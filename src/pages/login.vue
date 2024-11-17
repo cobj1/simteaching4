@@ -4,15 +4,15 @@
       <h2>校级平台</h2>
       <form>
         <div class="user-box">
-          <input type="text" name="" required="" v-model="loginId" @keyup.enter="login">
+          <input type="text" name="" required="" v-model="account" @keyup.enter="login">
           <label>用户名</label>
         </div>
         <div class="user-box">
-          <input type="password" name="" required="" v-model="loginPwd" autocomplete="off"
-            @focus="$event.target.type = 'password'" @keyup.enter="login">
+          <input type="password" name="" required="" v-model="password" autocomplete="off" @focus="$event.target.type = 'password'"
+            @keyup.enter="login">
           <label>密码</label>
         </div>
-        <v-checkbox v-model="savePwd" style=" display: flex; text-align: left; color: #b5b5b5;"
+        <v-checkbox v-model="remember" style=" display: flex; text-align: left; color: #b5b5b5;"
           label="记住密码"></v-checkbox>
 
         <a href="#" @click="login">
@@ -23,7 +23,7 @@
           登录
         </a>
         <div style="position: relative;">
-          <div class="apply" @click="$router.push({ name: '申请试用' })">
+          <div class="apply" @click="router.push({ name: '申请试用' })">
             <v-icon icon="mdi-card-account-details-outline" size="large" style="margin-right: 10px;"></v-icon>
             申请试用
           </div>
@@ -38,36 +38,29 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router';
 import AES from 'crypto-js/aes'
+import { login as loginApi } from '../api/us-user'
+import { useRouter } from 'vue-router';
 
+const router = useRouter()
 const route = useRoute()
 const remember = ref(false)
 const redirect = ref(route.query.redirect)
-const ylinput = ref('')
-const loginId = ref('')
-const loginPwd = ref('')
-const savePwd = ref(false)
-const write = () => { }
-const read = () => { }
-const clear = () => { }
+const account = ref('')
+const password = ref('')
 
 const login = async () => {
-  if (this.loginId && this.loginPwd) {
-    this.$store.dispatch('user/login', {
-      username: this.loginId,
-      password: this.loginPwd
-    }).then(res => {
-      if (this.savePwd) {
-        write('local', this.$route.path,
-          JSON.stringify({
-            title: '保存密码',
-            loginId: this.loginId,
-            loginPwd: this.loginPwd
-          }))
-      } else {
-        clear('local', this.$route.path)
-      }
-      this.$router.push(this.redirect || '/')
-    })
+  if (account.value && password.value) {
+    const res = await loginApi(account.value, password.value)
+    if (remember.value) {
+      localStorage.setItem('a', account.value)
+      localStorage.setItem('p', password.value)
+      localStorage.setItem('remember', remember.value)
+    } else {
+      localStorage.removeItem('a')
+      localStorage.removeItem('p')
+      localStorage.removeItem('remember')
+    }
+    this.$router.push(this.redirect || '/')
   } else {
     this.$message({
       message: '账号密码不得为空',

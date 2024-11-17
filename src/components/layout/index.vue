@@ -32,9 +32,11 @@
       <v-app-bar-title>智慧教育云仿真管理平台</v-app-bar-title>
 
       <template #append>
-        <v-btn class="text-none me-2" height="48" icon slim>
-          <v-avatar color="surface-light" image="https://cdn.vuetifyjs.com/images/john.png" size="32" />
-
+        <v-switch class="pr-4" v-model="isDark" :label="isDark ? '暗色主题' : '浅色主题'" hide-details></v-switch>
+        <v-btn v-if="accountStore.token" class="text-none me-2" height="48" icon slim>
+          <v-avatar color="surface-light" size="32">
+            {{ accountStore.info.name }}
+          </v-avatar>
           <v-menu activator="parent">
             <v-list density="compact" nav>
               <v-list-item append-icon="mdi-cog-outline" link title="Settings" />
@@ -42,6 +44,9 @@
               <v-list-item append-icon="mdi-logout" link title="Logout" />
             </v-list>
           </v-menu>
+        </v-btn>
+        <v-btn v-else class="text-none me-2" @click="router.push('/login')" >
+          <span style="font-size: 13px;">未登录</span>
         </v-btn>
       </template>
     </v-app-bar>
@@ -56,9 +61,22 @@
 </template>
 
 <script setup>
+import { useAccountStore } from '@/stores/account';
+import { useDark } from '@vueuse/core';
+import { watch } from 'vue';
 import { ref } from 'vue'
+import { useRouter } from 'vue-router';
+import { useTheme } from 'vuetify';
 
+const router = useRouter()
+const accountStore = useAccountStore()
 const drawer = ref(true)
+const theme = useTheme()
+const isDark = ref(theme.global.name.value == 'dark')
+
+watch(isDark, (value) => {
+  theme.global.name.value = value ? 'dark' : 'light'
+})
 
 const items = ref([
   {

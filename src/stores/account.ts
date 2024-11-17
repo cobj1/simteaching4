@@ -3,11 +3,11 @@ import { ref, reactive } from "vue";
 import { login as loginApi } from "../api/us-user";
 
 export const useAccountStore = defineStore("account", () => {
+  const token = ref();
   const info = reactive({
     id: null,
     name: null,
   });
-
   const roles = ref([]);
   const authoritys = ref([]);
 
@@ -17,6 +17,7 @@ export const useAccountStore = defineStore("account", () => {
   };
 
   return {
+    token,
     info,
     roles,
     authoritys,
