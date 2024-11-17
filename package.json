@@ -8,9 +8,11 @@
     "lint": "eslint . --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-vue": "^7.2.0",
     "@mdi/font": "7.4.47",
     "@vueuse/core": "^11.2.0",
     "axios": "^1.7.7",
+    "ckeditor5": "^43.3.1",
     "core-js": "^3.37.1",
     "crypto-js": "^4.2.0",
     "pinia": "^2.2.6",

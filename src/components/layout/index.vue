@@ -32,7 +32,7 @@
       <v-app-bar-title>智慧教育云仿真管理平台</v-app-bar-title>
 
       <template #append>
-        <v-switch class="pr-4" v-model="isDark" :label="isDark ? '暗色主题' : '浅色主题'" hide-details></v-switch>
+        <ThemeSwitch></ThemeSwitch>
         <v-btn v-if="accountStore.token" class="text-none me-2" height="48" icon slim>
           <v-avatar color="surface-light" size="32">
             {{ accountStore.info.name }}
@@ -46,7 +46,7 @@
           </v-menu>
         </v-btn>
         <v-btn v-else class="text-none me-2" @click="router.push('/login')" >
-          <span style="font-size: 13px;">未登录</span>
+          <span style="font-size: 14px;">未登录</span>
         </v-btn>
       </template>
     </v-app-bar>
@@ -62,21 +62,12 @@
 
 <script setup>
 import { useAccountStore } from '@/stores/account';
-import { useDark } from '@vueuse/core';
-import { watch } from 'vue';
 import { ref } from 'vue'
 import { useRouter } from 'vue-router';
-import { useTheme } from 'vuetify';
 
 const router = useRouter()
 const accountStore = useAccountStore()
 const drawer = ref(true)
-const theme = useTheme()
-const isDark = ref(theme.global.name.value == 'dark')
-
-watch(isDark, (value) => {
-  theme.global.name.value = value ? 'dark' : 'light'
-})
 
 const items = ref([
   {
@@ -197,7 +188,7 @@ const items = ref([
   },
 ])
 </script>
-<style>
+<style scoped>
 .v-layout {
   height: 100%;
 }
