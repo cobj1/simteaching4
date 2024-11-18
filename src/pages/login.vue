@@ -23,7 +23,7 @@
           登录
         </a>
         <div style="position: relative;">
-          <div class="apply" @click="router.push({ name: '申请试用' })">
+          <div class="apply" @click="router.replace('/apply')">
             <v-icon icon="mdi-card-account-details-outline" size="large" style="margin-right: 10px;"></v-icon>
             申请试用
           </div>
@@ -59,7 +59,7 @@ const redirect = ref(route.query.redirect)
 const account = ref('')
 const password = ref('')
 const snackbar = ref(false)
-const text = ref(`I am a multi-line snackbar.\nI can have more than one line. This is another line that is quite long.`)
+const text = ref('')
 
 const login = async () => {
   if (account.value && password.value) {
