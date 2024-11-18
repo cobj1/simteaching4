@@ -8,8 +8,8 @@
           <label>用户名</label>
         </div>
         <div class="user-box">
-          <input type="password" name="" required="" v-model="password" autocomplete="off" @focus="$event.target.type = 'password'"
-            @keyup.enter="login">
+          <input type="password" name="" required="" v-model="password" autocomplete="off"
+            @focus="$event.target.type = 'password'" @keyup.enter="login">
           <label>密码</label>
         </div>
         <v-checkbox v-model="remember" style=" display: flex; text-align: left; color: #b5b5b5;"
@@ -30,6 +30,15 @@
         </div>
       </form>
     </div>
+    <v-snackbar v-model="snackbar" multi-line :timeout="2000" color="yellow-darken-1">
+      {{ text }}
+
+      <template v-slot:actions>
+        <v-btn color="red" variant="text" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -38,33 +47,42 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router';
 import AES from 'crypto-js/aes'
-import { login as loginApi } from '../api/us-user'
+import CryptoJS from 'crypto-js'
 import { useRouter } from 'vue-router';
+import { useAccountStore } from '@/stores/account';
 
+const accountStore = useAccountStore()
 const router = useRouter()
 const route = useRoute()
 const remember = ref(false)
 const redirect = ref(route.query.redirect)
 const account = ref('')
 const password = ref('')
+const snackbar = ref(false)
+const text = ref(`I am a multi-line snackbar.\nI can have more than one line. This is another line that is quite long.`)
 
 const login = async () => {
   if (account.value && password.value) {
-    const res = await loginApi(account.value, password.value)
-    if (remember.value) {
-      localStorage.setItem('a', account.value)
-      localStorage.setItem('p', password.value)
-      localStorage.setItem('remember', remember.value)
+    const res = await accountStore.login(account.value, password.value)
+    if (res.code == '0') {
+      if (remember.value) {
+        localStorage.setItem('a', AES.encrypt(account.value, 'simteaching').toString())
+        localStorage.setItem('p', AES.encrypt(password.value, 'simteaching').toString())
+        localStorage.setItem('remember', remember.value)
+      } else {
+        localStorage.removeItem('a')
+        localStorage.removeItem('p')
+        localStorage.removeItem('remember')
+      }
+      router.push(redirect.value || '/')
     } else {
-      localStorage.removeItem('a')
-      localStorage.removeItem('p')
-      localStorage.removeItem('remember')
+      text.value = res.message
+      snackbar.value = true
     }
-    this.$router.push(this.redirect || '/')
+
   } else {
-    this.$message({
-      message: '账号密码不得为空',
-    });
+    text.value = `账号和密码不得为空`
+    snackbar.value = true
   }
 }
 
@@ -74,8 +92,8 @@ onMounted(() => {
   const rememberArchive = localStorage.getItem("remember")
   if (rememberArchive && rememberArchive == 'true') {
     try {
-      account.value = AES.decrypt(accountArchive)
-      password.value = AES.decrypt(passwordArchive)
+      account.value = AES.decrypt(accountArchive, 'simteaching').toString(CryptoJS.enc.Utf8)
+      password.value = AES.decrypt(passwordArchive, 'simteaching').toString(CryptoJS.enc.Utf8)
       remember.value = true
     } catch (e) { /* empty */ }
   }

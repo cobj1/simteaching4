@@ -33,21 +33,7 @@
 
       <template #append>
         <ThemeSwitch></ThemeSwitch>
-        <v-btn v-if="accountStore.token" class="text-none me-2" height="48" icon slim>
-          <v-avatar color="surface-light" size="32">
-            {{ accountStore.info.name }}
-          </v-avatar>
-          <v-menu activator="parent">
-            <v-list density="compact" nav>
-              <v-list-item append-icon="mdi-cog-outline" link title="Settings" />
 
-              <v-list-item append-icon="mdi-logout" link title="Logout" />
-            </v-list>
-          </v-menu>
-        </v-btn>
-        <v-btn v-else class="text-none me-2" @click="router.push('/login')" >
-          <span style="font-size: 14px;">未登录</span>
-        </v-btn>
       </template>
     </v-app-bar>
 

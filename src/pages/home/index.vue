@@ -13,7 +13,8 @@
           <v-btn variant="text">更多 +</v-btn>
         </v-sheet>
         <v-list lines="three">
-          <v-list-item class="border-b-sm" v-for="(item, index) in acadeamic" :key="index" :value="index">
+          <v-list-item class="border-b-sm" v-for="(item, index) in acadeamic" :key="index" :value="index"
+            @click="router.push(`/home/articles/${index}`)">
             <template #prepend>
               <v-sheet class="d-flex flex-column border text-center mr-4" style="border-color: #990000;">
                 <div class="px-4 py-1" style=" background: #990000; color: white;">
@@ -46,8 +47,8 @@
           <v-btn variant="text">更多 +</v-btn>
         </v-sheet>
         <v-list lines="two">
-          <v-list-item class="border-b-sm" v-for="(item, index) in news" :key="index" :title="item.title"
-            :value="index">
+          <v-list-item class="border-b-sm" v-for="(item, index) in news" :key="index" :title="item.title" :value="index"
+            @click="router.push(`/home/articles/${index}`)">
             <div class="text-caption opacity-70 pb-0 d-flex pt-1">
               <v-icon icon="mdi-clock-time-five" class="mr-2"></v-icon>
               时间：{{ item.date }}
@@ -61,9 +62,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useDate } from 'vuetify'
 
 const date = useDate()
+const router = useRouter()
 
 const slides = ref([
   'https://cdn.vuetifyjs.com/images/cards/docks.jpg',
