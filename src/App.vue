@@ -7,5 +7,8 @@
 </template>
 
 <script lang="ts" setup>
+import { useSettingsStore } from './stores/settings';
 
+const useSystemThemes = useSettingsStore();
+useSystemThemes.initTheme()
 </script>

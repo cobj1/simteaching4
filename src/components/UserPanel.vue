@@ -1,9 +1,12 @@
 <template>
-  <div>
+  <div class="mr-2">
     <v-btn v-if="accountStore.token" class="ms-1" icon>
       <v-avatar image="@/assets/avatar/default-avatar.svg" />
       <v-menu activator="parent">
         <v-list density="compact" nav>
+          <v-list-item append-icon="mdi-home" link title="首页" @click="router.replace('/')" />
+          <v-list-item append-icon="mdi-school" link title="学习" @click="router.replace('/app')" />
+          <v-list-item append-icon="mdi-console-network" link title="控制台" @click="router.replace('/manage')" />
           <v-list-item append-icon="mdi-cog-outline" link title="设置" @click="dialog = true" />
           <v-list-item append-icon="mdi-logout" link title="注销" @click="accountStore.logout" />
         </v-list>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{ 'apply-dark': settingsStore.isDark }">
     <div class="header">
       <div class="inner-header flex">
         <v-sheet class="pa-8 position-absolute elevation-4	" width="600px" style="z-index: 10;top: calc(50vh - 400px);">
@@ -77,8 +77,10 @@ import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import { sendCode } from '@/api/message';
 import { useRouter } from 'vue-router';
+import { useSettingsStore } from '@/stores/settings';
 
 const router = useRouter()
+const settingsStore = useSettingsStore()
 const successSnackbar = ref(false)
 const warningSnackbar = ref(false)
 const text = ref('')
@@ -139,6 +141,18 @@ const submit = async () => {
 </script>
 
 <style scoped>
+.apply-dark{
+  background-color: #666666;
+  height: 100%
+}
+
+.apply-dark .header{
+  background: linear-gradient(60deg, rgb(36 25 78) 0%, rgb(0 66 74) 100%);
+}
+
+.apply-dark .waves{
+  filter: invert(0.6)
+}
 .header {
   position: relative;
   text-align: center;

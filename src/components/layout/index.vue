@@ -33,7 +33,7 @@
 
       <template #append>
         <ThemeSwitch></ThemeSwitch>
-
+        <UserPanel></UserPanel>
       </template>
     </v-app-bar>
 
