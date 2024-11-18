@@ -1,6 +1,6 @@
 import axios from "../axios";
 
-export function sendCode(phone) {
+export function sendCode(phone: String) {
   return axios({
     url: import.meta.env.VITE_APP_MESSAGE_SERVER + "/sms/sendCode",
     method: "post",

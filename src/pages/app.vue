@@ -5,9 +5,8 @@
 </template>
 
 <script setup lang="ts">
+import layout from '@/layout/manage.vue'
 
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

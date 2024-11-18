@@ -3,12 +3,13 @@
     <v-navigation-drawer v-model="drawer">
       <v-list density="compact" nav>
         <v-list-subheader>Navigation</v-list-subheader>
-        <div v-for="(item, i) in items" :key="item.title">
-          <v-list-item :value="item" color="primary" v-if="item.children == null || item.children.length == 0">
+        <div v-for="(item) in items" :key="item.title">
+          <v-list-item v-if="item.children == null || item.children.length == 0" :value="item" color="primary"
+            @click="router.push(item.path)">
             <template v-slot:prepend> <v-icon :icon="item.prependIcon"></v-icon> </template>
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
-          <v-list-group :value="item.title" v-else>
+          <v-list-group v-else :value="item.title">
             <template v-slot:activator="{ props }">
               <v-list-item v-bind="props" color="primary">
                 <template v-slot:prepend> <v-icon :icon="item.prependIcon"></v-icon> </template>
@@ -60,19 +61,13 @@ const items = ref([
     title: '后台首页',
     prependIcon: 'mdi-view-dashboard-outline',
     link: true,
+    path: '/manage'
   },
   {
     title: '组织管理',
     prependIcon: 'mdi-account-group',
     link: true,
-    children: [
-      {
-        title: '组织中心',
-      },
-      {
-        title: '学校',
-      }
-    ]
+    path: '/manage/org'
   },
   {
     title: '用户管理',
