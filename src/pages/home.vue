@@ -31,6 +31,12 @@
     <v-main class="d-flex align-center justify-center">
       <RouterView></RouterView>
     </v-main>
+
+    <v-footer name="footer" app>
+      <v-btn class="mx-auto" variant="text" >
+        Copyright@北京大学数学科学学院
+      </v-btn>
+    </v-footer>
   </v-layout>
 </template>
 
@@ -65,5 +71,3 @@ const items = [
 
 
 </script>
- 
- 
