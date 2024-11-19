@@ -16,7 +16,8 @@
                 <v-list-item-title>{{ item.title }}</v-list-item-title>
               </v-list-item>
             </template>
-            <v-list-item v-for="(child) in item.children" :key="child.title" :value="child" color="primary">
+            <v-list-item v-for="(child) in item.children" :key="child.title" :value="child" color="primary"
+              @click="router.push(child.path)">
               <v-list-item-title>{{ child.title }}</v-list-item-title>
             </v-list-item>
           </v-list-group>
@@ -48,12 +49,10 @@
 </template>
 
 <script setup>
-import { useAccountStore } from '@/stores/account';
 import { ref } from 'vue'
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
-const accountStore = useAccountStore()
 const drawer = ref(true)
 
 const items = ref([
@@ -75,13 +74,16 @@ const items = ref([
     link: true,
     children: [
       {
-        title: '角色列表',
+        title: '权限列表',
+        path: '/manage/user/permission'
       },
       {
-        title: '权限列表',
+        title: '角色列表',
+        path: '/manage/user/role'
       },
       {
         title: '校级管理员',
+        path: '/manage/user/123'
       },
     ]
   },

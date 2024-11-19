@@ -32,5 +32,8 @@ declare module 'vue-router/auto-routes' {
     '/manage': RouteRecordInfo<'/manage', '/manage', Record<never, never>, Record<never, never>>,
     '/manage/': RouteRecordInfo<'/manage/', '/manage', Record<never, never>, Record<never, never>>,
     '/manage/org': RouteRecordInfo<'/manage/org', '/manage/org', Record<never, never>, Record<never, never>>,
+    '/manage/user/[roleId]': RouteRecordInfo<'/manage/user/[roleId]', '/manage/user/:roleId', { roleId: ParamValue<true> }, { roleId: ParamValue<false> }>,
+    '/manage/user/permission': RouteRecordInfo<'/manage/user/permission', '/manage/user/permission', Record<never, never>, Record<never, never>>,
+    '/manage/user/role': RouteRecordInfo<'/manage/user/role', '/manage/user/role', Record<never, never>, Record<never, never>>,
   }
 }

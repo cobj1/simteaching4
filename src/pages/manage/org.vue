@@ -1,11 +1,10 @@
 <template>
   <v-card>
-    <v-card-title class="bg-indigo text-white text-h5">
-      User Directory
-    </v-card-title>
+    <v-toolbar title="组织管理"></v-toolbar>
+
 
     <v-row class="pa-4" justify="space-between">
-      <v-col cols="5">
+      <v-col cols="12" md="6">
         <v-treeview v-model:activated="active" v-model:opened="open" :items="items" :load-children="fetchUsers"
           color="warning" density="compact" item-title="name" item-value="id" activatable open-on-click transition>
           <template v-slot:prepend="{ item }">
@@ -16,7 +15,7 @@
         </v-treeview>
       </v-col>
 
-      <v-divider vertical></v-divider>
+      <v-divider :vertical="!$vuetify.display.smAndDown"></v-divider>
 
       <v-col class="d-flex text-center">
         <v-scroll-y-transition mode="out-in">
@@ -61,7 +60,12 @@
     </v-row>
   </v-card>
 </template>
+<script setup>
+import { VTreeview } from 'vuetify/labs/VTreeview'
+
+</script>
 <script>
+
 const avatars = [
   '?accessoriesType=Blank&avatarStyle=Circle&clotheColor=PastelGreen&clotheType=ShirtScoopNeck&eyeType=Wink&eyebrowType=UnibrowNatural&facialHairColor=Black&facialHairType=MoustacheMagnum&hairColor=Platinum&mouthType=Concerned&skinColor=Tanned&topType=Turban',
   '?accessoriesType=Sunglasses&avatarStyle=Circle&clotheColor=Gray02&clotheType=ShirtScoopNeck&eyeType=EyeRoll&eyebrowType=RaisedExcited&facialHairColor=Red&facialHairType=BeardMagestic&hairColor=Red&hatColor=White&mouthType=Twinkle&skinColor=DarkBrown&topType=LongHairBun',

@@ -7,7 +7,7 @@
       </v-carousel-item>
     </v-carousel>
     <v-row class="pt-4">
-      <v-col md="7" sm="12">
+      <v-col md="7" cols="12">
         <v-sheet class="d-flex justify-space-between align-center border-b-md px-4 py-2">
           <span>学术报告</span>
           <v-btn variant="text">更多 +</v-btn>
@@ -41,7 +41,7 @@
           </v-list-item>
         </v-list>
       </v-col>
-      <v-col md="5" sm="12">
+      <v-col md="5" cols="12">
         <v-sheet class="d-flex justify-space-between align-center border-b-md px-4 py-2">
           <span>学校新闻</span>
           <v-btn variant="text">更多 +</v-btn>

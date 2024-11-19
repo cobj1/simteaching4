@@ -2,7 +2,8 @@
   <div :class="{ 'apply-dark': settingsStore.isDark }">
     <div class="header">
       <div class="inner-header flex">
-        <v-sheet class="pa-8 position-absolute elevation-4	" width="600px" style="z-index: 10;top: calc(50vh - 400px);">
+        <v-sheet class="pa-8 position-absolute elevation-4	" style="z-index: 10; "
+          :style="{ 'height': $vuetify.display.smAndDown ? '100vh' : 'auto', 'top': $vuetify.display.smAndDown ? '0' : 'calc(50vh - 400px)', 'width': $vuetify.display.smAndDown ? '100%' : '600px' }">
           <p class="mt-2 text-h7 font-weight-bold text-md-h6 pb-5">
             申请试用
           </p>
@@ -53,8 +54,8 @@
       {{ text }}
 
       <template v-slot:actions>
-        <v-btn variant="text" @click="snackbar = false">
-          Close
+        <v-btn variant="text" @click="successSnackbar = false">
+          关闭
         </v-btn>
       </template>
     </v-snackbar>
@@ -63,11 +64,27 @@
       {{ text }}
 
       <template v-slot:actions>
-        <v-btn color="red" variant="text" @click="snackbar = false">
-          Close
+        <v-btn color="red" variant="text" @click="warningSnackbar = false">
+          关闭
         </v-btn>
       </template>
     </v-snackbar>
+    <v-dialog v-model="dialog" max-width="320" persistent>
+      <v-list class="py-2" color="primary" elevation="12" rounded="lg">
+        <v-list-item prepend-icon="$vuetify-outline" title="提交申请试用表单...">
+          <template v-slot:prepend>
+            <div class="pe-4">
+              <ProductLogo width="26px"></ProductLogo>
+            </div>
+          </template>
+
+          <template v-slot:append>
+            <v-progress-circular color="primary" indeterminate="disable-shrink" size="16"
+              width="2"></v-progress-circular>
+          </template>
+        </v-list-item>
+      </v-list>
+    </v-dialog>
   </div>
 </template>
 
@@ -75,22 +92,25 @@
 import { reactive, ref } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
-import { sendCode } from '@/api/message';
 import { useRouter } from 'vue-router';
 import { useSettingsStore } from '@/stores/settings';
+import ProductLogo from '@/components/ProductLogo.vue';
+import { MessageApi } from '@/api/message';
+import { ApplayApi } from '@/api/us-apply';
 
 const router = useRouter()
 const settingsStore = useSettingsStore()
 const successSnackbar = ref(false)
 const warningSnackbar = ref(false)
 const text = ref('')
+const dialog = ref(false)
 
 const initialState = {
-  phone: '18233752904',
-  code: '123456',
-  name: '王硕',
-  org: '北京易格通智仿真技术有限公司的',
-  explain: '测试'
+  phone: '',
+  code: '',
+  name: '',
+  org: '',
+  explain: ''
 }
 
 const state = reactive({
@@ -115,7 +135,7 @@ function clear() {
 }
 
 const sendSMS = async () => {
-  const res = await sendCode(state.phone)
+  const res = await MessageApi.sendCode(state.phone)
   if (res) {
     text.value = '短信发送成功'
     successSnackbar.value = true
@@ -128,10 +148,24 @@ const sendSMS = async () => {
 const submit = async () => {
   const res = await v$.value.$validate()
   if (res) {
-    const res2 = await giveATrial({
-
-    })
-    console.log(res2)
+    dialog.value = true
+    try {
+      const res2 = await ApplayApi.giveATrial({
+        phone: state.phone,
+        code: state.code,
+        name: state.name,
+        org: state.org,
+        illustrate: state.explain
+      })
+      if (res2.code == 0) {
+        text.value = '申请提交成功'
+        successSnackbar.value = trued
+      } else {
+        text.value = res2.message
+        warningSnackbar.value = true
+      }
+    } catch (e) { /* empty */ }
+    setTimeout(() => dialog.value = false, 400)
   } else {
     text.value = '提交失败'
     warningSnackbar.value = true
@@ -141,18 +175,19 @@ const submit = async () => {
 </script>
 
 <style scoped>
-.apply-dark{
+.apply-dark {
   background-color: #666666;
   height: 100%
 }
 
-.apply-dark .header{
+.apply-dark .header {
   background: linear-gradient(60deg, rgb(36 25 78) 0%, rgb(0 66 74) 100%);
 }
 
-.apply-dark .waves{
+.apply-dark .waves {
   filter: invert(0.6)
 }
+
 .header {
   position: relative;
   text-align: center;

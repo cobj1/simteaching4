@@ -1,6 +1,6 @@
+import { UserApi } from "@/api/us-user";
 import { defineStore } from "pinia";
 import { ref, reactive } from "vue";
-import { login as loginApi } from "../api/us-user";
 
 export const useAccountStore = defineStore(
   "account",
@@ -14,7 +14,7 @@ export const useAccountStore = defineStore(
     const authoritys = ref([]);
 
     const login = async (account: string, password: string) => {
-      const res = (await loginApi(account, password)) as any;
+      const res = (await UserApi.login(account, password)) as any;
       if (res.code == "0") token.value = res.result;
       return res;
     };

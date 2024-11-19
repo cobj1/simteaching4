@@ -35,7 +35,7 @@
 
       <template v-slot:actions>
         <v-btn color="red" variant="text" @click="snackbar = false">
-          Close
+          关闭
         </v-btn>
       </template>
     </v-snackbar>
