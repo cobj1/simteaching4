@@ -1,6 +1,25 @@
 import axios from "../axios";
 
 export const OrgApi = {
+  selectByAdmin(childrenCount: boolean = false) {
+    return axios({
+      url: "org/element/selectByAdmin",
+      method: "get",
+      params: {
+        childrenCount,
+      },
+    });
+  },
+  selectByParent(parent: string, childrenCount: boolean = false) {
+    return axios({
+      url: "org/element/selectByParent",
+      method: "get",
+      params: {
+        parent,
+        childrenCount
+      },
+    });
+  },
   dynamicElement(struct: string, parent: string) {
     return axios({
       url: "org/element/dynamicElement",
@@ -38,14 +57,7 @@ export const OrgApi = {
       url: "org/element/selectByUser",
     });
   },
-  selectByParent(parent: string) {
-    return axios({
-      url: "org/element/selectByParent",
-      params: {
-        parent,
-      },
-    });
-  },
+
   selectOneById(id: string) {
     return axios({
       url: "org/element/selectOneById",

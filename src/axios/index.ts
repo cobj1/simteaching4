@@ -29,7 +29,6 @@ service.interceptors.response.use(
         title: "安全",
         text: "未经授权请重新登录后尝试",
         type: "info",
-        duration: 9000000,
         data: {
           icon: "mdi-alert-circle",
         },

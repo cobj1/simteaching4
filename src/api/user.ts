@@ -14,6 +14,7 @@ export const UserApi = {
   info(id: string) {
     return axios({
       url: "/user/info",
+      method: "get",
       params: {
         id,
       },
@@ -22,6 +23,7 @@ export const UserApi = {
   permission() {
     return axios({
       url: "/user/permission",
+      method: "get",
     });
   },
   save(data: object) {

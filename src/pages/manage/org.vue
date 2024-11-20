@@ -1,70 +1,19 @@
 <template>
   <v-card>
     <v-toolbar title="组织管理"></v-toolbar>
-
-
     <v-row class="pa-4" justify="space-between">
-      <v-col cols="12" md="6">
+      <v-col cols="12">
         <v-treeview v-model:activated="active" v-model:opened="open" :items="items" :load-children="fetchUsers"
           color="warning" density="compact" item-title="name" item-value="id" activatable open-on-click transition>
-          <template v-slot:prepend="{ item }">
-            <v-icon v-if="!item.children">
-              mdi-account
-            </v-icon>
-          </template>
         </v-treeview>
-      </v-col>
-
-      <v-divider :vertical="!$vuetify.display.smAndDown"></v-divider>
-
-      <v-col class="d-flex text-center">
-        <v-scroll-y-transition mode="out-in">
-          <div v-if="!selected" class="text-h6 text-grey-lighten-1 font-weight-light" style="align-self: center;">
-            Select a User
-          </div>
-          <v-card v-else :key="selected.id" class="pt-6 mx-auto" max-width="400" flat>
-            <v-card-text>
-              <v-avatar v-if="avatar" size="88">
-                <v-img :src="`https://avataaars.io/${avatar}`" class="mb-6"></v-img>
-              </v-avatar>
-              <h3 class="text-h5 mb-2">
-                {{ selected.name }}
-              </h3>
-              <div class="text-blue mb-2">
-                {{ selected.email }}
-              </div>
-              <div class="text-blue subheading font-weight-bold">
-                {{ selected.username }}
-              </div>
-            </v-card-text>
-            <v-divider></v-divider>
-            <v-row class="text-left" tag="v-card-text">
-              <v-col class="text-right me-4 mb-2" cols="5" tag="strong">
-                Company:
-              </v-col>
-              <v-col>{{ selected.company.name }}</v-col>
-              <v-col class="text-right me-4 mb-2" cols="5" tag="strong">
-                Website:
-              </v-col>
-              <v-col>
-                <a :href="`//${selected.website}`" target="_blank">{{ selected.website }}</a>
-              </v-col>
-              <v-col class="text-right me-4 mb-2" cols="5" tag="strong">
-                Phone:
-              </v-col>
-              <v-col>{{ selected.phone }}</v-col>
-            </v-row>
-          </v-card>
-        </v-scroll-y-transition>
       </v-col>
     </v-row>
   </v-card>
 </template>
 <script setup>
+import { OrgApi } from '@/api/org';
+import { computed, onMounted, ref, watch } from 'vue';
 import { VTreeview } from 'vuetify/labs/VTreeview'
-
-</script>
-<script>
 
 const avatars = [
   '?accessoriesType=Blank&avatarStyle=Circle&clotheColor=PastelGreen&clotheType=ShirtScoopNeck&eyeType=Wink&eyebrowType=UnibrowNatural&facialHairColor=Black&facialHairType=MoustacheMagnum&hairColor=Platinum&mouthType=Concerned&skinColor=Tanned&topType=Turban',
@@ -76,50 +25,43 @@ const avatars = [
 
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-export default {
-  data: () => ({
-    active: [],
-    avatar: null,
-    open: [],
-    users: [],
-  }),
+const active = ref([])
+const avatar = ref(null)
+const open = ref([])
+const users = ref([])
 
-  computed: {
-    items() {
-      return [
-        {
-          name: 'Users',
-          children: this.users,
-        },
-      ]
-    },
-    selected() {
-      if (!this.active.length) return undefined
+const items = ref([]) //computed(() => [{ name: 'Users', children: users.value }])
+const selected = computed(() => {
+  if (!active.value.length) return undefined
+  const id = active.value[0]
+  return users.value.find(user => user.id === id)
+})
 
-      const id = this.active[0]
+watch(selected, () => randomAvatar())
 
-      return this.users.find(user => user.id === id)
-    },
-  },
-
-  watch: {
-    selected: 'randomAvatar',
-  },
-
-  methods: {
-    async fetchUsers(item) {
-      // Remove in 6 months and say
-      // you've made optimizations! :)
-      await pause(1500)
-
-      return fetch('https://jsonplaceholder.typicode.com/users')
-        .then(res => res.json())
-        .then(json => (item.children.push(...json)))
-        .catch(err => console.warn(err))
-    },
-    randomAvatar() {
-      this.avatar = avatars[Math.floor(Math.random() * avatars.length)]
-    },
-  },
+const fetchUsers = async (item) => {
+  const res = await OrgApi.selectByParent(item.id, true)
+  if (res.length > 0)
+    return item.children.push(...res.map(item => wrap(item)))
+  else item.children = null
+  return true;
 }
+
+const randomAvatar = () => {
+  avatar.value = avatars[Math.floor(Math.random() * avatars.length)]
+}
+
+const wrap = (item) => {
+  return { ...item, name: `${item.name} ( ${item.childrenCount} )`, children: (item.childrenCount > 0 ? [] : null) }
+}
+
+onMounted(async () => {
+  const res = await OrgApi.selectByAdmin(true)
+  items.value = res.map(item => wrap(item))
+})
+
+</script>
+<script>
+
+
 </script>

@@ -35,6 +35,8 @@ declare module 'vue-router/auto-routes' {
     '/manage/apply/review': RouteRecordInfo<'/manage/apply/review', '/manage/apply/review', Record<never, never>, Record<never, never>>,
     '/manage/notice': RouteRecordInfo<'/manage/notice', '/manage/notice', Record<never, never>, Record<never, never>>,
     '/manage/org': RouteRecordInfo<'/manage/org', '/manage/org', Record<never, never>, Record<never, never>>,
+    '/manage/resource/courseware': RouteRecordInfo<'/manage/resource/courseware', '/manage/resource/courseware', Record<never, never>, Record<never, never>>,
+    '/manage/resource/questions': RouteRecordInfo<'/manage/resource/questions', '/manage/resource/questions', Record<never, never>, Record<never, never>>,
     '/manage/site': RouteRecordInfo<'/manage/site', '/manage/site', Record<never, never>, Record<never, never>>,
     '/manage/system/database': RouteRecordInfo<'/manage/system/database', '/manage/system/database', Record<never, never>, Record<never, never>>,
     '/manage/system/dict': RouteRecordInfo<'/manage/system/dict', '/manage/system/dict', Record<never, never>, Record<never, never>>,

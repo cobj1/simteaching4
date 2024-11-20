@@ -130,11 +130,22 @@ const items = ref([
     title: '资源管理',
     prependIcon: 'mdi-briefcase-outline',
     link: true,
+    children: [
+      {
+        title: '题库',
+        path: '/manage/resource/questions'
+      },
+      {
+        title: '课件',
+        path: '/manage/resource/courseware'
+      }
+    ]
   },
   {
     title: '共享资源库',
     prependIcon: 'mdi-calendar',
     link: true,
+
   },
   {
     title: '考勤管理',
@@ -176,7 +187,7 @@ const items = ref([
     title: '门户管理',
     prependIcon: 'mdi-file-chart-outline',
     link: true,
-    path:'/manage/site'
+    path: '/manage/site'
   },
 ])
 </script>
