@@ -3,6 +3,7 @@
     <v-main>
       <router-view />
     </v-main>
+    <v-notifications></v-notifications>
   </v-app>
 </template>
 

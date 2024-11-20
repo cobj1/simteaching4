@@ -96,7 +96,7 @@ import { useRouter } from 'vue-router';
 import { useSettingsStore } from '@/stores/settings';
 import ProductLogo from '@/components/ProductLogo.vue';
 import { MessageApi } from '@/api/message';
-import { ApplayApi } from '@/api/us-apply';
+import { ApplayApi } from '@/api/apply';
 
 const router = useRouter()
 const settingsStore = useSettingsStore()

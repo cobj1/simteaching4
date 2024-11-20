@@ -9,7 +9,6 @@
 //   $color-pack: false
 // );
 
-
 body.ckeditor-dark {
   /* 背景颜色 */
   --ck-color-base-background: var(--v-theme-surface);
@@ -119,4 +118,43 @@ body.ckeditor-dark {
   /* -- Overrides the default colors used by the ckeditor5-link package. ---------------------- */
 
   --ck-color-link-default: hsl(190, 100%, 75%);
+}
+
+// style of the notification itself
+.my-notification {
+  border-radius: 4px;
+  padding: 16px;
+  background: #44a4fc;
+  border-left: 5px solid #187fe7;
+  margin: 15px 15px 0 0;
+  color: #fff;
+
+  // style for title line
+  .notification-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+
+  // style for content
+  .notification-content {
+    font-size: 16px;
+  }
+
+  // additional styling hook when using`type` parameter, i.e. this.$notify({ type: 'success', message: 'Yay!' })
+  &.info {
+    background: #424242;
+    border-left-color: #757575;
+  }
+  &.success {
+    background: #68cd86;
+    border-left-color: #42a85f;
+  }
+  &.warn {
+    background: #ffb648;
+    border-left-color: #f48a06;
+  }
+  &.error {
+    background: #e54d42;
+    border-left-color: #b82e24;
+  }
 }

@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-navigation-drawer v-model="drawer">
+    <v-navigation-drawer v-model="drawer" class="position-fixed	">
       <v-list density="compact" nav>
         <v-list-subheader>Navigation</v-list-subheader>
         <div v-for="(item) in items" :key="item.title">
@@ -28,7 +28,7 @@
       </template>
     </v-navigation-drawer>
 
-    <v-app-bar border="b" class="ps-4" flat>
+    <v-app-bar border="b" class="ps-4 position-fixed" flat>
       <v-app-bar-nav-icon v-if="$vuetify.display.smAndDown" @click="drawer = !drawer" />
 
       <v-app-bar-title>智慧教育云仿真管理平台</v-app-bar-title>
@@ -49,11 +49,12 @@
 </template>
 
 <script setup>
+import vuetify from '@/plugins/vuetify';
 import { ref } from 'vue'
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
-const drawer = ref(true)
+const drawer = ref(!vuetify.display.smAndDown.value)
 
 const items = ref([
   {
@@ -93,16 +94,20 @@ const items = ref([
     link: true,
     children: [
       {
-        title: '数据监控'
+        title: '数据库',
+        path: '/manage/system/database'
       },
       {
-        title: '字典管理'
+        title: '字典管理',
+        path: '/manage/system/dict'
       },
       {
-        title: '参数设置'
+        title: '参数设置',
+        path: '/manage/system/parameter-setting'
       },
       {
-        title: '日志管理'
+        title: '日志管理',
+        path: '/manage/system/log'
       }
     ]
   },
@@ -112,10 +117,12 @@ const items = ref([
     link: true,
     children: [
       {
-        title: '审核申请'
+        title: '审核申请',
+        path: '/manage/apply/review'
       },
       {
-        title: '试用账号'
+        title: '试用账号',
+        path: '/manage/apply/account'
       }
     ]
   },

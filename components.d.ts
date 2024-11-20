@@ -14,5 +14,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ThemeSwitch: typeof import('./src/components/ThemeSwitch.vue')['default']
     UserPanel: typeof import('./src/components/UserPanel.vue')['default']
+    VNotifications: typeof import('./src/components/VNotifications.vue')['default']
   }
 }

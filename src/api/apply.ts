@@ -15,6 +15,9 @@ export const ApplayApi = {
     return axios({
       url: "/apply/examine",
       method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
       data: {
         id,
         deadline,
@@ -23,13 +26,12 @@ export const ApplayApi = {
       },
     });
   },
-  selectTrialPage(current: number, size: number) {
+  selectTrialPage(state: string) {
     return axios({
       url: "/apply/selectTrialPage",
       method: "get",
       params: {
-        current,
-        size,
+        state,
       },
     });
   },

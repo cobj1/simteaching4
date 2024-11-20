@@ -101,22 +101,10 @@ export const UserApi = {
       },
     });
   },
-  selectPageTrialUser(
-    current: string,
-    size: string,
-    account: string,
-    name: string,
-    org: string
-  ) {
+  selectPageTrialUser() {
     return axios({
       url: "/user/selectPageTrialUser",
-      params: {
-        current,
-        size,
-        account,
-        name,
-        org,
-      },
+      method: "get",
     });
   },
   updateOnTrial(onTrial: string, userId: string) {

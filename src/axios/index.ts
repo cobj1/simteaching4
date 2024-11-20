@@ -1,3 +1,5 @@
+import { useAccountStore } from "@/stores/account";
+import { notify } from "@kyvg/vue3-notification";
 import axios from "axios";
 
 const service = axios.create({
@@ -8,6 +10,8 @@ const service = axios.create({
 
 service.interceptors.request.use(
   (config) => {
+    const accountStore = useAccountStore();
+    config.headers["x-token"] = accountStore.token;
     return config;
   },
   (error) => {
@@ -20,6 +24,17 @@ service.interceptors.response.use(
     return response.data;
   },
   (error) => {
+    if (error.status == 401) {
+      notify({
+        title: "安全",
+        text: "未经授权请重新登录后尝试",
+        type: "info",
+        duration: 9000000,
+        data: {
+          icon: "mdi-alert-circle",
+        },
+      });
+    }
     return Promise.reject(error);
   }
 );

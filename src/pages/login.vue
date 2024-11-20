@@ -64,7 +64,7 @@ const text = ref('')
 const login = async () => {
   if (account.value && password.value) {
     const res = await accountStore.login(account.value, password.value)
-    if (res.code == '0') {
+    if (res) {
       if (remember.value) {
         localStorage.setItem('a', AES.encrypt(account.value, 'simteaching').toString())
         localStorage.setItem('p', AES.encrypt(password.value, 'simteaching').toString())
@@ -232,7 +232,6 @@ onMounted(() => {
         .btn {
           text-align: center;
           white-space: nowrap;
-          vertical-align: middle;
           user-select: none;
           transition: all .15s ease-in-out;
           display: block;

@@ -6,7 +6,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar class="px-md-4">
+    <v-app-bar class="px-md-4 position-fixed">
       <v-container class="mx-auto d-flex align-center justify-center" max-width="1600px">
         <v-app-bar-nav-icon v-if="$vuetify.display.smAndDown" @click="drawer = !drawer" />
         <v-img class="me-sm-8" max-width="40" src="/favicon.ico" />
