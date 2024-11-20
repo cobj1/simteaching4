@@ -12,7 +12,7 @@
         </v-list>
       </v-menu>
     </v-btn>
-    <v-btn v-else class="text-none me-2" prepend-icon="mdi-login" @click="router.push('/login')">
+    <v-btn v-else class="text-none me-2" prepend-icon="mdi-login" @click="goLogin">
       <span style="font-size: 14px">登录</span>
     </v-btn>
     <v-dialog v-model="dialog" transition="dialog-bottom-transition" max-width="600"
@@ -48,16 +48,18 @@
 import { useAccountStore } from "@/stores/account";
 import { useSettingsStore } from "@/stores/settings";
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const accountStore = useAccountStore();
 const settingsStore = useSettingsStore()
+const route = useRoute()
 const router = useRouter();
 
 const dialog = ref(false);
-const notifications = ref(false);
-const sound = ref(true);
-const widgets = ref(false);
+
+const goLogin = () => {
+  router.push('/login?redirect=' + route.fullPath)
+}
 </script>
 
 <style scoped></style>

@@ -3,55 +3,55 @@ import axios from "../axios";
 export const SystemApi = {
   basic() {
     return axios({
-      url: "/druid-api/basic",
+      url: "/druid/basic",
       method: "get",
     });
   },
   datasource() {
     return axios({
-      url: "/druid-api/datasource",
+      url: "/druid/datasource",
       method: "get",
     });
   },
   activeConnectionStackTrace() {
     return axios({
-      url: "/druid-api/activeConnectionStackTrace",
+      url: "/druid/activeConnectionStackTrace",
     });
   },
 
   sql() {
     return axios({
-      url: "/druid-api/sql",
+      url: "/druid/sql",
     });
   },
 
   wall() {
     return axios({
-      url: "/druid-api/wall",
+      url: "/druid/wall",
     });
   },
 
   webapp() {
     return axios({
-      url: "/druid-api/webapp",
+      url: "/druid/webapp",
     });
   },
 
   weburi() {
     return axios({
-      url: "/druid-api/weburi",
+      url: "/druid/weburi",
     });
   },
 
   websession() {
     return axios({
-      url: "/druid-api/websession",
+      url: "/druid/websession",
     });
   },
 
   spring() {
     return axios({
-      url: "/druid-api/spring",
+      url: "/druid/spring",
     });
   },
 

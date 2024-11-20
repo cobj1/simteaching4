@@ -34,6 +34,8 @@ service.interceptors.response.use(
           icon: "mdi-alert-circle",
         },
       });
+      const accountStore = useAccountStore();
+      accountStore.logout();
     }
     return Promise.reject(error);
   }

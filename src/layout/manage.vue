@@ -170,11 +170,13 @@ const items = ref([
     title: '通知公告',
     prependIcon: 'mdi-file-chart-outline',
     link: true,
+    path: '/manage/notice'
   },
   {
     title: '门户管理',
     prependIcon: 'mdi-file-chart-outline',
     link: true,
+    path:'/manage/site'
   },
 ])
 </script>
