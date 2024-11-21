@@ -22,4 +22,10 @@ export const RoleApi = {
       data,
     });
   },
+  listByUserPermission() {
+    return axios({
+      url: "/user/role/listByUserPermission",
+      method: "get",
+    });
+  },
 };

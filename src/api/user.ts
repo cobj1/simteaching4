@@ -56,6 +56,7 @@ export const UserApi = {
     sortOrder: string;
     name: string;
     role: string;
+    org: string;
   }) {
     const _sortKey = params.sortKey
       ? useChangeCase(params.sortKey, "snakeCase").value

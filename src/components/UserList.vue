@@ -71,15 +71,18 @@
 <script setup>
 import { NoticeApi } from '@/api/notice'
 import { UserApi } from '@/api/user';
-import { computed, nextTick, reactive, ref } from 'vue';
+import { computed, nextTick, reactive, ref, watch } from 'vue';
 
 const props = defineProps({
   role: {
-    type: String,
+    type: [String, Number, Array],
+    default: '99'
+  },
+  org: {
+    type: [String, Number, Array],
     default: '99'
   },
 })
-
 const search = reactive({
   name: ''
 })
@@ -123,6 +126,11 @@ const defaultItem = ref({
   content: '',
 })
 const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
+
+watch(() => props.role, () => {
+  options.value.page = 1
+  loadItems(options.value)
+})
 
 const addItem = () => {
   editedItem.value = Object.assign({}, defaultItem.value)
@@ -173,7 +181,15 @@ const save = async () => {
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
-  const res = await UserApi.page({ current: page, size: itemsPerPage, sortKey: sortBy[0] ? sortBy[0].key : null, sortOrder: sortBy[0] ? sortBy[0].order : '', name: search.name, role: props.role })
+  const res = await UserApi.page({
+    current: page,
+    size: itemsPerPage,
+    sortKey: sortBy[0] ? sortBy[0].key : null,
+    sortOrder: sortBy[0] ? sortBy[0].order : '',
+    name: search.name,
+    role: props.role,
+    org: props.org
+  })
   serverItems.value = res.records
   totalItems.value = res.total
   loading.value = false

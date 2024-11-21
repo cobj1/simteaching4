@@ -49,12 +49,24 @@
 </template>
 
 <script setup>
+import { RoleApi } from '@/api/role';
 import vuetify from '@/plugins/vuetify';
-import { ref } from 'vue'
+import { useAccountStore } from '@/stores/account';
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router';
 
+const account = useAccountStore()
 const router = useRouter()
 const drawer = ref(!vuetify.display.smAndDown.value)
+const userManage = ref([{
+  title: '权限列表',
+  path: '/manage/user/permission'
+},
+{
+  title: '角色列表',
+  path: '/manage/user/role'
+}
+])
 
 const items = ref([
   {
@@ -73,20 +85,7 @@ const items = ref([
     title: '用户管理',
     prependIcon: 'mdi-account-group',
     link: true,
-    children: [
-      {
-        title: '权限列表',
-        path: '/manage/user/permission'
-      },
-      {
-        title: '角色列表',
-        path: '/manage/user/role'
-      },
-      {
-        title: '校级管理员',
-        path: '/manage/user/123'
-      },
-    ]
+    children: userManage
   },
   {
     title: '系统管理',
@@ -190,6 +189,20 @@ const items = ref([
     path: '/manage/site'
   },
 ])
+
+
+onMounted(async () => {
+  if (account.token) {
+    const roles = await RoleApi.listByUserPermission()
+    userManage.value.push(...roles.map(item => {
+      return {
+        title: item.name,
+        path: '/manage/user/' + item.id
+      }
+    }))
+  }
+
+})
 </script>
 <style scoped>
 .v-layout {
