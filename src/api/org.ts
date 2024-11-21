@@ -16,60 +16,29 @@ export const OrgApi = {
       method: "get",
       params: {
         parent,
-        childrenCount
+        childrenCount,
       },
-    });
-  },
-  dynamicElement(struct: string, parent: string) {
-    return axios({
-      url: "org/element/dynamicElement",
-      params: {
-        struct,
-        parent,
-      },
-    });
-  },
-  save(data: object) {
-    return axios({
-      url: "org/element/save",
-      method: "post",
-      data,
-    });
-  },
-  update(data: object) {
-    return axios({
-      url: "org/element/update",
-      method: "post",
-      data,
     });
   },
   del(id: string) {
     return axios({
       url: "org/element/del",
       method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
       data: {
         id,
       },
     });
   },
-  selectByUser() {
+  save(data: { id: string; parentId: string; name: string }) {
     return axios({
-      url: "org/element/selectByUser",
-    });
-  },
-
-  selectOneById(id: string) {
-    return axios({
-      url: "org/element/selectOneById",
-      params: {
-        id,
-      },
-    });
-  },
-  updateAdmin(data: object) {
-    return axios({
-      url: "org/element/updateAdmin",
+      url: "org/element/save",
       method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
       data,
     });
   },

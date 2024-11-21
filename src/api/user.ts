@@ -1,3 +1,4 @@
+import { useChangeCase } from "@vueuse/integrations/useChangeCase";
 import axios from "../axios";
 
 export const UserApi = {
@@ -30,13 +31,9 @@ export const UserApi = {
     return axios({
       url: "/user/save",
       method: "post",
-      data,
-    });
-  },
-  update(data: object) {
-    return axios({
-      url: "/user/update",
-      method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
       data,
     });
   },
@@ -44,88 +41,35 @@ export const UserApi = {
     return axios({
       url: "/user/del",
       method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
       data: {
         id,
       },
     });
   },
-  selectByElementProgeny(params: object) {
+  page(params: {
+    current: number;
+    size: number;
+    sortKey: string;
+    sortOrder: string;
+    name: string;
+    role: string;
+  }) {
+    const _sortKey = params.sortKey
+      ? useChangeCase(params.sortKey, "snakeCase").value
+      : null;
+    const _sortOrder = params.sortOrder
+      ? useChangeCase(params.sortOrder, "snakeCase").value
+      : null;
     return axios({
-      url: "/user/selectByElementProgeny",
-      params,
-    });
-  },
-  dynamic() {
-    return axios({
-      url: "/user/dynamic",
-    });
-  },
-  modifyPersonalInfo(data: object) {
-    return axios({
-      url: "/user/modifyPersonalInfo",
-      method: "post",
-      data,
-    });
-  },
-  changePwd(newPwd: string, oldPwd: string) {
-    return axios({
-      url: "/user/changePwd",
-      method: "post",
-      data: {
-        newPwd,
-        oldPwd,
-      },
-    });
-  },
-  updateAvatar(avatar: string) {
-    return axios({
-      url: "/user/updateAvatar",
-      method: "post",
-      data: {
-        avatar,
-      },
-    });
-  },
-  updateUserName(userName: string) {
-    return axios({
-      url: "/user/updateUserName",
-      method: "post",
-      data: {
-        userName,
-      },
-    });
-  },
-  getOrgAdmins(orgId: string) {
-    return axios({
-      url: "/user/getOrgAdmins",
-      params: {
-        orgId,
-      },
-    });
-  },
-  selectPageTrialUser() {
-    return axios({
-      url: "/user/selectPageTrialUser",
+      url: "/user/page",
       method: "get",
-    });
-  },
-  updateOnTrial(onTrial: string, userId: string) {
-    return axios({
-      url: "/user/updateOnTrial",
-      method: "post",
-      data: {
-        onTrial,
-        userId,
-      },
-    });
-  },
-  updateOnTrialTime(onTrialTime: string, userId: string) {
-    return axios({
-      url: "/user/updateOnTrialTime",
-      method: "post",
-      data: {
-        onTrialTime,
-        userId,
+      params: {
+        ...params,
+        sortKey: _sortKey,
+        sortOrder: _sortOrder,
       },
     });
   },

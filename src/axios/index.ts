@@ -26,7 +26,7 @@ service.interceptors.response.use(
   (error) => {
     if (error.status == 401) {
       notify({
-        title: "安全",
+        title: "401 Unauthorized",
         text: "未经授权请重新登录后尝试",
         type: "info",
         data: {
@@ -35,6 +35,16 @@ service.interceptors.response.use(
       });
       const accountStore = useAccountStore();
       accountStore.logout();
+    }
+    if (error.status == 400) {
+      notify({
+        title: "400 Bad Request",
+        text: error.response.data,
+        type: "info",
+        data: {
+          icon: "mdi-alert-circle",
+        },
+      });
     }
     return Promise.reject(error);
   }

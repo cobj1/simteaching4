@@ -1,63 +1,191 @@
 <template>
   <v-card>
-    <v-toolbar title="组织管理"></v-toolbar>
+    <v-toolbar title="组织管理">
+      <v-btn prepend-icon="mdi-bank-plus" @click="newItem(defaultItem)">新增根节点</v-btn>
+    </v-toolbar>
     <v-row class="pa-4" justify="space-between">
       <v-col cols="12">
-        <v-treeview v-model:activated="active" v-model:opened="open" :items="items" :load-children="fetchUsers"
-          color="warning" density="compact" item-title="name" item-value="id" activatable open-on-click transition>
+        <v-treeview v-model:activated="active" v-model:opened="open" :items="serverItems" :load-children="fetchOrgs"
+          color="primary" density="compact" activatable open-on-click transition>
+          <template #title="{ item }">
+            {{ item.name }} {{ item.childrenCount > 0 ? ` ( ${item.childrenCount} ) ` : `` }}
+          </template>
+          <template #append="{ item }">
+            <v-btn prepend-icon="mdi-subdirectory-arrow-right" variant="text" @click.stop="newItem(item)">
+              添加子组织
+            </v-btn>
+            <v-btn prepend-icon="mdi-pencil" variant="text" @click.stop="updateNameItem(item)">
+              修改名称
+            </v-btn>
+            <v-btn prepend-icon="mdi-delete" variant="text" @click.stop="deleteItem(item)">
+              删除
+            </v-btn>
+          </template>
         </v-treeview>
       </v-col>
     </v-row>
+    <v-dialog v-model="dialogDelete" max-width="500px">
+      <v-card>
+        <v-card-title class="text-h5">您确定要删除此项目吗？</v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue-darken-1" variant="text" @click="closeDelete">取消</v-btn>
+          <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">确定</v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="dialogUpdateName" max-width="500">
+      <v-card prepend-icon="mdi-pencil" title="修改项目名称">
+        <v-card-text>
+          <v-row dense>
+            <v-col cols="12">
+              <v-text-field v-model="editedItem.name" label="项目名称" required></v-text-field>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text="取消" variant="plain" @click="closeUpdateName"></v-btn>
+          <v-btn color="primary" text="保存" variant="tonal" @click="updateNameItemConfirm"></v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="dialogNew" max-width="500">
+      <v-card prepend-icon="mdi-pencil" title="新增项目">
+        <v-card-text>
+          <v-row dense>
+            <v-col cols="12">
+              <v-text-field v-model="editedItem.name" label="项目名称" required></v-text-field>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text="取消" variant="plain" @click="closeNew"></v-btn>
+          <v-btn color="primary" text="保存" variant="tonal" @click="newItemConfirm"></v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-card>
 </template>
 <script setup>
 import { OrgApi } from '@/api/org';
-import { computed, onMounted, ref, watch } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 import { VTreeview } from 'vuetify/labs/VTreeview'
 
-const avatars = [
-  '?accessoriesType=Blank&avatarStyle=Circle&clotheColor=PastelGreen&clotheType=ShirtScoopNeck&eyeType=Wink&eyebrowType=UnibrowNatural&facialHairColor=Black&facialHairType=MoustacheMagnum&hairColor=Platinum&mouthType=Concerned&skinColor=Tanned&topType=Turban',
-  '?accessoriesType=Sunglasses&avatarStyle=Circle&clotheColor=Gray02&clotheType=ShirtScoopNeck&eyeType=EyeRoll&eyebrowType=RaisedExcited&facialHairColor=Red&facialHairType=BeardMagestic&hairColor=Red&hatColor=White&mouthType=Twinkle&skinColor=DarkBrown&topType=LongHairBun',
-  '?accessoriesType=Prescription02&avatarStyle=Circle&clotheColor=Black&clotheType=ShirtVNeck&eyeType=Surprised&eyebrowType=Angry&facialHairColor=Blonde&facialHairType=Blank&hairColor=Blonde&hatColor=PastelOrange&mouthType=Smile&skinColor=Black&topType=LongHairNotTooLong',
-  '?accessoriesType=Round&avatarStyle=Circle&clotheColor=PastelOrange&clotheType=Overall&eyeType=Close&eyebrowType=AngryNatural&facialHairColor=Blonde&facialHairType=Blank&graphicType=Pizza&hairColor=Black&hatColor=PastelBlue&mouthType=Serious&skinColor=Light&topType=LongHairBigHair',
-  '?accessoriesType=Kurt&avatarStyle=Circle&clotheColor=Gray01&clotheType=BlazerShirt&eyeType=Surprised&eyebrowType=Default&facialHairColor=Red&facialHairType=Blank&graphicType=Selena&hairColor=Red&hatColor=Blue02&mouthType=Twinkle&skinColor=Pale&topType=LongHairCurly',
-]
-
-const pause = ms => new Promise(resolve => setTimeout(resolve, ms))
-
 const active = ref([])
-const avatar = ref(null)
 const open = ref([])
-const users = ref([])
-
-const items = ref([]) //computed(() => [{ name: 'Users', children: users.value }])
-const selected = computed(() => {
-  if (!active.value.length) return undefined
-  const id = active.value[0]
-  return users.value.find(user => user.id === id)
+const serverItems = ref([]) //computed(() => [{ name: 'Users', children: users.value }])
+const dialogDelete = ref(false)
+const dialogUpdateName = ref(false)
+const dialogNew = ref(false)
+const editedIndex = ref(-1)
+const editedItem = ref({
+  id: null,
+  parentId: null,
+  name: '',
+  admin: '',
+  parent: null
+})
+const defaultItem = ref({
+  id: null,
+  parentId: null,
+  name: '',
+  admin: '',
+  parent: null
 })
 
-watch(selected, () => randomAvatar())
-
-const fetchUsers = async (item) => {
-  const res = await OrgApi.selectByParent(item.id, true)
-  if (res.length > 0)
-    return item.children.push(...res.map(item => wrap(item)))
-  else item.children = null
-  return true;
+const deleteItem = (item) => {
+  editedIndex.value = serverItems.value.indexOf(item);
+  editedItem.value = Object.assign({}, item)
+  dialogDelete.value = true;
+}
+const updateNameItem = (item) => {
+  editedIndex.value = serverItems.value.indexOf(item);
+  editedItem.value = Object.assign({}, item)
+  dialogUpdateName.value = true;
+}
+const newItem = (item) => {
+  editedIndex.value = -1;
+  editedItem.value = Object.assign({}, defaultItem.value)
+  editedItem.value.parentId = item.id
+  editedItem.value.parent = item
+  dialogNew.value = true;
+}
+const closeDelete = () => {
+  dialogDelete.value = false;
+  nextTick(() => {
+    editedItem.value = Object.assign({}, defaultItem.value)
+    editedIndex.value = -1;
+  })
+}
+const closeUpdateName = () => {
+  dialogUpdateName.value = false;
+  nextTick(() => {
+    editedItem.value = Object.assign({}, defaultItem.value)
+    editedIndex.value = -1;
+  })
+}
+const closeNew = () => {
+  dialogNew.value = false;
+  nextTick(() => {
+    editedItem.value = Object.assign({}, defaultItem.value)
+    editedIndex.value = -1;
+  })
+}
+const deleteItemConfirm = async () => {
+  try {
+    await OrgApi.del(editedItem.value.id)
+    if (editedItem.value.parent) {
+      fetchOrgs(editedItem.value.parent)
+    } else
+      load()
+  } catch (e) { /* empty */ }
+  closeDelete()
+}
+const updateNameItemConfirm = async () => {
+  await OrgApi.save({ id: editedItem.value.id, parentId: editedItem.value.parentId, name: editedItem.value.name })
+  if (editedItem.value.parent) {
+    fetchOrgs(editedItem.value.parent)
+  } else
+    load()
+  closeUpdateName()
+}
+const newItemConfirm = async () => {
+  await OrgApi.save({ id: editedItem.value.id, parentId: editedItem.value.parentId, name: editedItem.value.name })
+  if (editedItem.value.parent.id) {
+    fetchOrgs(editedItem.value.parent)
+  } else
+    load()
+  closeNew()
 }
 
-const randomAvatar = () => {
-  avatar.value = avatars[Math.floor(Math.random() * avatars.length)]
+const fetchOrgs = async (item) => {
+  const res = await OrgApi.selectByParent(item.id, true)
+  if (res.length > 0) {
+    return item.children = res.map(child => {
+      child.parent = item
+      return wrap(child)
+    })
+  } else
+    return item.children = null
 }
 
 const wrap = (item) => {
-  return { ...item, name: `${item.name} ( ${item.childrenCount} )`, children: (item.childrenCount > 0 ? [] : null) }
+  return { ...item, children: (item.childrenCount > 0 ? [] : null) }
 }
 
-onMounted(async () => {
+const load = async () => {
   const res = await OrgApi.selectByAdmin(true)
-  items.value = res.map(item => wrap(item))
+  serverItems.value = res.map(item => wrap(item))
+}
+
+onMounted(() => {
+  load()
 })
 
 </script>

@@ -1,12 +1,20 @@
 <template>
   <VCard>
-    <VToolbar title="通知公告">
+    <v-toolbar>
+      <template #title v-if="!$vuetify.display.smAndDown">
+        用户列表
+      </template>
+      <v-text-field v-model="search.name" class="ml-2" density="compact" placeholder="检索用户名..." max-width="300px"
+        hide-details @change="loadItems(options)"></v-text-field>
       <v-btn class="mb-2" color="primary" dark @click="addItem()">
         新增项目
       </v-btn>
-    </VToolbar>
+      <v-btn class="mb-2" color="primary" prepend-icon="mdi-database-import" dark>
+        批量导入
+      </v-btn>
+    </v-toolbar>
     <v-data-table-server v-model:options="options" :headers="headers" :items="serverItems" :items-length="totalItems"
-      :loading="loading" :search="search" item-value="name" @update:options="loadItems">
+      :loading="loading" item-value="name" @update:options="loadItems">
       <template v-slot:item.actions="{ item }">
         <VBtn icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)"></VBtn>
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
@@ -62,25 +70,38 @@
 
 <script setup>
 import { NoticeApi } from '@/api/notice'
-import { computed, nextTick, ref } from 'vue';
+import { UserApi } from '@/api/user';
+import { computed, nextTick, reactive, ref } from 'vue';
 
+const props = defineProps({
+  role: {
+    type: String,
+    default: '99'
+  },
+})
+
+const search = reactive({
+  name: ''
+})
 const options = ref({
   page: 1,
   itemsPerPage: 5
 })
 const headers = ref([
   {
-    title: '标题',
+    title: '姓名',
     align: 'start',
     sortable: false,
-    key: 'title',
+    key: 'name',
   },
-  { title: '类型', key: 'type', align: 'end' },
-  { title: '发布时间', key: 'createTime', align: 'end' },
-  { title: '发布人', key: 'authorName', align: 'end' },
+  { title: '账号', key: 'account' },
+  { title: '岗位', key: 'phone', },
+  { title: '手机号', key: 'phone', },
+  { title: '邮箱', key: 'email', },
+  { title: '组织', key: 'orgName', sortable: false, },
+  { title: '最近登录时间', key: 'lastLoginTime', },
   { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
 ])
-const search = ref('')
 const serverItems = ref([])
 const loading = ref(true)
 const totalItems = ref(0)
@@ -138,7 +159,7 @@ const closeDelete = () => {
 }
 
 const deleteItemConfirm = async () => {
-  await NoticeApi.del(editedItem.value.id)
+  await UserApi.del(editedItem.value.id)
   loadItems(options.value)
   closeDelete()
 }
@@ -152,7 +173,7 @@ const save = async () => {
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
-  const res = await NoticeApi.page(page, itemsPerPage, sortBy[0] ? sortBy[0].key : null, sortBy[0] ? sortBy[0].order : '')
+  const res = await UserApi.page({ current: page, size: itemsPerPage, sortKey: sortBy[0] ? sortBy[0].key : null, sortOrder: sortBy[0] ? sortBy[0].order : '', name: search.name, role: props.role })
   serverItems.value = res.records
   totalItems.value = res.total
   loading.value = false
