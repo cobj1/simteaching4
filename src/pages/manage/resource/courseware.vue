@@ -1,6 +1,9 @@
 <template>
   <VCard>
     <VToolbar title="课件">
+      <ResourceCoursewareCategory>
+        <VBtn>你好</VBtn>
+      </ResourceCoursewareCategory>
       <v-btn class="mb-2" color="primary" dark @click="addItem()">
         新增项目
       </v-btn>
@@ -62,6 +65,7 @@
 
 <script setup>
 import { NoticeApi } from '@/api/notice'
+import ResourceCoursewareCategory from '@/components/ResourceCoursewareCategory.vue';
 import { computed, nextTick, ref } from 'vue';
 
 const options = ref({

@@ -1,6 +1,7 @@
 <template>
   <VCard>
     <VToolbar title="题库">
+      <ResourceQuestionsCategory></ResourceQuestionsCategory>
       <v-btn class="mb-2" color="primary" dark @click="addItem()">
         新增项目
       </v-btn>
@@ -62,6 +63,7 @@
 
 <script setup>
 import { NoticeApi } from '@/api/notice'
+import ResourceQuestionsCategory from '@/components/ResourceQuestionsCategory.vue';
 import { computed, nextTick, ref } from 'vue';
 
 const options = ref({

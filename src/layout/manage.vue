@@ -131,20 +131,24 @@ const items = ref([
     link: true,
     children: [
       {
+        title: '课件',
+        path: '/manage/resource/courseware'
+      },
+      {
+        title: '仿真',
+        path: '/manage/resource/simulation'
+      },
+      {
         title: '题库',
         path: '/manage/resource/questions'
       },
-      {
-        title: '课件',
-        path: '/manage/resource/courseware'
-      }
     ]
   },
   {
     title: '共享资源库',
     prependIcon: 'mdi-calendar',
     link: true,
-
+    path: '/manage/resource/share'
   },
   {
     title: '考勤管理',
@@ -155,26 +159,46 @@ const items = ref([
     title: '课程管理',
     prependIcon: 'mdi-file-chart-outline',
     link: true,
+    path: '/manage/course'
   },
   {
     title: '作业管理',
     prependIcon: 'mdi-file-chart-outline',
     link: true,
+    path: '/manage/homework'
   },
   {
     title: '考试管理',
     prependIcon: 'mdi-file-chart-outline',
     link: true,
+    children: [
+      {
+        title: '考试',
+        path: '/manage/exam'
+      },
+      {
+        title: '试卷',
+        path: '/manage/testpaper'
+      },
+      {
+        title: '题库',
+        path: '/manage/resource/questions'
+      },
+    ]
   },
   {
     title: '数据中心',
     prependIcon: 'mdi-file-chart-outline',
     link: true,
-  },
-  {
-    title: '新闻',
-    prependIcon: 'mdi-file-chart-outline',
-    link: true,
+    children: [
+      {
+        title: '学员',
+        path: '/manage/dc/student'
+      }, {
+        title: '考试',
+        path: '/manage/dc/exam'
+      }
+    ]
   },
   {
     title: '通知公告',
