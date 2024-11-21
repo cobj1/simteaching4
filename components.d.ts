@@ -14,6 +14,7 @@ declare module 'vue' {
     ResourceQuestionsCategory: typeof import('./src/components/ResourceQuestionsCategory.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SiteType: typeof import('./src/components/SiteType.vue')['default']
     ThemeSwitch: typeof import('./src/components/ThemeSwitch.vue')['default']
     UserList: typeof import('./src/components/UserList.vue')['default']
     UserPanel: typeof import('./src/components/UserPanel.vue')['default']

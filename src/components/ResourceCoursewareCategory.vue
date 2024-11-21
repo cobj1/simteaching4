@@ -1,10 +1,8 @@
 <template>
   <div @click="dialog = true">
-        <slot> </slot>
-      </div>
+    <slot> </slot>
+  </div>
   <v-dialog v-model="dialog" width="auto" scrollable>
-
-
     <template v-slot:default="{ isActive }">
       <v-card prepend-icon="mdi-earth" title="Select Country">
         <v-divider class="mt-3"></v-divider>

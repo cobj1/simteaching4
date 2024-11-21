@@ -178,7 +178,7 @@ const items = ref([
       },
       {
         title: '试卷',
-        path: '/manage/testpaper'
+        path: '/manage/exam/testpaper'
       },
       {
         title: '题库',

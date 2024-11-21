@@ -38,6 +38,7 @@ declare module 'vue-router/auto-routes' {
     '/manage/dc/exam': RouteRecordInfo<'/manage/dc/exam', '/manage/dc/exam', Record<never, never>, Record<never, never>>,
     '/manage/dc/student': RouteRecordInfo<'/manage/dc/student', '/manage/dc/student', Record<never, never>, Record<never, never>>,
     '/manage/exam/': RouteRecordInfo<'/manage/exam/', '/manage/exam', Record<never, never>, Record<never, never>>,
+    '/manage/exam/testpaper': RouteRecordInfo<'/manage/exam/testpaper', '/manage/exam/testpaper', Record<never, never>, Record<never, never>>,
     '/manage/homework/': RouteRecordInfo<'/manage/homework/', '/manage/homework', Record<never, never>, Record<never, never>>,
     '/manage/notice': RouteRecordInfo<'/manage/notice', '/manage/notice', Record<never, never>, Record<never, never>>,
     '/manage/org': RouteRecordInfo<'/manage/org', '/manage/org', Record<never, never>, Record<never, never>>,

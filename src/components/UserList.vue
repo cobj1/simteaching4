@@ -6,7 +6,7 @@
       </template>
       <v-text-field v-model="search.name" class="ml-2" density="compact" placeholder="检索用户名..." max-width="300px"
         hide-details @change="loadItems(options)"></v-text-field>
-      <v-btn class="mb-2" color="primary" dark @click="addItem()">
+      <v-btn color="primary" dark @click="addItem()">
         新增项目
       </v-btn>
       <v-btn class="mb-2" color="primary" prepend-icon="mdi-database-import" dark>

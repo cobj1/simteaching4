@@ -4,7 +4,7 @@
       <ResourceCoursewareCategory>
         <VBtn>你好</VBtn>
       </ResourceCoursewareCategory>
-      <v-btn class="mb-2" color="primary" dark @click="addItem()">
+      <v-btn color="primary" dark @click="addItem()">
         新增项目
       </v-btn>
     </VToolbar>

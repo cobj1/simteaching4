@@ -2,7 +2,7 @@
   <VCard>
     <VToolbar title="题库">
       <ResourceQuestionsCategory></ResourceQuestionsCategory>
-      <v-btn class="mb-2" color="primary" dark @click="addItem()">
+      <v-btn color="primary" dark @click="addItem()">
         新增项目
       </v-btn>
     </VToolbar>

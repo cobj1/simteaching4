@@ -1,254 +1,169 @@
 <template>
-  <v-data-table  :headers="headers" :items="desserts" :sort-by="[{ key: 'calories', order: 'asc' }]">
-    <template v-slot:top>
-      <v-toolbar flat>
-        <v-toolbar-title>My CRUD</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ props }">
-            <v-btn class="mb-2" color="primary" dark v-bind="props">
-              New Item
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" md="4" sm="6">
-                    <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="4" sm="6">
-                    <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="4" sm="6">
-                    <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="4" sm="6">
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="4" sm="6">
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="close">
-                Cancel
-              </v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="save">
-                Save
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon class="me-2" size="small" @click="editItem(item)">
-        mdi-pencil
-      </v-icon>
-      <v-icon size="small" @click="deleteItem(item)">
-        mdi-delete
-      </v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">
-        Reset
+  <VCard>
+    <VToolbar title="门户管理">
+      <SiteType>
+        <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
+      </SiteType>
+      <v-btn color="primary" @click="addItem()">
+        新增项目
       </v-btn>
-    </template>
-  </v-data-table>
+    </VToolbar>
+    <v-data-table-server v-model:options="options" :headers="headers" :items="serverItems" :items-length="totalItems"
+      :loading="loading" :search="search" item-value="name" @update:options="loadItems">
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template v-slot:item.actions="{ item }">
+        <VBtn icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)"></VBtn>
+        <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
+      </template>
+    </v-data-table-server>
+    <v-dialog v-model="dialog" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">{{ formTitle }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" sm="6">
+                <v-text-field v-model="editedItem.title" label="标题"></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-select v-model="editedItem.type" label="类型" :items="NoticeApi.noticeType"></v-select>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field v-model="editedItem.cover" label="封面(url)"></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field v-model="editedItem.content" label="内容"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue-darken-1" variant="text" @click="close">
+            取消
+          </v-btn>
+          <v-btn color="blue-darken-1" variant="text" @click="save">
+            保存
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="dialogDelete" max-width="500px">
+      <v-card>
+        <v-card-title class="text-h5">您确定要删除此项目吗？</v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue-darken-1" variant="text" @click="closeDelete">取消</v-btn>
+          <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">确定</v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </VCard>
 </template>
-<script>
-export default {
-  data: () => ({
-    dialog: false,
-    dialogDelete: false,
-    headers: [
-      {
-        title: 'Dessert (100g serving)',
-        align: 'start',
-        sortable: false,
-        key: 'name',
-      },
-      { title: 'Calories', key: 'calories' },
-      { title: 'Fat (g)', key: 'fat' },
-      { title: 'Carbs (g)', key: 'carbs' },
-      { title: 'Protein (g)', key: 'protein' },
-      { title: 'Actions', key: 'actions', sortable: false },
-    ],
-    desserts: [],
-    editedIndex: -1,
-    editedItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
-    },
-    defaultItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
-    },
-  }),
 
-  computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-    },
+<script setup>
+import { NoticeApi } from '@/api/notice'
+import SiteType from '@/components/SiteType.vue';
+import { computed, nextTick, ref } from 'vue';
+
+const options = ref({
+  page: 1,
+  itemsPerPage: 5
+})
+const headers = ref([
+  {
+    title: '标题',
+    align: 'start',
+    sortable: false,
+    key: 'title',
   },
+  { title: '类型', key: 'type', align: 'end' },
+  { title: '发布时间', key: 'createTime', align: 'end' },
+  { title: '发布人', key: 'authorName', align: 'end' },
+  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
+])
+const search = ref('')
+const serverItems = ref([])
+const loading = ref(true)
+const totalItems = ref(0)
+const dialogDelete = ref(false)
+const dialog = ref(false)
+const editedIndex = ref(-1)
+const editedItem = ref({
+  id: null,
+  title: '',
+  type: null,
+  cover: '',
+  content: '',
+})
+const defaultItem = ref({
+  id: null,
+  title: '',
+  type: null,
+  cover: '',
+  content: '',
+})
+const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
 
-  watch: {
-    dialog(val) {
-      val || this.close()
-    },
-    dialogDelete(val) {
-      val || this.closeDelete()
-    },
-  },
-
-  created() {
-    this.initialize()
-  },
-
-  methods: {
-    initialize() {
-      this.desserts = [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-        },
-      ]
-    },
-
-    editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
-    },
-
-    deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialogDelete = true
-    },
-
-    deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1)
-      this.closeDelete()
-    },
-
-    close() {
-      this.dialog = false
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
-    },
-
-    closeDelete() {
-      this.dialogDelete = false
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
-    },
-
-    save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem)
-      } else {
-        this.desserts.push(this.editedItem)
-      }
-      this.close()
-    },
-  },
+const addItem = () => {
+  editedItem.value = Object.assign({}, defaultItem.value)
+  editedIndex.value = -1;
+  dialog.value = true
 }
+
+const editItem = (item) => {
+  editedIndex.value = serverItems.value.indexOf(item)
+  editedItem.value = Object.assign({}, item)
+  dialog.value = true
+}
+
+const deleteItem = (item) => {
+  editedIndex.value = serverItems.value.indexOf(item);
+  editedItem.value = Object.assign({}, item)
+  dialogDelete.value = true;
+}
+
+const close = () => {
+  dialog.value = false
+  nextTick(() => {
+    editedItem.value = Object.assign({}, defaultItem.value)
+    editedIndex.value = -1
+  })
+}
+
+const closeDelete = () => {
+  dialogDelete.value = false;
+  nextTick(() => {
+    editedItem.value = Object.assign({}, defaultItem.value)
+    editedIndex.value = -1;
+  })
+}
+
+const deleteItemConfirm = async () => {
+  await NoticeApi.del(editedItem.value.id)
+  loadItems(options.value)
+  closeDelete()
+}
+
+
+const save = async () => {
+  await NoticeApi.save(editedItem.value)
+  loadItems(options.value)
+  close()
+}
+
+const loadItems = async ({ page, itemsPerPage, sortBy }) => {
+  loading.value = true
+  const res = await NoticeApi.page(page, itemsPerPage, sortBy[0] ? sortBy[0].key : null, sortBy[0] ? sortBy[0].order : '')
+  serverItems.value = res.records
+  totalItems.value = res.total
+  loading.value = false
+}
+
 </script>
+
+
+<style scoped></style>

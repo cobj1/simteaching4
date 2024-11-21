@@ -1,12 +1,13 @@
 <template>
   <VCard>
     <VToolbar title="通知公告">
-      <v-btn class="mb-2" color="primary" dark @click="addItem()">
+      <v-btn color="primary" dark @click="addItem()">
         新增项目
       </v-btn>
     </VToolbar>
     <v-data-table-server v-model:options="options" :headers="headers" :items="serverItems" :items-length="totalItems"
       :loading="loading" :search="search" item-value="name" @update:options="loadItems">
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.actions="{ item }">
         <VBtn icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)"></VBtn>
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
