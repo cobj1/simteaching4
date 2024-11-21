@@ -26,11 +26,13 @@ export const ApplayApi = {
       },
     });
   },
-  selectTrialPage(state: string) {
+  page(state: string) {
     return axios({
-      url: "/apply/selectTrialPage",
+      url: "/apply/page",
       method: "get",
       params: {
+        current: 1,
+        size: 100,
         state,
       },
     });

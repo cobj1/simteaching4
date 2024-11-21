@@ -74,4 +74,11 @@ export const UserApi = {
       },
     });
   },
+
+  trialPage() {
+    return axios({
+      url: "/user/trial/page",
+      method: "get",
+    });
+  },
 };

@@ -152,7 +152,7 @@ const save = async () => {
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
-  const res = await NoticeApi.page(page, itemsPerPage, sortBy.key, sortBy.order)
+  const res = await NoticeApi.page(page, itemsPerPage, sortBy[0] ? sortBy[0].key : null, sortBy[0] ? sortBy[0].order : '')
   serverItems.value = res.records
   totalItems.value = res.total
   loading.value = false

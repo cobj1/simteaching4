@@ -121,8 +121,8 @@ const examine = async () => {
 }
 
 const load = async () => {
-  const res = await ApplayApi.selectTrialPage(queryState.value)
-  list.value = res.map(item => {
+  const res = await ApplayApi.page(queryState.value)
+  list.value = res.records.map(item => {
     return {
       id: item.id,
       title: `${item.name} （ 联系方式: ${item.phone} ）`,
