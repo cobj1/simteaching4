@@ -60,25 +60,25 @@
 </template>
 
 <script setup lang="ts">
-import { Site, SiteApi } from '@/api/site';
+import { SiteType, SiteApi } from '@/api/site';
 import { nextTick, onMounted, ref } from 'vue';
 
 const dialog = ref(false)
 const dialogEdit = ref(false)
 const dialogDelete = ref(false)
-const items = ref<Site[]>([])
+const items = ref<SiteType[]>([])
 const editedIndex = ref(-1)
-const editedItem = ref<Site>({
+const editedItem = ref<SiteType>({
   id: '',
   type: ''
 })
-const defaultItem = ref<Site>({
+const defaultItem = ref<SiteType>({
   id: '',
   type: ''
 })
 const formTitle = ref('')
 
-const editItem = (item: Site | null) => {
+const editItem = (item: SiteType | null) => {
   if (item) {
     editedIndex.value = items.value.indexOf(item)
     editedItem.value = Object.assign({}, item)
@@ -91,7 +91,7 @@ const editItem = (item: Site | null) => {
   dialogEdit.value = true;
 }
 
-const deleteItem = (item: Site) => {
+const deleteItem = (item: SiteType) => {
   editedIndex.value = items.value.indexOf(item)
   editedItem.value = Object.assign({}, item)
   dialogDelete.value = true

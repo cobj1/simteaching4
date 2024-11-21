@@ -8,6 +8,7 @@
 </template>
 
 <script lang="ts" setup>
+import 'ckeditor5/ckeditor5.css';
 import { useSettingsStore } from './stores/settings';
 
 const useSystemThemes = useSettingsStore();

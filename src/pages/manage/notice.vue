@@ -76,9 +76,9 @@ const headers = ref([
     sortable: false,
     key: 'title',
   },
-  { title: '类型', key: 'type', align: 'end' },
-  { title: '发布时间', key: 'createTime', align: 'end' },
-  { title: '发布人', key: 'authorName', align: 'end' },
+  { title: '类型', key: 'type', },
+  { title: '发布时间', key: 'createTime', },
+  { title: '发布人', key: 'authorName', },
   { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
 ])
 const search = ref('')
@@ -153,7 +153,12 @@ const save = async () => {
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
-  const res = await NoticeApi.page(page, itemsPerPage, sortBy[0] ? sortBy[0].key : null, sortBy[0] ? sortBy[0].order : '')
+  const res = await NoticeApi.page({
+    current: page,
+    size: itemsPerPage,
+    sortKey: sortBy[0] ? sortBy[0].key : null,
+    sortOrder: sortBy[0] ? sortBy[0].order : null,
+  })
   serverItems.value = res.records
   totalItems.value = res.total
   loading.value = false

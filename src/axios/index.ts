@@ -25,7 +25,9 @@ service.interceptors.response.use(
   },
   (error) => {
     if (error.status == 401) {
+      notify.close(401);
       notify({
+        id: 401,
         title: "401 Unauthorized",
         text: "未经授权请重新登录后尝试",
         type: "info",
@@ -37,7 +39,9 @@ service.interceptors.response.use(
       accountStore.logout();
     }
     if (error.status == 400) {
+      notify.close(400);
       notify({
+        id: 401,
         title: "400 Bad Request",
         text: error.response.data,
         type: "info",
