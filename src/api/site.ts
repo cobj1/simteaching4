@@ -1,4 +1,5 @@
 import axios from "../axios";
+import { PagingProcessor } from "@/utils/paging-processor";
 
 export interface SiteType {
   id: string;
@@ -54,6 +55,7 @@ export const SiteApi = {
     typeId?: string;
     title?: string;
   }) {
+    params = PagingProcessor(params);
     return axios({
       url: "/site/public/page",
       method: "get",

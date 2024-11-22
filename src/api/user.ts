@@ -1,5 +1,5 @@
-import { useChangeCase } from "@vueuse/integrations/useChangeCase";
 import axios from "../axios";
+import { PagingProcessor } from "@/utils/paging-processor";
 
 export const UserApi = {
   login(account: string, password: string) {
@@ -58,20 +58,11 @@ export const UserApi = {
     role: string;
     org: string;
   }) {
-    const _sortKey = params.sortKey
-      ? useChangeCase(params.sortKey, "snakeCase").value
-      : null;
-    const _sortOrder = params.sortOrder
-      ? useChangeCase(params.sortOrder, "snakeCase").value
-      : null;
+    params = PagingProcessor(params);
     return axios({
       url: "/user/page",
       method: "get",
-      params: {
-        ...params,
-        sortKey: _sortKey,
-        sortOrder: _sortOrder,
-      },
+      params
     });
   },
 

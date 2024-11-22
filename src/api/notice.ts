@@ -1,5 +1,5 @@
+import { PagingProcessor } from "@/utils/paging-processor";
 import axios from "../axios";
-import { useChangeCase } from "@vueuse/integrations/useChangeCase";
 
 export const NoticeApi = {
   noticeType: ["通知", "公告"],
@@ -9,20 +9,11 @@ export const NoticeApi = {
     sortKey: string;
     sortOrder: string;
   }) {
-    const _sortKey = params.sortKey
-      ? useChangeCase(params.sortKey, "snakeCase").value
-      : null;
-    const _sortOrder = params.sortOrder
-      ? useChangeCase(params.sortOrder, "snakeCase").value
-      : null;
+    params = PagingProcessor(params);
     return axios({
       url: "/notice/page",
       method: "get",
-      params: {
-        ...params,
-        sortKey: _sortKey,
-        sortOrder: _sortOrder,
-      },
+      params,
     });
   },
   save(data: object) {
