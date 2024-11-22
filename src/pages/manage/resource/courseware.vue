@@ -116,6 +116,7 @@ const editedItem = ref({
   author: '',
   category: null,
   url: null,
+  urlOld: null,
   extensions: null,
   duration: null,
   size: null,
@@ -127,6 +128,7 @@ const defaultItem = ref({
   author: '',
   category: null,
   url: null,
+  urlOld: null,
   extensions: null,
   duration: null,
   size: null,
@@ -138,6 +140,7 @@ const editItem = async (item) => {
   if (item) {
     editedIndex.value = serverItems.value.indexOf(item)
     editedItem.value = Object.assign({}, item)
+    editedItem.value.urlOld = editedItem.value.url
   } else {
     editedItem.value = Object.assign({}, defaultItem.value)
     editedIndex.value = -1;
@@ -182,6 +185,7 @@ const save = async () => {
       editedItem.value.size = res.size
       editedItem.value.duration = res.duration
       editedItem.value.extensions = res.suffix
+      if (editedItem.value.urlOld) FileApi.delete(editedItem.value.urlOld)
     }
     await ResourceApi.save(editedItem.value)
     close()
