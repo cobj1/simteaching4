@@ -23,33 +23,34 @@
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
       </template>
     </v-data-table-server>
-    <v-dialog v-model="dialog" max-width="800px">
-      <v-card>
+    <v-dialog v-model="dialog" max-width="500px" :persistent="loadingEdit">
+      <v-card :loading="loadingEdit">
         <v-card-title>
           <span class="text-h5">{{ formTitle }}</span>
         </v-card-title>
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12" sm="6">
-                <v-text-field v-model="editedItem.name" label="标题"></v-text-field>
+              <v-col cols="12">
+                <v-text-field v-model="editedItem.name" label="标题" :disabled="loadingEdit"></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-select v-model="editedItem.category" label="类型" :items="categorys" item-title="name"
-                  item-value="id"></v-select>
+                <v-select v-model="editedItem.category" label="类型" :items="categorys" item-title="name" item-value="id"
+                  :disabled="loadingEdit"></v-select>
               </v-col>
               <v-col cols="12">
-                <v-text-field v-model="editedItem.url" label="链接"></v-text-field>
+                <v-file-input v-model="editedItem.file" label="选择文件..." :disabled="loadingEdit"></v-file-input>
               </v-col>
             </v-row>
           </v-container>
+          <small class="text-caption text-medium-emphasis" v-show="loadingEdit">* 等待中请勿关闭窗口或刷新页面</small>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue-darken-1" variant="text" @click="close">
+          <v-btn color="blue-darken-1" variant="text" :disabled="loadingEdit" @click="close">
             取消
           </v-btn>
-          <v-btn color="blue-darken-1" variant="text" @click="save">
+          <v-btn color="blue-darken-1" variant="text" :loading="loadingEdit" @click="save">
             保存
           </v-btn>
         </v-card-actions>
@@ -73,6 +74,7 @@
 import ResourceCoursewareCategory from '@/components/ResourceCoursewareCategory.vue';
 import { computed, nextTick, ref } from 'vue';
 import { ResourceApi } from '@/api/resource';
+import { FileApi } from '@/api/file';
 
 const options = ref({
   page: 1,
@@ -83,11 +85,11 @@ const headers = ref([
     title: '标题',
     align: 'start',
     sortable: false,
-    key: 'title',
+    key: 'name',
   },
-  { title: '类型', key: 'typeName', },
-  { title: '作者', key: 'author' },
-  { title: '发布时间', key: 'createTime', },
+  { title: '类型', key: 'categoryName', },
+  { title: '大小', key: 'size' },
+  { title: '时长', key: 'duration', },
   { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
 ])
 const search = ref({
@@ -97,6 +99,7 @@ const search = ref({
 const serverItems = ref([])
 const categorys = ref([])
 const loading = ref(true)
+const loadingEdit = ref(false)
 const totalItems = ref(0)
 const dialogDelete = ref(false)
 const dialog = ref(false)
@@ -108,7 +111,8 @@ const editedItem = ref({
   category: null,
   url: null,
   duration: null,
-  size: null
+  size: null,
+  file: null
 })
 const defaultItem = ref({
   id: null,
@@ -117,7 +121,8 @@ const defaultItem = ref({
   category: null,
   url: null,
   duration: null,
-  size: null
+  size: null,
+  file: null
 })
 const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
 
@@ -161,9 +166,18 @@ const deleteItemConfirm = async () => {
 }
 
 const save = async () => {
-  await ResourceApi.save(editedItem.value)
-  close()
-  loadItems(options.value)
+  loadingEdit.value = true
+  try {
+    const res = await FileApi.upload(editedItem.value.file, 'simteaching/resource/courseware')
+    console.log(res)
+    editedItem.value.url = res.url
+    editedItem.value.size = res.size
+    editedItem.value.duration = res.duration
+    await ResourceApi.save(editedItem.value)
+    close()
+    loadItems(options.value)
+  } catch (e) { /* empty */ }
+  loadingEdit.value = false
 }
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
@@ -180,7 +194,8 @@ const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   serverItems.value = res.records.map(item => {
     return {
       ...item,
-      categoryName: categorys.value.find(category => category.id == item.category)?.name
+      categoryName: item.category ? categorys.value.find(category => category.id == item.category)?.name
+        : "<未分类>"
     }
   })
   totalItems.value = res.total
