@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-navigation-drawer v-model="drawer" class="position-fixed	">
+    <v-navigation-drawer v-model="drawer" disable-resize-watcher class="position-fixed	">
       <v-list density="compact" nav>
         <v-list-subheader>Navigation</v-list-subheader>
         <div v-for="(item) in items" :key="item.title">

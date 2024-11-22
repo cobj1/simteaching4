@@ -2,21 +2,23 @@
   <div @click="dialog = true">
     <slot></slot>
   </div>
-  <v-dialog v-model="dialog" width="auto" scrollable min-width="400px">
+  <v-dialog v-model="dialog" width="auto" scrollable min-width="500px">
     <template v-slot:default="{ isActive }">
       <v-card prepend-icon="mdi-format-list-bulleted-type">
         <template #title>
           <div class="d-flex align-center justify-space-between">
             类型管理
-            <v-btn prepend-icon="mdi-plus" @click="editItem(null)">新增类型</v-btn>
+            <v-btn prepend-icon="mdi-plus" variant="text" @click="editItem(null)">新增类型</v-btn>
           </div>
         </template>
         <v-divider class="mt-3"></v-divider>
         <v-card-text class="px-4" style="height: 400px;">
           <v-list>
-            <v-list-item v-for="item in items" :key="item.id" :title="item.type">
+            <v-list-item v-for="item in items" :key="item.id" :title="item.type"
+              :subtitle="`路径: ${item.path},首页显示数量: ${item.displays}`">
               <template #append>
-                <v-btn prepend-icon="mdi-delete" size="small" @click="deleteItem(item)">删除</v-btn>
+                <v-btn prepend-icon="mdi-pencil" size="small" @click="editItem(item)">修改</v-btn>
+                <v-btn prepend-icon="mdi-delete" size="small" class="ml-2" @click="deleteItem(item)">删除</v-btn>
               </template>
             </v-list-item>
           </v-list>
@@ -29,12 +31,18 @@
       </v-card>
     </template>
   </v-dialog>
-  <v-dialog v-model="dialogEdit" max-width="600">
+  <v-dialog v-model="dialogEdit" max-width="500">
     <v-card prepend-icon="mdi-format-list-bulleted-type" :title="formTitle">
       <v-card-text>
         <v-row dense>
           <v-col cols="12">
             <v-text-field label="类型名称" required v-model="editedItem.type"></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-text-field label="路径" required v-model="editedItem.path"></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-text-field label="首页显示数量" required v-model="editedItem.displays"></v-text-field>
           </v-col>
         </v-row>
       </v-card-text>
@@ -70,11 +78,15 @@ const items = ref<SiteType[]>([])
 const editedIndex = ref(-1)
 const editedItem = ref<SiteType>({
   id: '',
-  type: ''
+  type: '',
+  path: '',
+  displays: 10
 })
 const defaultItem = ref<SiteType>({
   id: '',
-  type: ''
+  type: '',
+  path: '',
+  displays: 10
 })
 const formTitle = ref('')
 

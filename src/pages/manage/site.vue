@@ -23,7 +23,7 @@
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
       </template>
     </v-data-table-server>
-    <v-dialog v-model="dialog" max-width="800px" >
+    <v-dialog v-model="dialog" max-width="800px">
       <v-card>
         <v-card-title>
           <span class="text-h5">{{ formTitle }}</span>
@@ -81,7 +81,8 @@
 import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo } from 'ckeditor5';
 import SiteType from '@/components/SiteType.vue';
 import { SiteApi } from '@/api/site';
-import { computed, nextTick, onMounted, ref, reactive } from 'vue';
+import { computed, nextTick, ref, reactive } from 'vue';
+import { FileApi } from '@/api/file';
 
 const editor = ref(ClassicEditor)
 const editorConfig = reactive({
@@ -100,6 +101,7 @@ const headers = ref([
     key: 'title',
   },
   { title: '类型', key: 'typeName', },
+  { title: '作者', key: 'author' },
   { title: '发布时间', key: 'createTime', },
   { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
 ])
@@ -121,6 +123,7 @@ const editedItem = ref({
   typeId: null,
   cover: '',
   content: '',
+  contentOld: ''
 })
 const defaultItem = ref({
   id: null,
@@ -129,6 +132,7 @@ const defaultItem = ref({
   typeId: null,
   cover: '',
   content: '',
+  contentOld: ''
 })
 const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
 
@@ -138,9 +142,16 @@ const addItem = () => {
   dialog.value = true
 }
 
-const editItem = (item) => {
+const editItem = async (item) => {
   editedIndex.value = serverItems.value.indexOf(item)
   editedItem.value = Object.assign({}, item)
+  if (editedItem.value.content) {
+    try {
+      const res = await FileApi.downloadTxt(editedItem.value.content)
+      editedItem.value.contentOld = editedItem.value.content
+      editedItem.value.content = res
+    } catch (e) { /* empty */ }
+  }
   dialog.value = true
 }
 
@@ -173,13 +184,19 @@ const deleteItemConfirm = async () => {
 }
 
 const save = async () => {
+  const blob = new Blob([editedItem.value.content])
+  const file = new File([blob], 'content.txt', { type: 'text/plain' })
+  const res = await FileApi.upload(file, 'simteaching/site/content')
+  editedItem.value.content = res.url
+  if (editedItem.value.contentOld) FileApi.delete(editedItem.value.contentOld)
   await SiteApi.save(editedItem.value)
-  loadItems(options.value)
   close()
+  loadItems(options.value)
 }
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
+  types.value = await SiteApi.typeSelectAll()
   const res = await SiteApi.page({
     current: page,
     size: itemsPerPage,
@@ -197,15 +214,6 @@ const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   totalItems.value = res.total
   loading.value = false
 }
-
-const loadTypes = async () => {
-  types.value = await SiteApi.typeSelectAll()
-}
-
-onMounted(() => {
-  loadTypes()
-})
 </script>
-
 
 <style scoped></style>

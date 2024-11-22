@@ -1,8 +1,10 @@
 <template>
   <v-layout class="rounded rounded-md">
-    <v-navigation-drawer v-model="drawer" color="primary" disable-resize-watcher>
-      <v-list nav>
-        <v-list-item v-for="(item, i) in items" :key="i" :active="i === 0" link :title="item.text" />
+    <v-navigation-drawer v-model="drawer" disable-resize-watcher class="position-fixed	">
+      <v-list density="compact" nav>
+        <v-list-subheader>Navigation</v-list-subheader>
+        <v-list-item v-for="(item, i) in homeStore.NavigationItems" :key="i" :active="item.path == route.fullPath" link
+          :title="item.text" @click="router.push(item.path)" />
       </v-list>
     </v-navigation-drawer>
 
@@ -11,7 +13,7 @@
         <v-app-bar-nav-icon v-if="$vuetify.display.smAndDown" @click="drawer = !drawer" />
         <v-img class="me-sm-8" max-width="40" src="/favicon.ico" />
         <div v-if="$vuetify.display.mdAndUp">
-          <v-btn class="me-2 text-none" v-for="(item, i) in items" :key="i" :active="item.path == route.fullPath"
+          <v-btn class="me-2 text-none" v-for="(item, i) in homeStore.NavigationItems" :key="i" :active="item.path == route.fullPath"
             variant="text" slim v-bind="item" @click="router.push(item.path)"></v-btn>
         </div>
         <v-spacer></v-spacer>
@@ -34,33 +36,19 @@
 
 <script setup>
 import UserPanel from '@/components/UserPanel.vue';
-import { shallowRef } from 'vue'
+import { useHomeStore } from '@/stores/home';
+import { onMounted, shallowRef } from 'vue'
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 
+const homeStore = useHomeStore()
 const route = useRoute()
 const router = useRouter()
 const drawer = shallowRef(false)
 
 
-const items = [
-  {
-    text: '首页',
-    path: '/home'
-  },
-  {
-    text: '学术报告',
-    path: '/home/articles'
-  },
-  {
-    text: '学校概况',
-    path: '/home/about'
-  },
-  {
-    text: '学校新闻',
-    path: '/home/news'
-  }
-]
 
-
+onMounted(() => {
+  homeStore.loadNavigationItems()
+})
 </script>

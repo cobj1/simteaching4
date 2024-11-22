@@ -3,6 +3,8 @@ import axios from "../axios";
 export interface SiteType {
   id: string;
   type: string;
+  path?: String;
+  displays?: number;
 }
 
 export interface Site {
@@ -17,7 +19,7 @@ export interface Site {
 export const SiteApi = {
   typeSelectAll() {
     return axios({
-      url: "/site/type/selectAll",
+      url: "/site/public/type/selectAll",
       method: "get",
     });
   },
@@ -37,16 +39,30 @@ export const SiteApi = {
       data,
     });
   },
+  typeOne(params: { id?: string; type?: string; path?: string | string[] }) {
+    return axios({
+      url: "/site/public/type/one",
+      method: "get",
+      params,
+    });
+  },
   page(params: {
     current: number;
     size: number;
-    sortKey: string;
-    sortOrder: string;
-    typeId: string;
-    title: string;
+    sortKey?: string;
+    sortOrder?: string;
+    typeId?: string;
+    title?: string;
   }) {
     return axios({
-      url: "/site/page",
+      url: "/site/public/page",
+      method: "get",
+      params,
+    });
+  },
+  one(params: { id: string }) {
+    return axios({
+      url: "/site/public/one",
       method: "get",
       params,
     });
