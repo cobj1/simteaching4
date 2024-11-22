@@ -39,7 +39,12 @@
                   :disabled="loadingEdit"></v-select>
               </v-col>
               <v-col cols="12">
-                <v-file-input v-model="editedItem.file" label="选择文件..." :disabled="loadingEdit"></v-file-input>
+                <v-file-input v-model="editedItem.file" label="选择文件..." :disabled="loadingEdit">
+                  <template #details v-if="editedItem.url">
+                    <small class="text-caption text-medium-emphasis" style="word-break:break-all;"> {{ FileApi.filePath
+                      + editedItem.url }}</small>
+                  </template>>
+                </v-file-input>
               </v-col>
             </v-row>
           </v-container>
@@ -90,6 +95,7 @@ const headers = ref([
   { title: '类型', key: 'categoryName', },
   { title: '大小', key: 'size' },
   { title: '时长', key: 'duration', },
+  { title: '扩展名', key: 'extensions' },
   { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
 ])
 const search = ref({
@@ -110,6 +116,7 @@ const editedItem = ref({
   author: '',
   category: null,
   url: null,
+  extensions: null,
   duration: null,
   size: null,
   file: null
@@ -120,6 +127,7 @@ const defaultItem = ref({
   author: '',
   category: null,
   url: null,
+  extensions: null,
   duration: null,
   size: null,
   file: null
@@ -168,11 +176,13 @@ const deleteItemConfirm = async () => {
 const save = async () => {
   loadingEdit.value = true
   try {
-    const res = await FileApi.upload(editedItem.value.file, 'simteaching/resource/courseware')
-    console.log(res)
-    editedItem.value.url = res.url
-    editedItem.value.size = res.size
-    editedItem.value.duration = res.duration
+    if (editedItem.value.file) {
+      const res = await FileApi.upload(editedItem.value.file, 'simteaching/resource/courseware')
+      editedItem.value.url = res.url
+      editedItem.value.size = res.size
+      editedItem.value.duration = res.duration
+      editedItem.value.extensions = res.suffix
+    }
     await ResourceApi.save(editedItem.value)
     close()
     loadItems(options.value)

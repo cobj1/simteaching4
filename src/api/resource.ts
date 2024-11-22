@@ -11,6 +11,7 @@ export interface Resource {
   name: string;
   category: string;
   url: string;
+  extensions: string;
   duration: number;
   size: string;
 }
