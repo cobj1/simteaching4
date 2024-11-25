@@ -1,47 +1,73 @@
 <template>
   <VCard>
     <VToolbar title="题库">
-      <ResourceQuestionsCategory></ResourceQuestionsCategory>
-      <v-btn color="primary" dark @click="addItem()">
+      <ResourceCoursewareCategory>
+        <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
+      </ResourceCoursewareCategory>
+      <v-btn color="primary" dark @click="editItem()">
         新增项目
       </v-btn>
     </VToolbar>
-    <v-data-table-server v-model:options="options" :headers="headers" :items="serverItems" :items-length="totalItems"
-      :loading="loading" :search="search" item-value="name" @update:options="loadItems">
+    <v-data-table-server v-model:options="options" :items-per-page="options.itemsPerPage" :headers="headers"
+      :items="serverItems" :items-length="totalItems" :loading="loading"
+      :search="`${search.category},${search.type},${search.difficulty},${search.name}`" item-value="name"
+      @update:options="loadItems">
+      <template v-slot:top>
+        <div class="d-flex">
+          <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="categorys"
+            item-title="name" item-value="id"></v-select>
+          <v-select hide-details v-model="search.type" class="pa-2" label="筛选题型..." :items="types"></v-select>
+          <v-select hide-details v-model="search.difficulty" class="pa-2" label="筛选难易度..."
+            :items="difficultys"></v-select>
+          <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..."
+            append-inner-icon="mdi-magnify"></v-text-field>
+        </div>
+      </template>
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.actions="{ item }">
         <VBtn icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)"></VBtn>
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
       </template>
     </v-data-table-server>
-    <v-dialog v-model="dialog" max-width="500px">
-      <v-card>
+    <v-dialog v-model="dialog" max-width="600px" :persistent="loadingEdit">
+      <v-card :loading="loadingEdit">
         <v-card-title>
           <span class="text-h5">{{ formTitle }}</span>
         </v-card-title>
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12" sm="6">
-                <v-text-field v-model="editedItem.title" label="标题"></v-text-field>
+              <v-col cols="12">
+                <v-text-field v-model="editedItem.name" label="标题" :disabled="loadingEdit"></v-text-field>
               </v-col>
-              <v-col cols="12" sm="6">
-                <v-select v-model="editedItem.type" label="类型" :items="NoticeApi.noticeType"></v-select>
+              <v-col cols="12" sm="4">
+                <v-select v-model="editedItem.type" label="题型" :items="types" :disabled="loadingEdit"></v-select>
+              </v-col>
+              <v-col cols="12" sm="4">
+                <v-select v-model="editedItem.difficulty" label="难易度" :items="difficultys"
+                  :disabled="loadingEdit"></v-select>
+              </v-col>
+              <v-col cols="12" sm="4">
+                <v-select v-model="editedItem.category" label="类型" :items="categorys" item-title="name" item-value="id"
+                  :disabled="loadingEdit"></v-select>
               </v-col>
               <v-col cols="12">
-                <v-text-field v-model="editedItem.cover" label="封面(url)"></v-text-field>
+                <QuestionsOptions :type="editedItem.type" v-model:answer="editedItem.answer"
+                  v-model:options="editedItem.options"></QuestionsOptions>
               </v-col>
               <v-col cols="12">
-                <v-text-field v-model="editedItem.content" label="内容"></v-text-field>
+                <v-textarea v-model="editedItem.answerAnalysis" label="答案解析" :disabled="loadingEdit"></v-textarea>
               </v-col>
             </v-row>
           </v-container>
+          <small class="text-caption text-medium-emphasis" v-show="loadingEdit">* 等待中请勿关闭窗口或刷新页面</small>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue-darken-1" variant="text" @click="close">
+          <v-btn color="blue-darken-1" variant="text" :disabled="loadingEdit" @click="close">
             取消
           </v-btn>
-          <v-btn color="blue-darken-1" variant="text" @click="save">
+          <v-btn color="blue-darken-1" variant="text" :loading="loadingEdit" @click="save">
             保存
           </v-btn>
         </v-card-actions>
@@ -59,61 +85,79 @@
       </v-card>
     </v-dialog>
   </VCard>
+
 </template>
 
 <script setup>
-import { NoticeApi } from '@/api/notice'
-import ResourceQuestionsCategory from '@/components/ResourceQuestionsCategory.vue';
+import ResourceCoursewareCategory from '@/components/ResourceCoursewareCategory.vue';
 import { computed, nextTick, ref } from 'vue';
+import { ResourceApi } from '@/api/resource';
+import { FileApi } from '@/api/file';
+import { useDateFormat, useNow } from '@vueuse/core';
+import { ResourceQuestionsApi } from '@/api/resource-questions';
+import QuestionsOptions from '@/components/QuestionsOptions.vue';
 
 const options = ref({
   page: 1,
-  itemsPerPage: 5
+  itemsPerPage: 10
 })
 const headers = ref([
-  {
-    title: '标题',
-    align: 'start',
-    sortable: false,
-    key: 'title',
-  },
-  { title: '类型', key: 'type', align: 'end' },
-  { title: '发布时间', key: 'createTime', align: 'end' },
-  { title: '发布人', key: 'authorName', align: 'end' },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
+  { title: '标题', key: 'name', sortable: false },
+  { title: '类型', key: 'categoryName', sortable: false, width: 100 },
+  { title: '题型', key: 'type', width: 100 },
+  { title: '难易度', key: 'difficulty', width: 100 },
+  { title: 'Actions', key: 'actions', sortable: false, align: 'end', width: 100 },
 ])
-const search = ref('')
+const search = ref({
+  name: '',
+  category: null,
+  type: null,
+  difficulty: null
+})
 const serverItems = ref([])
+const categorys = ref([])
+const types = ref(['单选题', '多选题', '简答题'])
+const difficultys = ref(['简单', '普通', '困难'])
 const loading = ref(true)
+const loadingEdit = ref(false)
 const totalItems = ref(0)
 const dialogDelete = ref(false)
 const dialog = ref(false)
 const editedIndex = ref(-1)
+
 const editedItem = ref({
   id: null,
-  title: '',
-  type: null,
-  cover: '',
-  content: '',
+  name: '',
+  type: '单选题',
+  category: null,
+  difficulty: '普通',
+  answer: null,
+  answerAnalysis: '',
+  options: []
 })
 const defaultItem = ref({
   id: null,
-  title: '',
-  type: null,
-  cover: '',
-  content: '',
+  name: '',
+  type: '单选题',
+  category: null,
+  difficulty: '普通',
+  answer: null,
+  answerAnalysis: '',
+  options: []
 })
 const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
 
-const addItem = () => {
-  editedItem.value = Object.assign({}, defaultItem.value)
-  editedIndex.value = -1;
-  dialog.value = true
-}
-
-const editItem = (item) => {
-  editedIndex.value = serverItems.value.indexOf(item)
-  editedItem.value = Object.assign({}, item)
+const editItem = async (item) => {
+  if (item) {
+    editedIndex.value = serverItems.value.indexOf(item)
+    editedItem.value = Object.assign({}, item)
+    editedItem.value.answer = item.type == '多选题' ? item.answer.split(',') : item.answer
+    const res = await ResourceQuestionsApi.info(item.id)
+    editedItem.value.options = res.options.map(item => item.name)
+  } else {
+    editedItem.value = Object.assign({}, defaultItem.value)
+    editedIndex.value = -1;
+  }
   dialog.value = true
 }
 
@@ -140,27 +184,44 @@ const closeDelete = () => {
 }
 
 const deleteItemConfirm = async () => {
-  await NoticeApi.del(editedItem.value.id)
+  await ResourceQuestionsApi.del(editedItem.value.id)
   loadItems(options.value)
   closeDelete()
 }
 
-
 const save = async () => {
-  await NoticeApi.save(editedItem.value)
-  loadItems(options.value)
-  close()
+  loadingEdit.value = true
+  try {
+    await ResourceQuestionsApi.save(editedItem.value)
+    close()
+    loadItems(options.value)
+  } catch (e) { /* empty */ }
+  loadingEdit.value = false
 }
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
-  const res = await NoticeApi.page(page, itemsPerPage, sortBy[0] ? sortBy[0].key : null, sortBy[0] ? sortBy[0].order : '')
-  serverItems.value = res.records
+  categorys.value = await ResourceApi.categorySelectAll()
+  const res = await ResourceQuestionsApi.page({
+    current: page,
+    size: itemsPerPage,
+    sortKey: sortBy[0] ? sortBy[0].key : null,
+    sortOrder: sortBy[0] ? sortBy[0].order : null,
+    category: search.value.category,
+    name: search.value.name,
+    type: search.value.type,
+    difficulty: search.value.difficulty
+  })
+  serverItems.value = res.records.map(item => {
+    return {
+      ...item,
+      categoryName: item.category ? categorys.value.find(category => category.id == item.category)?.name
+        : "<未分类>"
+    }
+  })
   totalItems.value = res.total
   loading.value = false
 }
-
 </script>
-
 
 <style scoped></style>

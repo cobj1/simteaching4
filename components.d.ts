@@ -11,6 +11,7 @@ declare module 'vue' {
     Layout: typeof import('./src/components/layout/index.vue')['default']
     Logo: typeof import('./src/components/Logo.vue')['default']
     ProductLogo: typeof import('./src/components/ProductLogo.vue')['default']
+    QuestionsOptions: typeof import('./src/components/QuestionsOptions.vue')['default']
     ResourceCoursewareCategory: typeof import('./src/components/ResourceCoursewareCategory.vue')['default']
     ResourceQuestionsCategory: typeof import('./src/components/ResourceQuestionsCategory.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

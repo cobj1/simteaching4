@@ -87,11 +87,11 @@ const options = ref({
 })
 const headers = ref([
   { title: '标题', align: 'start', sortable: false, key: 'name', },
-  { title: '类型', key: 'categoryName', sortable: false, },
-  { title: '大小', key: 'size' },
-  { title: '时长', key: 'duration', },
-  { title: '扩展名', key: 'extensions' },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
+  { title: '类型', key: 'categoryName', sortable: false },
+  { title: '大小', key: 'size', width: 100 },
+  { title: '时长', key: 'duration', width: 100 },
+  { title: '扩展名', key: 'extensions', width: 100 },
+  { title: 'Actions', key: 'actions', sortable: false, align: 'end', width: 100 },
 ])
 const search = ref({
   name: '',
