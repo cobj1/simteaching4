@@ -86,13 +86,8 @@ const options = ref({
   itemsPerPage: 5
 })
 const headers = ref([
-  {
-    title: '标题',
-    align: 'start',
-    sortable: false,
-    key: 'name',
-  },
-  { title: '类型', key: 'categoryName', },
+  { title: '标题', align: 'start', sortable: false, key: 'name', },
+  { title: '类型', key: 'categoryName', sortable: false, },
   { title: '大小', key: 'size' },
   { title: '时长', key: 'duration', },
   { title: '扩展名', key: 'extensions' },
