@@ -1,13 +1,23 @@
 <template>
   <v-layout>
     <v-navigation-drawer v-model="drawer" disable-resize-watcher class="position-fixed	">
-      <v-list density="compact" nav>
-        <v-list-subheader>Navigation</v-list-subheader>
+      <v-list nav>
+        <v-list-subheader>控制台</v-list-subheader>
         <div v-for="(item) in items" :key="item.title">
-          <v-list-item v-if="item.children == null || item.children.length == 0" :value="item" color="primary"
+          <v-divider v-if="item.type == 'divider'"></v-divider>
+          <div v-if="item.type == 'subheader'">
+            <v-divider></v-divider>
+            <v-list-subheader> {{ item.title }} </v-list-subheader>
+          </div>
+          <v-list-item v-else-if="item.children == null || item.children.length == 0" :value="item" color="primary"
             @click="router.push(item.path)">
-            <template v-slot:prepend> <v-icon :icon="item.prependIcon"></v-icon> </template>
+            <template v-slot:prepend>
+              <v-icon :icon="item.prependIcon" v-if="item.prependIcon"></v-icon>
+              <v-avatar v-if="item.avatar" color="blue-darken-4" size="32" icon="item.avatar" class="mr-2 ">
+                {{ item.avatar }}</v-avatar>
+            </template>
             <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
           </v-list-item>
           <v-list-group v-else :value="item.title">
             <template v-slot:activator="{ props }">
@@ -24,7 +34,7 @@
         </div>
       </v-list>
       <template #append>
-        <v-list-item class="ma-2" link nav prepend-icon="mdi-cog-outline" title="Settings" />
+        <v-list-item class="ma-2" link nav prepend-icon="mdi-cog-outline" title="系统设置" />
       </template>
     </v-navigation-drawer>
 
@@ -49,10 +59,11 @@
 </template>
 
 <script setup>
+import { CourseApi } from '@/api/course';
 import { RoleApi } from '@/api/role';
 import vuetify from '@/plugins/vuetify';
 import { useAccountStore } from '@/stores/account';
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router';
 
 const account = useAccountStore()
@@ -67,13 +78,70 @@ const userManage = ref([{
   path: '/manage/user/role'
 }
 ])
-
-const items = ref([
+const courseManage = ref([])
+const defaultManage = ref([
   {
     title: '后台首页',
     prependIcon: 'mdi-view-dashboard-outline',
     link: true,
     path: '/manage'
+  },
+  {
+    title: '课程管理',
+    prependIcon: 'mdi-file-chart-outline',
+    link: true,
+    path: '/manage/course'
+  },
+
+
+
+  {
+    title: '资源管理',
+    prependIcon: 'mdi-briefcase-outline',
+    link: true,
+    children: [
+      {
+        title: '课件',
+        path: '/manage/resource/courseware'
+      },
+      {
+        title: '仿真',
+        path: '/manage/resource/simulation'
+      },
+      {
+        title: '题库',
+        path: '/manage/resource/questions'
+      },
+      {
+        title: '试卷',
+        path: '/manage/resource/testpaper'
+      },
+    ]
+  },
+  {
+    title: '共享资源库',
+    prependIcon: 'mdi-calendar',
+    link: true,
+    path: '/manage/resource/share'
+  },
+  {
+    title: '考勤管理',
+    prependIcon: 'mdi-file-chart-outline',
+    link: true,
+  },
+
+
+  {
+    title: '通知公告',
+    prependIcon: 'mdi-file-chart-outline',
+    link: true,
+    path: '/manage/notice'
+  },
+  {
+    title: '门户管理',
+    prependIcon: 'mdi-file-chart-outline',
+    link: true,
+    path: '/manage/site'
   },
   {
     title: '组织管理',
@@ -86,6 +154,21 @@ const items = ref([
     prependIcon: 'mdi-account-group',
     link: true,
     children: userManage
+  },
+  {
+    title: '试用管理',
+    prependIcon: 'mdi-briefcase-outline',
+    link: true,
+    children: [
+      {
+        title: '审核申请',
+        path: '/manage/apply/review'
+      },
+      {
+        title: '试用账号',
+        path: '/manage/apply/account'
+      }
+    ]
   },
   {
     title: '系统管理',
@@ -111,82 +194,6 @@ const items = ref([
     ]
   },
   {
-    title: '试用管理',
-    prependIcon: 'mdi-briefcase-outline',
-    link: true,
-    children: [
-      {
-        title: '审核申请',
-        path: '/manage/apply/review'
-      },
-      {
-        title: '试用账号',
-        path: '/manage/apply/account'
-      }
-    ]
-  },
-  {
-    title: '资源管理',
-    prependIcon: 'mdi-briefcase-outline',
-    link: true,
-    children: [
-      {
-        title: '课件',
-        path: '/manage/resource/courseware'
-      },
-      {
-        title: '仿真',
-        path: '/manage/resource/simulation'
-      },
-      {
-        title: '题库',
-        path: '/manage/resource/questions'
-      },
-    ]
-  },
-  {
-    title: '共享资源库',
-    prependIcon: 'mdi-calendar',
-    link: true,
-    path: '/manage/resource/share'
-  },
-  {
-    title: '考勤管理',
-    prependIcon: 'mdi-file-chart-outline',
-    link: true,
-  },
-  {
-    title: '课程管理',
-    prependIcon: 'mdi-file-chart-outline',
-    link: true,
-    path: '/manage/course'
-  },
-  {
-    title: '作业管理',
-    prependIcon: 'mdi-file-chart-outline',
-    link: true,
-    path: '/manage/homework'
-  },
-  {
-    title: '考试管理',
-    prependIcon: 'mdi-file-chart-outline',
-    link: true,
-    children: [
-      {
-        title: '考试',
-        path: '/manage/exam'
-      },
-      {
-        title: '试卷',
-        path: '/manage/exam/testpaper'
-      },
-      {
-        title: '题库',
-        path: '/manage/resource/questions'
-      },
-    ]
-  },
-  {
     title: '数据中心',
     prependIcon: 'mdi-file-chart-outline',
     link: true,
@@ -201,31 +208,51 @@ const items = ref([
     ]
   },
   {
-    title: '通知公告',
-    prependIcon: 'mdi-file-chart-outline',
-    link: true,
-    path: '/manage/notice'
+    type: 'subheader',
+    title: '教授的课程',
   },
   {
-    title: '门户管理',
-    prependIcon: 'mdi-file-chart-outline',
+    title: '待批改',
+    prependIcon: 'mdi-view-dashboard-edit',
     link: true,
-    path: '/manage/site'
+    path: '/manage/correct'
   },
 ])
+
+const items = computed(() => {
+  return [...defaultManage.value, ...courseManage.value]
+})
+
+
+
+const loadUserManage = async () => {
+  const roles = await RoleApi.listByUserPermission()
+  userManage.value.push(...roles.map(item => {
+    return {
+      title: item.name,
+      path: '/manage/user/' + item.id
+    }
+  }))
+}
+
+const loadCourse = async () => {
+  const courses = await CourseApi.list()
+  courseManage.value.push(...courses.map(item => {
+    return {
+      avatar: item.name.charAt(0),
+      title: item.name,
+      subtitle: item.explain,
+      path: '/manage/user/permission'
+    }
+  }))
+}
 
 
 onMounted(async () => {
   if (account.token) {
-    const roles = await RoleApi.listByUserPermission()
-    userManage.value.push(...roles.map(item => {
-      return {
-        title: item.name,
-        path: '/manage/user/' + item.id
-      }
-    }))
+    loadUserManage()
+    loadCourse()
   }
-
 })
 </script>
 <style scoped>
