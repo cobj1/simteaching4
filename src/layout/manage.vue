@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-navigation-drawer v-model="drawer" disable-resize-watcher class="position-fixed	">
+    <v-navigation-drawer v-model="drawer" disable-resize-watcher class="position-fixed">
       <v-list nav>
         <v-list-subheader>控制台</v-list-subheader>
         <div v-for="(item) in items" :key="item.title">
@@ -51,7 +51,6 @@
 
     <v-main>
       <div class="pa-4">
-        <!-- <v-sheet border="dashed md" color="surface-light" height="500" rounded="lg" width="100%" /> -->
         <slot></slot>
       </div>
     </v-main>
@@ -63,12 +62,15 @@ import { CourseApi } from '@/api/course';
 import { RoleApi } from '@/api/role';
 import vuetify from '@/plugins/vuetify';
 import { useAccountStore } from '@/stores/account';
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router';
 
 const account = useAccountStore()
 const router = useRouter()
 const drawer = ref(!vuetify.display.smAndDown.value)
+
+watch(() => vuetify.display.smAndDown.value, (value) => drawer.value = !value)
+
 const userManage = ref([{
   title: '权限列表',
   path: '/manage/user/permission'
@@ -92,9 +94,6 @@ const defaultManage = ref([
     link: true,
     path: '/manage/course'
   },
-
-
-
   {
     title: '资源管理',
     prependIcon: 'mdi-briefcase-outline',
@@ -129,8 +128,6 @@ const defaultManage = ref([
     prependIcon: 'mdi-file-chart-outline',
     link: true,
   },
-
-
   {
     title: '通知公告',
     prependIcon: 'mdi-file-chart-outline',
@@ -219,6 +216,7 @@ const defaultManage = ref([
   },
 ])
 
+
 const items = computed(() => {
   return [...defaultManage.value, ...courseManage.value]
 })
@@ -242,7 +240,7 @@ const loadCourse = async () => {
       avatar: item.name.charAt(0),
       title: item.name,
       subtitle: item.explain,
-      path: '/manage/user/permission'
+      path: '/manage/course/' + item.id
     }
   }))
 }

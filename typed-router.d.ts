@@ -33,7 +33,7 @@ declare module 'vue-router/auto-routes' {
     '/manage/apply/review': RouteRecordInfo<'/manage/apply/review', '/manage/apply/review', Record<never, never>, Record<never, never>>,
     '/manage/correct': RouteRecordInfo<'/manage/correct', '/manage/correct', Record<never, never>, Record<never, never>>,
     '/manage/course/': RouteRecordInfo<'/manage/course/', '/manage/course', Record<never, never>, Record<never, never>>,
-    '/manage/course/analyse': RouteRecordInfo<'/manage/course/analyse', '/manage/course/analyse', Record<never, never>, Record<never, never>>,
+    '/manage/course/[id]': RouteRecordInfo<'/manage/course/[id]', '/manage/course/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     '/manage/dc/exam': RouteRecordInfo<'/manage/dc/exam', '/manage/dc/exam', Record<never, never>, Record<never, never>>,
     '/manage/dc/student': RouteRecordInfo<'/manage/dc/student', '/manage/dc/student', Record<never, never>, Record<never, never>>,
     '/manage/notice': RouteRecordInfo<'/manage/notice', '/manage/notice', Record<never, never>, Record<never, never>>,

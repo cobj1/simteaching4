@@ -2,7 +2,7 @@ import { PagingProcessor } from "@/utils/paging-processor";
 import axios from "../axios";
 
 export interface Course {
-  id: string;
+  id: any;
   name: string;
 }
 
@@ -36,13 +36,13 @@ export const CourseApi = {
       method: "post",
     });
   },
-  recode(id: string) {
+  recode(id: any) {
     return axios({
       url: "/course/recode/" + id,
       method: "post",
     });
   },
-  stopcode(id: string) {
+  stopcode(id: any) {
     return axios({
       url: "/course/stopcode/" + id,
       method: "post",
@@ -51,6 +51,12 @@ export const CourseApi = {
   list() {
     return axios({
       url: "/course/list",
+      method: "get",
+    });
+  },
+  info(id: string | string[]) {
+    return axios({
+      url: "/course/" + id,
       method: "get",
     });
   },

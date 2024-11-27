@@ -7,6 +7,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    copy: typeof import('./src/components/CourseResourceItemOptions copy.vue')['default']
+    CourseCodeOptions: typeof import('./src/components/course/CourseCodeOptions.vue')['default']
+    CourseResourceItem: typeof import('./src/components/course/CourseResourceItem.vue')['default']
+    CourseResourceItemOptions: typeof import('./src/components/course/CourseResourceItemOptions.vue')['default']
+    CourseResourceOptions: typeof import('./src/components/CourseResourceOptions.vue')['default']
+    CourseResourceSubjectOptions: typeof import('./src/components/course/CourseResourceSubjectOptions.vue')['default']
+    CourseSubjectEdit: typeof import('./src/components/course/CourseSubjectEdit.vue')['default']
     FileList: typeof import('./src/components/FileList.vue')['default']
     Layout: typeof import('./src/components/layout/index.vue')['default']
     Logo: typeof import('./src/components/Logo.vue')['default']
