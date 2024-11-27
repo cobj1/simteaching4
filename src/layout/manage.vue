@@ -84,19 +84,19 @@ const courseManage = ref([])
 const defaultManage = ref([
   {
     title: '后台首页',
-    prependIcon: 'mdi-view-dashboard-outline',
+    prependIcon: 'mdi-home-outline',
     link: true,
     path: '/manage'
   },
   {
     title: '课程管理',
-    prependIcon: 'mdi-file-chart-outline',
+    prependIcon: 'mdi-school-outline',
     link: true,
     path: '/manage/course'
   },
   {
-    title: '资源管理',
-    prependIcon: 'mdi-briefcase-outline',
+    title: '资源库',
+    prependIcon: 'mdi-library-outline',
     link: true,
     children: [
       {
@@ -119,42 +119,42 @@ const defaultManage = ref([
   },
   {
     title: '共享资源库',
-    prependIcon: 'mdi-calendar',
+    prependIcon: 'mdi-share-variant-outline',
     link: true,
     path: '/manage/resource/share'
   },
   {
     title: '考勤管理',
-    prependIcon: 'mdi-file-chart-outline',
+    prependIcon: 'mdi-calendar-check-outline',
     link: true,
   },
   {
     title: '通知公告',
-    prependIcon: 'mdi-file-chart-outline',
+    prependIcon: 'mdi-bell-cog-outline',
     link: true,
     path: '/manage/notice'
   },
   {
     title: '门户管理',
-    prependIcon: 'mdi-file-chart-outline',
+    prependIcon: 'mdi-web',
     link: true,
     path: '/manage/site'
   },
   {
     title: '组织管理',
-    prependIcon: 'mdi-account-group',
+    prependIcon: 'mdi-bank',
     link: true,
     path: '/manage/org'
   },
   {
     title: '用户管理',
-    prependIcon: 'mdi-account-group',
+    prependIcon: 'mdi-account-cog-outline',
     link: true,
     children: userManage
   },
   {
     title: '试用管理',
-    prependIcon: 'mdi-briefcase-outline',
+    prependIcon: 'mdi-account-clock-outline',
     link: true,
     children: [
       {
@@ -168,8 +168,22 @@ const defaultManage = ref([
     ]
   },
   {
-    title: '系统管理',
-    prependIcon: 'mdi-briefcase-outline',
+    title: '统计中心',
+    prependIcon: 'mdi-chart-box-outline',
+    link: true,
+    children: [
+      {
+        title: '学员',
+        path: '/manage/dc/student'
+      }, {
+        title: '考试',
+        path: '/manage/dc/exam'
+      }
+    ]
+  },
+  {
+    title: '系统数据',
+    prependIcon: 'mdi-database-cog-outline',
     link: true,
     children: [
       {
@@ -187,20 +201,6 @@ const defaultManage = ref([
       {
         title: '日志管理',
         path: '/manage/system/log'
-      }
-    ]
-  },
-  {
-    title: '数据中心',
-    prependIcon: 'mdi-file-chart-outline',
-    link: true,
-    children: [
-      {
-        title: '学员',
-        path: '/manage/dc/student'
-      }, {
-        title: '考试',
-        path: '/manage/dc/exam'
       }
     ]
   },
