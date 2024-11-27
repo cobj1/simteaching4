@@ -13,7 +13,7 @@
             @click="router.push(item.path)">
             <template v-slot:prepend>
               <v-icon :icon="item.prependIcon" v-if="item.prependIcon"></v-icon>
-              <v-avatar v-if="item.avatar" color="blue-darken-4" size="32" icon="item.avatar" class="mr-2 ">
+              <v-avatar v-if="item.avatar" color="blue-darken-3" size="32" icon="item.avatar" class="mr-2 ">
                 {{ item.avatar }}</v-avatar>
             </template>
             <v-list-item-title>{{ item.title }}</v-list-item-title>
@@ -112,7 +112,7 @@ const defaultManage = ref([
         path: '/manage/resource/questions'
       },
       {
-        title: '试卷',
+        title: '测试',
         path: '/manage/resource/testpaper'
       },
     ]

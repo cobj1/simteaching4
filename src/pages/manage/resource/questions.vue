@@ -1,9 +1,9 @@
 <template>
   <VCard>
     <VToolbar title="题库">
-      <ResourceCoursewareCategory>
+      <ResourceCategory>
         <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
-      </ResourceCoursewareCategory>
+      </ResourceCategory>
       <v-btn color="primary" dark @click="editItem()">
         新增项目
       </v-btn>
@@ -89,11 +89,8 @@
 </template>
 
 <script setup>
-import ResourceCoursewareCategory from '@/components/ResourceCoursewareCategory.vue';
 import { computed, nextTick, ref } from 'vue';
 import { ResourceApi } from '@/api/resource';
-import { FileApi } from '@/api/file';
-import { useDateFormat, useNow } from '@vueuse/core';
 import { ResourceQuestionsApi } from '@/api/resource-questions';
 import QuestionsOptions from '@/components/QuestionsOptions.vue';
 

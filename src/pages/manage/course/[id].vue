@@ -65,7 +65,7 @@
               <v-list class="mt-2" width="160">
                 <v-list-item title="作业" prepend-icon="$vuetify" link></v-list-item>
                 <v-list-item title="测试" prepend-icon="$vuetify" link></v-list-item>
-                <v-list-item title="题目" prepend-icon="$vuetify" link></v-list-item>
+                <v-list-item title="题目" prepend-icon="mdi-head-question-outline" link></v-list-item>
                 <v-list-item title="资料" prepend-icon="$vuetify" link></v-list-item>
                 <v-divider></v-divider>
                 <v-list-item title="主题" prepend-icon="mdi-list-box-outline" link @click="CourseSubjectEditRef.editItem()"></v-list-item>
