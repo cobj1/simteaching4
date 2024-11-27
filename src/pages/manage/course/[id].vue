@@ -68,13 +68,16 @@
                 <v-list-item title="题目" prepend-icon="mdi-head-question-outline" link></v-list-item>
                 <v-list-item title="资料" prepend-icon="$vuetify" link></v-list-item>
                 <v-divider></v-divider>
-                <v-list-item title="主题" prepend-icon="mdi-list-box-outline" link @click="CourseSubjectEditRef.editItem()"></v-list-item>
+                <v-list-item title="主题" prepend-icon="mdi-list-box-outline" link
+                  @click="CourseSubjectEditRef.editItem(route.params.id, subjects.length)"></v-list-item>
               </v-list>
             </v-menu>
-            <VueDraggable ref="el" v-model="list" :animation="100" group="people" class="mt-8">
-              <CourseResourceItem v-for="item in list" :key="item.id" :item="item"></CourseResourceItem>
+            <VueDraggable ref="el" v-model="list" class="mt-8 vue-draggable" group="Resources">
+              <div v-for="item in list" :key="item.id">
+                <CourseResourceItem :item="item"></CourseResourceItem>
+              </div>
             </VueDraggable>
-            <v-card v-for="subitem in list2" :key="subitem.name" style="box-shadow:none;">
+            <v-card v-for="subitem in subjects" :key="subitem.name" style="box-shadow:none;">
               <template #title>
                 {{ subitem.name }}
               </template>
@@ -83,12 +86,16 @@
               </template>
               <template #append>
                 <div class="mr-4">
-                  <CourseResourceSubjectOptions @rename="CourseSubjectEditRef.editItem(subitem)"></CourseResourceSubjectOptions>
+                  <CourseSubjectOptions :item="subitem" @change="loadSubjects"
+                    @rename="CourseSubjectEditRef.editItem(route.params.id, subjects.length, subitem)">
+                  </CourseSubjectOptions>
                 </div>
               </template>
               <v-card-text class="pa-0">
-                <VueDraggable ref="el" v-model="subitem.children" :animation="150" group="people">
-                  <CourseResourceItem v-for="item in subitem.children" :key="item.id" :item="item"></CourseResourceItem>
+                <VueDraggable ref="el" v-model="subitem.children" class="vue-draggable" group="Resources">
+                  <div v-for="item in subitem.children" :key="item.id">
+                    <CourseResourceItem :item="item"></CourseResourceItem>
+                  </div>
                 </VueDraggable>
               </v-card-text>
             </v-card>
@@ -112,9 +119,10 @@
 
 <script setup>
 import { CourseApi } from '@/api/course';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { VueDraggable } from 'vue-draggable-plus'
+import { CourseSubjectApi } from '@/api/course/course-subject';
 
 const CourseSubjectEditRef = ref()
 const route = useRoute()
@@ -122,6 +130,7 @@ const data = ref({
   id: null,
   name: ''
 })
+const el = ref()
 const tab = ref('coursework')
 const tabs = ref([
   {
@@ -147,74 +156,37 @@ const tabs = ref([
   },
 ])
 const text = ref('')
-const list = ref([
-  {
-    name: 'Joao',
-    id: 1
-  },
-  {
-    name: 'Jean',
-    id: 2
-  },
-  {
-    name: 'Johanna',
-    id: 3
-  },
-  {
-    name: 'Juan',
-    id: 4
-  }
-])
-const list2 = ref([
-  {
-    name: '主题1',
-    children: [
-      {
-        name: '2Joao',
-        id: 21
-      },
-      {
-        name: '2Jean',
-        id: 22
-      },
-      {
-        name: '2Johanna',
-        id: 23
-      },
-      {
-        name: '2Juan',
-        id: 24
-      }
-    ]
-  }, {
-    name: '主题2',
-    children: [
-      {
-        name: '22Joao',
-        id: 221
-      },
-      {
-        name: '22Jean',
-        id: 222
-      },
-      {
-        name: '22Johanna',
-        id: 223
-      },
-      {
-        name: '22Juan',
-        id: 224
-      }
-    ]
-  }
-])
+const list = ref([])
+const subjects = ref([])
+
+watch(() => route.params.id, () => {
+  loadItem()
+  loadSubjects()
+})
 
 const loadItem = async () => {
   data.value = await CourseApi.info(route.params.id)
 }
+const loadSubjects = async () => {
+  const res = await CourseSubjectApi.list(route.params.id)
+  subjects.value = res.map((item) => { return { ...item, children: [] } })
+  loadResources()
+}
+const loadResources = async () => {
+  list.value = []
+}
 onMounted(() => {
   loadItem()
+  loadSubjects()
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.vue-draggable {
+  min-height: 20px;
+}
+
+.vue-draggable:deep(.sortable-ghost .v-card) {
+  box-shadow: 0px 2px 1px -1px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)), 0px 1px 1px 0px var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)), 0px 1px 3px 0px var(--v-shadow-key-ambient-opacity, rgba(0, 0, 0, 0.12)) !important;
+}
+</style>

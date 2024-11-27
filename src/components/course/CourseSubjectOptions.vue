@@ -29,14 +29,14 @@
 </template>
 
 <script setup lang="ts">
-import { CourseApi } from '@/api/course';
+import { CourseSubjectApi } from '@/api/course/course-subject';
 import { ref } from 'vue';
 
 const emit = defineEmits(['change', 'rename'])
-const props = defineProps({ id: [String, Number] })
+const props = defineProps({ item: Object })
 const dialogDelete = ref(false)
 
-const deleteItem = () => {
+const deleteItem = async () => {
   dialogDelete.value = true;
 }
 
@@ -46,7 +46,7 @@ const closeDelete = () => {
 }
 
 const deleteItemConfirm = async () => {
-  // await CourseApi.stopcode(props.id)
+  await CourseSubjectApi.del(props.item?.id)
   emit('change')
   closeDelete()
 }

@@ -1,7 +1,8 @@
 <template>
-  <v-hover >
+  <v-hover>
     <template #default="{ isHovering, props }">
-      <v-card class="mb-2 mx-2" ariant="text" style="box-shadow:none;" :class="{ 'elevation-4': isHovering }" v-bind="props">
+      <v-card class="mb-2 mx-2" ariant="text" style="box-shadow:none;" :class="{ 'elevation-4': isHovering }"
+        v-bind="props">
         <template #default>
           <v-expansion-panels>
             <v-expansion-panel>

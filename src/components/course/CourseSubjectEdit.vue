@@ -30,7 +30,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { CourseSubjectApi } from '@/api/course/course-subject';
+import { ref, computed, nextTick } from 'vue'
 
 const dialog = ref(false)
 const editedItem = ref({
@@ -38,24 +39,26 @@ const editedItem = ref({
   cid: null,
   name: '',
   explain: '',
-  order: 0,
+  order: 0
 })
 const defaultItem = ref({
   id: null,
   cid: null,
   name: '',
   explain: '',
-  order: 0,
+  order: 0
 })
 
 const formTitle = computed(() => editedItem.value.id == null ? '新增项目' : '编辑项目')
 
-const editItem = async (item) => {
+const editItem = async (cid, order, item) => {
   if (item) {
     editedItem.value = Object.assign({}, item)
   } else {
     editedItem.value = Object.assign({}, defaultItem.value)
   }
+  editedItem.value.cid = cid
+  editedItem.value.order = order
   dialog.value = true
 }
 
@@ -67,6 +70,7 @@ const close = () => {
 }
 
 const save = async () => {
+  await CourseSubjectApi.save(editedItem.value)
   close()
 }
 
