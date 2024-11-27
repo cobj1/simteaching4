@@ -66,7 +66,9 @@
                 <v-list-item title="作业" prepend-icon="$vuetify" link></v-list-item>
                 <v-list-item title="测试" prepend-icon="$vuetify" link></v-list-item>
                 <v-list-item title="题目" prepend-icon="mdi-head-question-outline" link></v-list-item>
-                <v-list-item title="资料" prepend-icon="$vuetify" link></v-list-item>
+                <v-list-item title="资料" prepend-icon="$vuetify" link>
+                  <SelectionCourseware> </SelectionCourseware>
+                </v-list-item>
                 <v-divider></v-divider>
                 <v-list-item title="主题" prepend-icon="mdi-list-box-outline" link
                   @click="CourseSubjectEditRef.editItem(route.params.id, subjects.length)"></v-list-item>
@@ -123,6 +125,7 @@ import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { VueDraggable } from 'vue-draggable-plus'
 import { CourseSubjectApi } from '@/api/course/course-subject';
+import SelectionCourseware from '@/components/resource/SelectionCourseware.vue';
 
 const CourseSubjectEditRef = ref()
 const route = useRoute()

@@ -1,6 +1,6 @@
 <template>
   <VCard>
-    <VToolbar title="课件">
+    <VToolbar :title="title">
       <ResourceCategory>
         <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
       </ResourceCategory>
@@ -8,8 +8,9 @@
         新增项目
       </v-btn>
     </VToolbar>
-    <v-data-table-server v-model:options="options" :headers="headers" :items="serverItems" :items-length="totalItems"
-      :loading="loading" :search="`${search.category},${search.name}`" item-value="name" @update:options="loadItems">
+    <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :headers="headers"
+      :items="serverItems" :items-length="totalItems" :loading="loading" :search="`${search.category},${search.name}`"
+      :show-select="enableSelection" @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
           <v-select v-model="search.category" class="pa-2" label="筛选类型..." :items="categorys" item-title="name"
@@ -80,6 +81,14 @@ import { computed, nextTick, ref } from 'vue';
 import { ResourceApi } from '@/api/resource';
 import { FileApi } from '@/api/file';
 
+const selected = defineModel()
+
+const props = defineProps({
+  enableSelection: {
+    type: Boolean,
+    default: false
+  }
+})
 const options = ref({
   page: 1,
   itemsPerPage: 5
@@ -128,6 +137,7 @@ const defaultItem = ref({
   size: null,
   file: null
 })
+const title = computed(() => props.enableSelection ? '选择课件' : '课件')
 const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
 
 const editItem = async (item) => {
