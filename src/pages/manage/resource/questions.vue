@@ -1,6 +1,6 @@
 <template>
   <VCard>
-    <VToolbar title="题库">
+    <VToolbar :title="title">
       <ResourceCategory>
         <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
       </ResourceCategory>
@@ -98,6 +98,7 @@ const selected = defineModel()
 const props = defineProps({
   enableSelection: { type: Boolean, default: false }
 })
+const title = computed(() => props.enableSelection ? '选择题库' : '题库')
 const options = ref({
   page: 1,
   itemsPerPage: 10

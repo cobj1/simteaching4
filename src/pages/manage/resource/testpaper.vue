@@ -1,6 +1,6 @@
 <template>
   <VCard>
-    <VToolbar title="测试管理">
+    <VToolbar :title="title">
       <ResourceCategory>
         <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
       </ResourceCategory>
@@ -94,6 +94,7 @@ const selected = defineModel()
 const props = defineProps({
   enableSelection: { type: Boolean, default: false }
 })
+const title = computed(() => props.enableSelection ? '选择测试' : '测试')
 const options = ref({
   page: 1,
   itemsPerPage: 10
