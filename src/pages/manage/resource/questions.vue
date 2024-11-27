@@ -8,9 +8,9 @@
         新增项目
       </v-btn>
     </VToolbar>
-    <v-data-table-server v-model:options="options" :items-per-page="options.itemsPerPage" :headers="headers"
-      :items="serverItems" :items-length="totalItems" :loading="loading"
-      :search="`${search.category},${search.type},${search.difficulty},${search.name}`" item-value="name"
+    <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
+      :items-per-page="options.itemsPerPage" :headers="headers" :items="serverItems" :items-length="totalItems"
+      :loading="loading" :search="`${search.category},${search.type},${search.difficulty},${search.name}`"
       @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
@@ -94,6 +94,10 @@ import { ResourceApi } from '@/api/resource';
 import { ResourceQuestionsApi } from '@/api/resource-questions';
 import QuestionsOptions from '@/components/QuestionsOptions.vue';
 
+const selected = defineModel()
+const props = defineProps({
+  enableSelection: { type: Boolean, default: false }
+})
 const options = ref({
   page: 1,
   itemsPerPage: 10

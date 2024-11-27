@@ -7,7 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    copy: typeof import('./src/components/CourseResourceItemOptions copy.vue')['default']
+    copy: typeof import('./src/components/resource/SelectionSimulation copy.vue')['default']
     CourseCodeOptions: typeof import('./src/components/course/CourseCodeOptions.vue')['default']
     CourseResourceItem: typeof import('./src/components/course/CourseResourceItem.vue')['default']
     CourseResourceItemOptions: typeof import('./src/components/course/CourseResourceItemOptions.vue')['default']
@@ -26,6 +26,9 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectionCourseware: typeof import('./src/components/resource/SelectionCourseware.vue')['default']
+    SelectionQuestions: typeof import('./src/components/resource/SelectionQuestions.vue')['default']
+    SelectionSimulation: typeof import('./src/components/resource/SelectionSimulation.vue')['default']
+    SelectionTestpaper: typeof import('./src/components/resource/SelectionTestpaper.vue')['default']
     SiteType: typeof import('./src/components/SiteType.vue')['default']
     ThemeSwitch: typeof import('./src/components/ThemeSwitch.vue')['default']
     UserList: typeof import('./src/components/UserList.vue')['default']

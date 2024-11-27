@@ -8,9 +8,9 @@
         新增项目
       </v-btn>
     </VToolbar>
-    <v-data-table-server v-model:options="options" :items-per-page="options.itemsPerPage" :headers="headers"
-      :items="serverItems" :items-length="totalItems" :loading="loading" :search="`${search.category},${search.name}`"
-      item-value="name" @update:options="loadItems">
+    <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
+      :items-per-page="options.itemsPerPage" :headers="headers" :items="serverItems" :items-length="totalItems"
+      :loading="loading" :search="`${search.category},${search.name}`" @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
           <v-select v-model="search.category" class="pa-2" label="筛选类型..." :items="categorys" item-title="name"
@@ -111,6 +111,10 @@ import { ResourceSimulationApi } from '@/api/resource-simulation';
 import { VImg } from 'vuetify/components';
 import { useDateFormat, useNow } from '@vueuse/core';
 
+const selected = defineModel()
+const props = defineProps({
+  enableSelection: { type: Boolean, default: false }
+})
 const options = ref({
   page: 1,
   itemsPerPage: 5

@@ -8,9 +8,9 @@
         新增项目
       </v-btn>
     </VToolbar>
-    <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :headers="headers"
+    <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection" :headers="headers"
       :items="serverItems" :items-length="totalItems" :loading="loading" :search="`${search.category},${search.name}`"
-      :show-select="enableSelection" @update:options="loadItems">
+       @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
           <v-select v-model="search.category" class="pa-2" label="筛选类型..." :items="categorys" item-title="name"
@@ -82,12 +82,8 @@ import { ResourceApi } from '@/api/resource';
 import { FileApi } from '@/api/file';
 
 const selected = defineModel()
-
 const props = defineProps({
-  enableSelection: {
-    type: Boolean,
-    default: false
-  }
+  enableSelection: { type: Boolean, default: false }
 })
 const options = ref({
   page: 1,

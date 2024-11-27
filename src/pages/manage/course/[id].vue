@@ -64,10 +64,17 @@
               </template>
               <v-list class="mt-2" width="160">
                 <v-list-item title="作业" prepend-icon="$vuetify" link></v-list-item>
-                <v-list-item title="测试" prepend-icon="$vuetify" link></v-list-item>
-                <v-list-item title="题目" prepend-icon="mdi-head-question-outline" link></v-list-item>
+                <v-list-item title="测试" prepend-icon="$vuetify" link>
+                  <SelectionTestpaper></SelectionTestpaper>
+                </v-list-item>
+                <v-list-item title="题目" prepend-icon="mdi-head-question-outline" link>
+                  <SelectionQuestions></SelectionQuestions>
+                </v-list-item>
                 <v-list-item title="资料" prepend-icon="$vuetify" link>
-                  <SelectionCourseware> </SelectionCourseware>
+                  <SelectionCourseware></SelectionCourseware>
+                </v-list-item>
+                <v-list-item title="仿真" prepend-icon="$vuetify" link>
+                  <SelectionSimulation></SelectionSimulation>
                 </v-list-item>
                 <v-divider></v-divider>
                 <v-list-item title="主题" prepend-icon="mdi-list-box-outline" link
@@ -126,6 +133,9 @@ import { useRoute } from 'vue-router';
 import { VueDraggable } from 'vue-draggable-plus'
 import { CourseSubjectApi } from '@/api/course/course-subject';
 import SelectionCourseware from '@/components/resource/SelectionCourseware.vue';
+import SelectionTestpaper from '@/components/resource/SelectionTestpaper.vue';
+import SelectionQuestions from '@/components/resource/SelectionQuestions.vue';
+import SelectionSimulation from '@/components/resource/SelectionSimulation.vue';
 
 const CourseSubjectEditRef = ref()
 const route = useRoute()
