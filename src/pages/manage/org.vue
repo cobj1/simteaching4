@@ -1,12 +1,12 @@
 <template>
   <v-card>
-    <v-toolbar title="组织管理">
+    <v-toolbar :title="title">
       <v-btn prepend-icon="mdi-bank-plus" @click="newItem(defaultItem)">新增根节点</v-btn>
     </v-toolbar>
     <v-row class="pa-4" justify="space-between">
       <v-col cols="12">
-        <v-treeview v-model:activated="active" v-model:opened="open" :items="serverItems" :load-children="fetchOrgs"
-          color="primary" density="compact" activatable open-on-click transition>
+        <v-treeview v-model:activated="selected" :items="serverItems" item-value="id" :load-children="fetchOrgs"
+          color="primary" density="compact" :activatable="enableSelection" :open-on-click="!enableSelection" transition>
           <template #title="{ item }">
             {{ item.name }} {{ item.childrenCount > 0 ? ` ( ${item.childrenCount} ) ` : `` }}
           </template>
@@ -74,12 +74,15 @@
 </template>
 <script setup>
 import { OrgApi } from '@/api/org';
-import { nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import { VTreeview } from 'vuetify/labs/VTreeview'
 
-const active = ref([])
-const open = ref([])
-const serverItems = ref([]) //computed(() => [{ name: 'Users', children: users.value }])
+const selected = defineModel()
+const props = defineProps({
+  enableSelection: { type: Boolean, default: false }
+})
+const title = computed(() => props.enableSelection ? '选择组织' : '组织')
+const serverItems = ref([])
 const dialogDelete = ref(false)
 const dialogUpdateName = ref(false)
 const dialogNew = ref(false)

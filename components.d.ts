@@ -26,6 +26,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectionCourseware: typeof import('./src/components/resource/SelectionCourseware.vue')['default']
+    SelectionOrg: typeof import('./src/components/user/SelectionOrg.vue')['default']
     SelectionQuestions: typeof import('./src/components/resource/SelectionQuestions.vue')['default']
     SelectionSimulation: typeof import('./src/components/resource/SelectionSimulation.vue')['default']
     SelectionTestpaper: typeof import('./src/components/resource/SelectionTestpaper.vue')['default']

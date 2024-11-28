@@ -66,7 +66,7 @@ const save = async () => {
 }
 
 onMounted(async () => {
-  const res = await RoleApi.selectAll() as any
+  const res = await RoleApi.list() as any
   items.value = res.map((item: Role) => {
     return { id: item.id, name: item.name }
   })

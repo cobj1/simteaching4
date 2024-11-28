@@ -20,6 +20,15 @@ export const OrgApi = {
       },
     });
   },
+  selectOneAndParentById(id: string) {
+    return axios({
+      url: "org/element/selectOneAndParentById",
+      method: "get",
+      params: {
+        id,
+      },
+    });
+  },
   del(id: string) {
     return axios({
       url: "org/element/del",

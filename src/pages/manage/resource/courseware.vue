@@ -8,14 +8,14 @@
         新增项目
       </v-btn>
     </VToolbar>
-    <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection" :headers="headers"
-      :items="serverItems" :items-length="totalItems" :loading="loading" :search="`${search.category},${search.name}`"
-       @update:options="loadItems">
+    <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
+      :headers="headers" :items="serverItems" :items-length="totalItems" :loading="loading"
+      :search="`${search.category},${search.name}`" @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
-          <v-select v-model="search.category" class="pa-2" label="筛选类型..." :items="categorys" item-title="name"
+          <v-select v-model="search.category" hide-details class="pa-2" label="筛选类型..." :items="categorys" item-title="name"
             item-value="id"></v-select>
-          <v-text-field v-model="search.name" class="pa-2" label="检索..."></v-text-field>
+          <v-text-field v-model="search.name" hide-details class="pa-2" label="检索..." append-inner-icon="mdi-magnify"></v-text-field>
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->

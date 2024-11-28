@@ -49,6 +49,19 @@ export const UserApi = {
       },
     });
   },
+  repwd(id: string, newpwd: string) {
+    return axios({
+      url: "/user/repwd",
+      method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data: {
+        id,
+        newpwd,
+      },
+    });
+  },
   page(params: {
     current: number;
     size: number;
@@ -62,10 +75,9 @@ export const UserApi = {
     return axios({
       url: "/user/page",
       method: "get",
-      params
+      params,
     });
   },
-
   trialPage() {
     return axios({
       url: "/user/trial/page",

@@ -6,10 +6,13 @@ export interface Role {
 }
 
 export const RoleApi = {
-  selectAll() {
+  list(ids?: string) {
     return axios({
-      url: "/user/role/selectAll",
+      url: "/user/role/list",
       method: "get",
+      params: {
+        ids,
+      },
     });
   },
   save(data: object) {
