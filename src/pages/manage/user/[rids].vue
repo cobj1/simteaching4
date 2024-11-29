@@ -10,9 +10,17 @@
     </v-toolbar>
     <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
       :headers="headers" :items="serverItems" :items-length="totalItems" :loading="loading"
-      :search="`${search.name},${search.role}`" @update:options="loadItems">
+      :search="`${search.name},${search.role},${search.org}`" @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
+          <v-btn prepend-icon="mdi-bank" class="ma-2 flex-1-1" size="large" min-height="56">
+            <div v-if="search.orgItem">{{ searchOrgItemNames.at(-1) }} </div>
+            <div v-else> 筛选组织</div>
+            <SelectionOrg @confirm="handleSearchSelectionOrgConfirm"></SelectionOrg>
+            <v-tooltip v-if="search.orgItem" activator="parent" location="top">
+              {{ searchOrgItemNames.join(' / ') }}
+            </v-tooltip>
+          </v-btn>
           <v-select v-if="roleItems.length > 1" hide-details v-model="search.role" class="pa-2" label="筛选角色..."
             :items="roleItems" item-title="name" item-value="id"></v-select>
           <v-text-field hide-details v-model="search.name" class="pa-2" label="检索用户名..."
@@ -127,7 +135,7 @@ const props = defineProps({
 
 })
 const title = computed(() => props.enableSelection ? '选择用户' : '用户管理')
-const search = reactive({ name: '', role: null })
+const search = reactive({ name: '', role: null, org: null, orgItem: null })
 const options = ref({ page: 1, itemsPerPage: 5 })
 const headers = ref([
   {
@@ -179,16 +187,23 @@ const defaultItem = ref({
   orgItem: null
 })
 const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
+
 const orgItemNames = computed(() => {
-  const orgNames = (org) => {
-    if (org.parent) return [org.name, ...orgNames(org.parent)]
-    else return [org.name]
-  }
   if (editedItem.value.orgItem) {
     return orgNames(editedItem.value.orgItem).reverse()
   }
   return null;
 })
+const searchOrgItemNames = computed(() => {
+  if (search.orgItem) {
+    return orgNames(search.orgItem).reverse()
+  }
+  return null;
+})
+const orgNames = (org) => {
+  if (org.parent) return [org.name, ...orgNames(org.parent)]
+  else return [org.name]
+}
 
 watch(() => [props.rids, route.params.rids], () => {
   options.value.page = 1
@@ -198,6 +213,10 @@ watch(() => [props.rids, route.params.rids], () => {
 const handleSelectionOrgConfirm = async (value) => {
   editedItem.value.org = value.join(',')
   editedItem.value.orgItem = await OrgApi.selectOneAndParentById(editedItem.value.org)
+}
+const handleSearchSelectionOrgConfirm = async (value) => {
+  search.org = value.join(',')
+  search.orgItem = await OrgApi.selectOneAndParentById(search.org)
 }
 
 const addItem = () => {
@@ -279,7 +298,8 @@ const loadItems = async ({ page, itemsPerPage, sortBy }) => {
       sortKey: sortBy[0] ? sortBy[0].key : null,
       sortOrder: sortBy[0] ? sortBy[0].order : '',
       name: search.name,
-      role: search.role
+      role: search.role,
+      org: search.org
     })
     serverItems.value = res.records
     totalItems.value = res.total
