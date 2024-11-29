@@ -62,10 +62,12 @@ import { CourseApi } from '@/api/course';
 import { RoleApi } from '@/api/role';
 import vuetify from '@/plugins/vuetify';
 import { useAccountStore } from '@/stores/account';
+import { useRoleStore } from '@/stores/role';
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router';
 
 const account = useAccountStore()
+const roleStore = useRoleStore()
 const router = useRouter()
 const drawer = ref(!vuetify.display.smAndDown.value)
 
@@ -224,7 +226,7 @@ const items = computed(() => {
 
 
 const loadUserManage = async () => {
-  const roles = await RoleApi.listByUserPermission()
+  const roles = await roleStore.items()
   userManage.value.push(...roles.map(item => {
     return {
       title: item.name,

@@ -30,6 +30,7 @@ declare module 'vue' {
     SelectionQuestions: typeof import('./src/components/resource/SelectionQuestions.vue')['default']
     SelectionSimulation: typeof import('./src/components/resource/SelectionSimulation.vue')['default']
     SelectionTestpaper: typeof import('./src/components/resource/SelectionTestpaper.vue')['default']
+    SelectionUser: typeof import('./src/components/user/SelectionUser.vue')['default']
     SiteType: typeof import('./src/components/SiteType.vue')['default']
     ThemeSwitch: typeof import('./src/components/ThemeSwitch.vue')['default']
     UserList: typeof import('./src/components/UserList.vue')['default']

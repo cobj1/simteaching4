@@ -1,9 +1,6 @@
 <template>
   <VCard>
-    <v-toolbar>
-      <template #title v-if="!$vuetify.display.smAndDown">
-        用户列表
-      </template>
+    <v-toolbar :title="title">
       <v-btn color="primary" dark @click="addItem()">
         新增项目
       </v-btn>
@@ -11,8 +8,9 @@
         批量导入
       </v-btn>
     </v-toolbar>
-    <v-data-table-server v-model:options="options" :headers="headers" :items="serverItems" :items-length="totalItems"
-      :loading="loading" item-value="name" :search="`${search.name},${search.role}`" @update:options="loadItems">
+    <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
+      :headers="headers" :items="serverItems" :items-length="totalItems" :loading="loading"
+      :search="`${search.name},${search.role}`" @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
           <v-select v-if="roleItems.length > 1" hide-details v-model="search.role" class="pa-2" label="筛选角色..."
@@ -122,9 +120,13 @@ import { useRoute } from 'vue-router';
 import { VSpacer } from 'vuetify/components';
 
 const route = useRoute()
+const selected = defineModel()
 const props = defineProps({
-  rids: { type: [String, Number, Array] }
+  rids: { type: [String, Number, Array] },
+  enableSelection: { type: Boolean, default: false }
+
 })
+const title = computed(() => props.enableSelection ? '选择用户' : '用户管理')
 const search = reactive({ name: '', role: null })
 const options = ref({ page: 1, itemsPerPage: 5 })
 const headers = ref([

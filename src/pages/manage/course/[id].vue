@@ -1,6 +1,10 @@
 <template>
   <VCard>
     <VToolbar :title="data.name">
+      <v-btn>
+        选择用户
+        <SelectionUser></SelectionUser>
+      </v-btn>
     </VToolbar>
     <v-sheet elevation="3" rounded="lg">
       <v-tabs v-model="tab" :items="tabs" height="50" slider-color="#f78166" class="pl-4 ">
