@@ -169,6 +169,7 @@ const newItemConfirm = async () => {
 
 const fetchOrgs = async (item) => {
   const res = await OrgApi.selectByParent(item.id, true)
+  item.childrenCount = res.length
   if (res.length > 0) {
     return item.children = res.map(child => {
       child.parent = item

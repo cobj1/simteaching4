@@ -34,7 +34,7 @@
         </div>
       </v-list>
       <template #append>
-        <v-list-item class="ma-2" link nav prepend-icon="mdi-cog-outline" title="系统设置" />
+        <SystemSettings> </SystemSettings>
       </template>
     </v-navigation-drawer>
 
