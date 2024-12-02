@@ -59,7 +59,6 @@
 
 <script setup>
 import { CourseApi } from '@/api/course';
-import { RoleApi } from '@/api/role';
 import vuetify from '@/plugins/vuetify';
 import { useAccountStore } from '@/stores/account';
 import { useRoleStore } from '@/stores/role';
@@ -129,6 +128,7 @@ const defaultManage = ref([
     title: '考勤管理',
     prependIcon: 'mdi-calendar-check-outline',
     link: true,
+    path: '/manage/attendance'
   },
   {
     title: '通知公告',

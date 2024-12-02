@@ -1,6 +1,9 @@
 <template>
   <VCard>
     <VToolbar title="门户管理">
+      <SiteCarousel>
+        <v-btn prepend-icon="mdi-panorama-variant-outline">轮播图管理</v-btn>
+      </SiteCarousel>
       <SiteType>
         <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
       </SiteType>

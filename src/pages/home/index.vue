@@ -1,9 +1,9 @@
 <template>
   <v-container max-width="1600px">
-    <v-carousel height="400" show-arrows="hover" hide-delimiter-background>
-      <v-carousel-item v-for="(slide, i) in slides" :key="i">
-        <v-img width="100%" class="position-absolute bg" cover :src="slide" style="transform: scale(1.1);"></v-img>
-        <v-img width="auto" height="100%" class="ma-auto" :src="slide"></v-img>
+    <v-carousel v-model="carouselIndex" height="400" show-arrows="hover" cycle hide-delimiter-background>
+      <v-carousel-item v-for="(slide) in slides" :key="slide.id">
+        <v-img width="100%" class="position-absolute bg" cover :src="slide.url" style="transform: scale(1.1);"></v-img>
+        <v-img width="auto" height="100%" class="ma-auto" :src="slide.url"></v-img>
       </v-carousel-item>
     </v-carousel>
     <v-row class="pt-4">
@@ -70,14 +70,11 @@ import { useDate } from 'vuetify'
 const date = useDate()
 const router = useRouter()
 const homeStore = useHomeStore()
-const slides = ref([
-  'https://cdn.vuetifyjs.com/images/cards/docks.jpg',
-  'https://cdn.vuetifyjs.com/images/cards/hotel.jpg',
-  'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg'
-])
+const slides = ref([])
 const acadeamic = ref([])
 const news = ref([])
 const loading = ref(true)
+const carouselIndex = ref(0)
 
 const loadItems = async () => {
   loading.value = true
@@ -94,10 +91,14 @@ const loadItems = async () => {
   }
   loading.value = false
 }
+const loadCarousel = async () => {
+  slides.value = await SiteApi.carouselList()
+}
 
 onMounted(async () => {
   await homeStore.loadNavigationItems()
   loadItems()
+  loadCarousel()
 })
 </script>
 

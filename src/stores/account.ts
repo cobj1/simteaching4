@@ -1,6 +1,7 @@
 import { UserApi } from "@/api/user";
 import { defineStore } from "pinia";
 import { ref, reactive } from "vue";
+import { useRouter } from "vue-router";
 
 export const useAccountStore = defineStore(
   "account",
@@ -24,6 +25,8 @@ export const useAccountStore = defineStore(
       roles.value = [];
       authoritys.value = [];
       Object.keys(info).forEach((key) => ((info as any)[key] = null));
+      const router = useRouter();
+      router.replace("/");
     };
 
     return {

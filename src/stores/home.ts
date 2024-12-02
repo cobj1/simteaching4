@@ -16,14 +16,12 @@ export const useHomeStore = defineStore("home", () => {
       NavigationItems.value.splice(1, 99);
       const res = (await SiteApi.typeSelectAll()) as any;
       TypeItems.value = res;
-      NavigationItems.value.push(
-        ...res.map((item: SiteType) => {
-          return {
-            text: item.type,
-            path: "/home/" + item.path,
-          };
-        })
-      );
+      NavigationItems.value = res.map((item: SiteType) => {
+        return {
+          text: item.type,
+          path: "/home/" + item.path,
+        };
+      });
     }
   };
 

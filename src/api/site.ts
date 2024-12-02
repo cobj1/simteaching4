@@ -17,6 +17,13 @@ export interface Site {
   typeId: string;
 }
 
+export interface SiteCarousel {
+  id: string;
+  title: string;
+  url: string;
+  order?: number;
+}
+
 export const SiteApi = {
   typeSelectAll() {
     return axios({
@@ -83,6 +90,28 @@ export const SiteApi = {
         "Content-Type": "multipart/form-data",
       },
       data,
+    });
+  },
+  carouselSave(data: SiteCarousel) {
+    return axios({
+      url: "/site-carousel/save",
+      method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data,
+    });
+  },
+  carouselDel(id: string) {
+    return axios({
+      url: "/site-carousel/del/" + id,
+      method: "post",
+    });
+  },
+  carouselList() {
+    return axios({
+      url: "/site-carousel/public/list",
+      method: "get",
     });
   },
 };

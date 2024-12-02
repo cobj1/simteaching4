@@ -11,7 +11,7 @@
     <v-app-bar class="px-md-4 position-fixed">
       <v-container class="mx-auto d-flex align-center justify-center" max-width="1600px">
         <v-app-bar-nav-icon v-if="$vuetify.display.smAndDown" @click="drawer = !drawer" />
-        <v-img class="me-sm-8" max-width="40" src="/favicon.ico" />
+        <v-img class="me-sm-8" max-width="40" src="/favicon.ico" @click="router.push('/')" />
         <div v-if="$vuetify.display.mdAndUp">
           <v-btn class="me-2 text-none" v-for="(item, i) in homeStore.NavigationItems" :key="i" :active="item.path == route.fullPath"
             variant="text" slim v-bind="item" @click="router.push(item.path)"></v-btn>

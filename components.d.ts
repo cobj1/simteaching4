@@ -31,11 +31,12 @@ declare module 'vue' {
     SelectionSimulation: typeof import('./src/components/resource/SelectionSimulation.vue')['default']
     SelectionTestpaper: typeof import('./src/components/resource/SelectionTestpaper.vue')['default']
     SelectionUser: typeof import('./src/components/user/SelectionUser.vue')['default']
+    SiteCarousel: typeof import('./src/components/site/SiteCarousel.vue')['default']
     SiteType: typeof import('./src/components/SiteType.vue')['default']
     SystemSettings: typeof import('./src/components/SystemSettings.vue')['default']
     ThemeSwitch: typeof import('./src/components/ThemeSwitch.vue')['default']
     UserList: typeof import('./src/components/UserList.vue')['default']
-    UserPanel: typeof import('./src/components/UserPanel.vue')['default']
+    UserPanel: typeof import('./src/components/user/UserPanel.vue')['default']
     VNotifications: typeof import('./src/components/VNotifications.vue')['default']
   }
 }
