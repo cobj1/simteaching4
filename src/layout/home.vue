@@ -35,7 +35,6 @@
 </template>
 
 <script setup>
-import UserPanel from '@/components/UserPanel.vue';
 import { useHomeStore } from '@/stores/home';
 import { onMounted, shallowRef } from 'vue'
 import { useRoute } from 'vue-router';

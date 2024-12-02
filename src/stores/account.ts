@@ -6,6 +6,7 @@ import { useRouter } from "vue-router";
 export const useAccountStore = defineStore(
   "account",
   () => {
+    const router = useRouter();
     const token = ref();
     const info = reactive({
       id: null,
@@ -25,7 +26,6 @@ export const useAccountStore = defineStore(
       roles.value = [];
       authoritys.value = [];
       Object.keys(info).forEach((key) => ((info as any)[key] = null));
-      const router = useRouter();
       router.replace("/");
     };
 
