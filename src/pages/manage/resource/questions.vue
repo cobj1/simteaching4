@@ -92,7 +92,6 @@
 import { computed, nextTick, ref } from 'vue';
 import { ResourceApi } from '@/api/resource';
 import { ResourceQuestionsApi } from '@/api/resource-questions';
-import QuestionsOptions from '@/components/QuestionsOptions.vue';
 
 const selected = defineModel()
 const props = defineProps({

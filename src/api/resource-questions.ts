@@ -31,6 +31,15 @@ export const ResourceQuestionsApi = {
       params,
     });
   },
+  listByIds(ids: string) {
+    return axios({
+      url: "/testQuestions/listByIds",
+      method: "get",
+      params: {
+        ids,
+      },
+    });
+  },
   save(data: ResourceQuestions) {
     return axios({
       url: "/testQuestions/save",

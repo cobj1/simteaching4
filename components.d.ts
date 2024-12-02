@@ -19,7 +19,7 @@ declare module 'vue' {
     Layout: typeof import('./src/components/layout/index.vue')['default']
     Logo: typeof import('./src/components/Logo.vue')['default']
     ProductLogo: typeof import('./src/components/ProductLogo.vue')['default']
-    QuestionsOptions: typeof import('./src/components/QuestionsOptions.vue')['default']
+    QuestionsOptions: typeof import('./src/components/resource/QuestionsOptions.vue')['default']
     ResourceCategory: typeof import('./src/components/resource/ResourceCategory.vue')['default']
     ResourceCoursewareCategory: typeof import('./src/components/resource/ResourceCoursewareCategory.vue')['default']
     ResourceQuestionsCategory: typeof import('./src/components/resource/ResourceQuestionsCategory.vue')['default']

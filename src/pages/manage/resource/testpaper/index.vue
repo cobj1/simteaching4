@@ -112,7 +112,6 @@ const totalItems = ref(0)
 const dialogDelete = ref(false)
 const dialog = ref(false)
 const editedIndex = ref(-1)
-
 const editedItem = ref({
   id: null,
   name: '',

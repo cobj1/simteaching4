@@ -14,7 +14,7 @@
         <v-divider class="mt-3"></v-divider>
         <v-card-text class="px-4" style="height: 400px;">
           <v-list>
-            <v-list-item v-for="item in items" :key="item.id" :title="item.name">
+            <v-list-item v-for="item in resourceStore.categorys" :key="item.id" :title="item.name">
               <template #append>
                 <v-btn prepend-icon="mdi-pencil" size="small" @click="editItem(item)">修改</v-btn>
                 <v-btn prepend-icon="mdi-delete" size="small" class="ml-2" @click="deleteItem(item)">删除</v-btn>
@@ -60,28 +60,29 @@
   </v-dialog>
 </template>
 
-<script setup lang="ts">
-import { ResourceApi, ResourceCategory } from '@/api/resource';
+<script setup>
+import { ResourceApi } from '@/api/resource';
+import { useResourceStore } from '@/stores/resource';
 import { nextTick, onMounted, ref } from 'vue';
 
+const resourceStore = useResourceStore()
 const dialog = ref(false)
 const dialogEdit = ref(false)
 const dialogDelete = ref(false)
-const items = ref<ResourceCategory[]>([])
 const editedIndex = ref(-1)
-const editedItem = ref<ResourceCategory>({
+const editedItem = ref({
   id: '',
   name: ''
 })
-const defaultItem = ref<ResourceCategory>({
+const defaultItem = ref({
   id: '',
   name: ''
 })
 const formTitle = ref('')
 
-const editItem = (item: ResourceCategory | null) => {
+const editItem = (item) => {
   if (item) {
-    editedIndex.value = items.value.indexOf(item)
+    editedIndex.value = resourceStore.categorys.indexOf(item)
     editedItem.value = Object.assign({}, item)
     formTitle.value = '修改类型'
   } else {
@@ -92,8 +93,8 @@ const editItem = (item: ResourceCategory | null) => {
   dialogEdit.value = true;
 }
 
-const deleteItem = (item: ResourceCategory) => {
-  editedIndex.value = items.value.indexOf(item)
+const deleteItem = (item) => {
+  editedIndex.value = resourceStore.categorys.indexOf(item)
   editedItem.value = Object.assign({}, item)
   dialogDelete.value = true
 }
@@ -116,21 +117,17 @@ const closeDelete = () => {
 
 const saveItemConfirm = async () => {
   await ResourceApi.categorySave(editedItem.value)
-  loadItems()
+  resourceStore.loadCategorys()
   close()
 }
 
 const deleteItemConfirm = async () => {
   await ResourceApi.categoryDel(editedItem.value.id)
-  loadItems()
+  resourceStore.loadCategorys()
   closeDelete()
 }
 
-const loadItems = async () => {
-  items.value = await ResourceApi.categorySelectAll() as any
-}
-
-onMounted(() => loadItems())
+onMounted(() => resourceStore.loadCategorys())
 </script>
 
 <style scoped></style>

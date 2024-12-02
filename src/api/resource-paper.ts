@@ -31,7 +31,17 @@ export const ResourceTestpaperApi = {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-      data
+      data,
+    });
+  },
+  saveQuestions(data: string) {
+    return axios({
+      url: "/resource-paper/saveQuestions",
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data,
     });
   },
   del(id: string) {
@@ -43,6 +53,12 @@ export const ResourceTestpaperApi = {
   info(id: string) {
     return axios({
       url: "/resource-paper/" + id,
+      method: "get",
+    });
+  },
+  paperQuestionListByParerId(pid: string) {
+    return axios({
+      url: "/resource-paper/paper-question/" + pid,
       method: "get",
     });
   },

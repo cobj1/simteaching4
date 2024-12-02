@@ -1,22 +1,25 @@
 <template>
   <VSheet>
     <v-radio-group v-model="answer" v-if="type == '单选题'" hide-details>
-      <v-radio v-for="(item, index) in options" :key="index" :value="'' + index">
+      <v-radio v-for="(item, index) in options" :key="index" :value="'' + index" :disabled="disabled">
         <template #label>
           <v-text-field v-model="options[index]" variant="underlined">
             <template #append>
-              <v-btn icon="mdi-close" density="comfortable" :disabled="options.length <= 1" @click="del(index)"></v-btn>
+              <v-btn icon="mdi-close" density="comfortable" :disabled="options.length <= 1 || disabled"
+                v-show="!disabled" @click="del(index)"></v-btn>
             </template>
           </v-text-field>
         </template>
       </v-radio>
     </v-radio-group>
     <div v-if="type == '多选题'">
-      <v-checkbox v-model="answer" v-for="(item, index) in options" :key="index" :value="'' + index" hide-details>
+      <v-checkbox v-model="answer" v-for="(item, index) in options" :key="index" :value="'' + index" hide-details
+        :disabled="disabled">
         <template #label>
           <v-text-field v-model="options[index]" variant="underlined">
             <template #append>
-              <v-btn icon="mdi-close" density="comfortable" :disabled="options.length <= 1" @click="del(index)"></v-btn>
+              <v-btn icon="mdi-close" density="comfortable" :disabled="options.length <= 1 || disabled"
+                v-show="!disabled" @click="del(index)"></v-btn>
             </template>
           </v-text-field>
         </template>
@@ -25,7 +28,8 @@
     <div v-if="type == '简答题'">
       <v-text-field v-model="answer" label="简短回答问题" disabled></v-text-field>
     </div>
-    <VBtn prepend-icon="mdi-plus" v-if="type == '单选题' || type == '多选题'" @click="add">
+    <VBtn prepend-icon="mdi-plus" v-if="type == '单选题' || type == '多选题'" v-show="!disabled" :disabled="disabled"
+      @click="add">
       添加选项
     </VBtn>
   </VSheet>
@@ -40,6 +44,10 @@ const props = defineProps({
   type: {
     type: String,
     default: '单选题'
+  },
+  disabled: {
+    type: Boolean,
+    default: false
   }
 })
 
