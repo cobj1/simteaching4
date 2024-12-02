@@ -21,8 +21,11 @@
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.actions="{ item }">
-        <VBtn icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)"></VBtn>
-        <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
+        <VBtn prepend-icon="mdi-head-question" variant="text" density="comfortable" size="small" @click="router.push(`/manage/resource/testpaper/${item.id}`)" >试题</VBtn>
+        <VBtn prepend-icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)">修改
+        </VBtn>
+        <VBtn prepend-icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)">删除
+        </VBtn>
       </template>
     </v-data-table-server>
     <v-dialog v-model="dialog" max-width="600px" :persistent="loadingEdit">
@@ -36,23 +39,13 @@
               <v-col cols="12">
                 <v-text-field v-model="editedItem.name" label="标题" :disabled="loadingEdit"></v-text-field>
               </v-col>
-              <v-col cols="12" sm="4">
-                <v-select v-model="editedItem.type" label="题型" :items="types" :disabled="loadingEdit"></v-select>
+              <v-col cols="12" md="6">
+                <v-number-input v-model="editedItem.score" control-variant="stacked" :min="0"
+                  :max="200"></v-number-input>
               </v-col>
-              <v-col cols="12" sm="4">
-                <v-select v-model="editedItem.difficulty" label="难易度" :items="difficultys"
-                  :disabled="loadingEdit"></v-select>
-              </v-col>
-              <v-col cols="12" sm="4">
+              <v-col cols="12" md="6">
                 <v-select v-model="editedItem.category" label="类型" :items="categorys" item-title="name" item-value="id"
                   :disabled="loadingEdit"></v-select>
-              </v-col>
-              <v-col cols="12">
-                <QuestionsOptions :type="editedItem.type" v-model:answer="editedItem.answer"
-                  v-model:options="editedItem.options"></QuestionsOptions>
-              </v-col>
-              <v-col cols="12">
-                <v-textarea v-model="editedItem.answerAnalysis" label="答案解析" :disabled="loadingEdit"></v-textarea>
               </v-col>
             </v-row>
           </v-container>
@@ -85,37 +78,34 @@
 </template>
 
 <script setup>
+import { VNumberInput } from 'vuetify/labs/VNumberInput'
 import { computed, nextTick, ref } from 'vue';
 import { ResourceApi } from '@/api/resource';
-import { ResourceQuestionsApi } from '@/api/resource-questions';
-import QuestionsOptions from '@/components/QuestionsOptions.vue';
+import { ResourceTestpaperApi } from '@/api/resource-paper';
+import { useRouter } from 'vue-router';
 
+const router = useRouter()
 const selected = defineModel()
 const props = defineProps({
   enableSelection: { type: Boolean, default: false }
 })
-const title = computed(() => props.enableSelection ? '选择测试' : '测试')
+const title = computed(() => props.enableSelection ? '选择测试' : '测试管理')
 const options = ref({
   page: 1,
   itemsPerPage: 10
 })
 const headers = ref([
   { title: '标题', key: 'name', sortable: false },
-  { title: '类型', key: 'categoryName', sortable: false, width: 100 },
-  { title: '题型', key: 'type', width: 100 },
-  { title: '难易度', key: 'difficulty', width: 100 },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end', width: 100 },
+  { title: '类型', key: 'categoryName', sortable: false },
+  { title: '分数', key: 'score' },
+  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
 ])
 const search = ref({
   name: '',
   category: null,
-  type: null,
-  difficulty: null
 })
 const serverItems = ref([])
 const categorys = ref([])
-const types = ref(['单选题', '多选题', '简答题'])
-const difficultys = ref(['简单', '普通', '困难'])
 const loading = ref(true)
 const loadingEdit = ref(false)
 const totalItems = ref(0)
@@ -126,22 +116,14 @@ const editedIndex = ref(-1)
 const editedItem = ref({
   id: null,
   name: '',
-  type: '单选题',
   category: null,
-  difficulty: '普通',
-  answer: null,
-  answerAnalysis: '',
-  options: []
+  score: 100,
 })
 const defaultItem = ref({
   id: null,
   name: '',
-  type: '单选题',
   category: null,
-  difficulty: '普通',
-  answer: null,
-  answerAnalysis: '',
-  options: []
+  score: 100,
 })
 const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
 
@@ -149,9 +131,6 @@ const editItem = async (item) => {
   if (item) {
     editedIndex.value = serverItems.value.indexOf(item)
     editedItem.value = Object.assign({}, item)
-    editedItem.value.answer = item.type == '多选题' ? item.answer.split(',') : item.answer
-    const res = await ResourceQuestionsApi.info(item.id)
-    editedItem.value.options = res.options.map(item => item.name)
   } else {
     editedItem.value = Object.assign({}, defaultItem.value)
     editedIndex.value = -1;
@@ -182,7 +161,7 @@ const closeDelete = () => {
 }
 
 const deleteItemConfirm = async () => {
-  await ResourceQuestionsApi.del(editedItem.value.id)
+  await ResourceTestpaperApi.del(editedItem.value.id)
   loadItems(options.value)
   closeDelete()
 }
@@ -190,7 +169,7 @@ const deleteItemConfirm = async () => {
 const save = async () => {
   loadingEdit.value = true
   try {
-    await ResourceQuestionsApi.save(editedItem.value)
+    await ResourceTestpaperApi.save(editedItem.value)
     close()
     loadItems(options.value)
   } catch (e) { /* empty */ }
@@ -200,15 +179,13 @@ const save = async () => {
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
   categorys.value = await ResourceApi.categorySelectAll()
-  const res = await ResourceQuestionsApi.page({
+  const res = await ResourceTestpaperApi.page({
     current: page,
     size: itemsPerPage,
     sortKey: sortBy[0] ? sortBy[0].key : null,
     sortOrder: sortBy[0] ? sortBy[0].order : null,
     category: search.value.category,
     name: search.value.name,
-    type: search.value.type,
-    difficulty: search.value.difficulty
   })
   serverItems.value = res.records.map(item => {
     return {

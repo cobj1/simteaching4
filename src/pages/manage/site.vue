@@ -185,7 +185,7 @@ const deleteItemConfirm = async () => {
 
 const save = async () => {
   const blob = new Blob([editedItem.value.content])
-  const file = new File([blob], 'content.txt', { type: 'text/plain' })
+  const file = new File([blob], editedItem.value.title + '.txt', { type: 'text/plain' })
   const res = await FileApi.upload(file, 'simteaching/site/content')
   editedItem.value.content = res.url
   if (editedItem.value.contentOld) FileApi.delete(editedItem.value.contentOld)

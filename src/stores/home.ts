@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 export const useHomeStore = defineStore("home", () => {
+  const TypeItems = ref([]);
   const NavigationItems = ref<{ text: string; path: string }[]>([
     {
       text: "首页",
@@ -11,9 +12,10 @@ export const useHomeStore = defineStore("home", () => {
   ]);
 
   const loadNavigationItems = async () => {
-    if (NavigationItems.value.length <= 1) {
+    if (TypeItems.value.length == 0) {
       NavigationItems.value.splice(1, 99);
       const res = (await SiteApi.typeSelectAll()) as any;
+      TypeItems.value = res;
       NavigationItems.value.push(
         ...res.map((item: SiteType) => {
           return {
@@ -26,6 +28,7 @@ export const useHomeStore = defineStore("home", () => {
   };
 
   return {
+    TypeItems,
     NavigationItems,
     loadNavigationItems,
   };

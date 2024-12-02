@@ -2,7 +2,7 @@
   <div @click="dialog = true">
     <slot></slot>
   </div>
-  <v-dialog v-model="dialog" width="auto" scrollable min-width="500px">
+  <v-dialog v-model="dialog" scrollable max-width="500px">
     <template v-slot:default="{ isActive }">
       <v-card prepend-icon="mdi-format-list-bulleted-type">
         <template #title>

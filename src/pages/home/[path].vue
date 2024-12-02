@@ -64,7 +64,7 @@ const defaultContent = () => {
 const loadItems = async () => {
   empty.value = false
   const siteType = await SiteApi.typeOne({ path: route.params.path }) as any
-  const res = await SiteApi.page({ current: 1, size: siteType.displays, typeId: siteType.id }) as any
+  const res = await SiteApi.page({ current: 1, size: 20, typeId: siteType.id }) as any
   items.value = res.records.map((item: { id: any; }) => {
     return {
       ...item,
