@@ -1,11 +1,6 @@
 <template>
   <VCard>
-    <VToolbar :title="data.name">
-      <v-btn>
-        选择用户
-        <SelectionUser></SelectionUser>
-      </v-btn>
-    </VToolbar>
+    <VToolbar :title="data.name"> </VToolbar>
     <v-sheet elevation="3" rounded="lg">
       <v-tabs v-model="tab" :items="tabs" height="50" slider-color="#f78166" class="pl-4 ">
         <template v-slot:tab="{ item }">
@@ -15,109 +10,20 @@
       <VDivider></VDivider>
       <v-tabs-window v-model="tab">
         <v-tabs-window-item value="info">
-          <v-container fluid max-width="1000px" min-height="800px">
-            <v-card class="mx-auto">
-              <v-img class="align-end text-white pa-4" height="200" src="@/assets/course/tab-info-bg.jpg" cover>
-                <div class="w-100 h-100 position-absolute left-0 top-0 opacity-80 d-print-block"
-                  style=" background-image: radial-gradient(25rem 18.75rem ellipse at bottom right, #202124, transparent);  ">
-                </div>
-                <v-card-title>{{ data.name }}</v-card-title>
-                <v-card-subtitle>{{ data.explain }}</v-card-subtitle>
-              </v-img>
-              <v-card-text class="pt-4 px-8">
-                <v-row>
-                  <v-col cols="12 py-1">
-                    <strong class="mr-2">课程代码</strong> {{ data.code }}
-                  </v-col>
-                  <v-col cols="12 py-1">
-                    <strong class="mr-2">主题</strong> {{ data.subject }}
-                  </v-col>
-                  <v-col cols="12 py-1">
-                    <strong class="mr-2">教室</strong> {{ data.classroom }}
-                  </v-col>
-                </v-row>
-              </v-card-text>
-            </v-card>
-            <v-row class="mt-4">
-              <v-col cols="12" md="3">
-                <v-card title="课程代码">
-                  <v-card-text class="text-h6 text-blue-darken-3 font-weight-medium"> {{ data.code }} </v-card-text>
-                  <template #append>
-                    <CourseCodeOptions :id="data.id" :code="data.code" @change="loadItem"></CourseCodeOptions>
-                  </template>
-                </v-card>
-              </v-col>
-              <v-col cols="12" md="9">
-                <v-card>
-                  <VCardText>
-                    <v-textarea v-model="text" label="发布课程通知"></v-textarea>
-                    <div class="text-right">
-                      <v-btn color="per" :disabled="text.length == 0">发布</v-btn>
-                    </div>
-                  </VCardText>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
+          <CourseTabInfo :data="data" @change="loadItem"></CourseTabInfo>
         </v-tabs-window-item>
         <v-tabs-window-item value="coursework">
-          <v-container fluid max-width="1000px" min-height="800px">
-            <v-menu>
-              <template v-slot:activator="{ props }">
-                <v-btn prepend-icon="mdi-plus" rounded="xl" size="large" color="#5865f2" v-bind="props">创建</v-btn>
-              </template>
-              <v-list class="mt-2" width="160">
-                <v-list-item title="资料" prepend-icon="mdi-book-outline" link>
-                  <SelectionCourseware @confirm="handleSelectionCoursewareConfirm"></SelectionCourseware>
-                </v-list-item>
-                <v-list-item title="仿真" prepend-icon="mdi-test-tube" link>
-                  <SelectionSimulation @confirm="handleSelectionSimulationConfirm"></SelectionSimulation>
-                </v-list-item>
-                <v-list-item title="题目" prepend-icon="mdi-head-question-outline" link>
-                  <SelectionQuestions @confirm="handleSelectionQuestionsConfirm"></SelectionQuestions>
-                </v-list-item>
-                <v-list-item title="测试" prepend-icon="mdi-ab-testing" link>
-                  <SelectionTestpaper @confirm="handleSelectionTestpaperConfirm"></SelectionTestpaper>
-                </v-list-item>
-                <v-divider></v-divider>
-                <v-list-item title="主题" prepend-icon="mdi-list-box-outline" link
-                  @click="CourseSubjectEditRef.editItem(route.params.id, subjects.length)"></v-list-item>
-              </v-list>
-            </v-menu>
-            <VueDraggable ref="el" v-model="list" class="mt-8 vue-draggable" group="Resources">
-              <div v-for="item in list" :key="item.id">
-                <CourseResourceItem :item="item.resource" @deleted="handleCourseResourceItemDeleted(item.id)">
-                </CourseResourceItem>
-              </div>
-            </VueDraggable>
-            <v-card v-for="subitem in subjects" :key="subitem.name" style="box-shadow:none;">
-              <template #title>
-                {{ subitem.name }}
-              </template>
-              <template #subtitle>
-                {{ subitem.explain }}
-              </template>
-              <template #append>
-                <div class="mr-4">
-                  <CourseSubjectOptions :item="subitem" @change="loadSubjects"
-                    @rename="CourseSubjectEditRef.editItem(route.params.id, subjects.length, subitem)">
-                  </CourseSubjectOptions>
-                </div>
-              </template>
-              <v-card-text class="pa-0">
-                <VueDraggable ref="el" v-model="subitem.children" class="vue-draggable" group="Resources">
-                  <div v-for="item in subitem.children" :key="item.id">
-                    <CourseResourceItem :item="item"></CourseResourceItem>
-                  </div>
-                </VueDraggable>
-              </v-card-text>
-            </v-card>
-          </v-container>
-          <CourseSubjectEdit ref="CourseSubjectEditRef" @change="loadSubjects"></CourseSubjectEdit>
+          <CourseTabCoursework v-model:list="list" v-model:subjects="subjects" :cid="route.params.id"
+            @change="loadItems" @save="handleCourseTabCourseworkSave" @del="handleCourseTabCourseworkDel"
+            @change-order="handleCourseTabCourseworkChangeOrder">
+          </CourseTabCoursework>
         </v-tabs-window-item>
         <v-tabs-window-item value="user">
           <v-container fluid max-width="1000px" min-height="800px">
-            user
+            <v-btn>
+              选择用户
+              <SelectionUser></SelectionUser>
+            </v-btn>
           </v-container>
         </v-tabs-window-item>
         <v-tabs-window-item value="grade">
@@ -134,21 +40,14 @@
 import { CourseApi } from '@/api/course';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { VueDraggable } from 'vue-draggable-plus'
 import { CourseSubjectApi } from '@/api/course/course-subject';
-import SelectionCourseware from '@/components/resource/SelectionCourseware.vue';
-import SelectionTestpaper from '@/components/resource/SelectionTestpaper.vue';
-import SelectionQuestions from '@/components/resource/SelectionQuestions.vue';
-import SelectionSimulation from '@/components/resource/SelectionSimulation.vue';
 import { CourseResourceApi } from '@/api/course-resource';
 
-const CourseSubjectEditRef = ref()
 const route = useRoute()
 const data = ref({
   id: null,
   name: ''
 })
-const el = ref()
 const tab = ref('coursework')
 const tabs = ref([
   {
@@ -173,75 +72,46 @@ const tabs = ref([
     value: 'grade',
   },
 ])
-const text = ref('')
 const list = ref([])
 const subjects = ref([])
 
 watch(() => route.params.id, () => {
   loadItem()
-  loadSubjects()
+  loadItems()
 })
-
-const handleCourseResourceItemDeleted = async (id) => {
+const handleCourseTabCourseworkDel = async (id) => {
   await CourseResourceApi.del(id)
-  loadSubjects()
+  loadItems()
 }
-const handleSelectionCoursewareConfirm = async (value) => {
-  await CourseResourceApi.save(JSON.stringify(value.map(item => {
-    return {
-      cid: route.params.id,
-      type: 'resource',
-      rid: item
-    }
-  })))
-  loadSubjects()
+const handleCourseTabCourseworkSave = async (array) => {
+  await CourseResourceApi.save(array)
+  loadItems()
 }
-const handleSelectionSimulationConfirm = async (value) => {
-  await CourseResourceApi.save(JSON.stringify(value.map(item => {
+const handleCourseTabCourseworkChangeOrder = async () => {
+  const newList = []
+  newList.push(...list.value)
+  subjects.value.forEach(subject => newList.push(...subject.children.map(item => { return { ...item, sid: subject.id } })))
+  await CourseResourceApi.save(newList.map(item => {
     return {
-      cid: route.params.id,
-      type: 'simulation',
-      rid: item
+      cid: item.cid,
+      rid: item.rid,
+      sid: item.sid,
+      type: item.type
     }
-  })))
-  loadSubjects()
-}
-const handleSelectionQuestionsConfirm = async (value) => {
-  await CourseResourceApi.save(JSON.stringify(value.map(item => {
-    return {
-      cid: route.params.id,
-      type: 'questions',
-      rid: item
-    }
-  })))
-  loadSubjects()
-}
-
-const handleSelectionTestpaperConfirm = async (value) => {
-  await CourseResourceApi.save(JSON.stringify(value.map(item => {
-    return {
-      cid: route.params.id,
-      type: 'testpaper',
-      rid: item
-    }
-  })))
-  loadSubjects()
+  }), true, route.params.id)
 }
 
 const loadItem = async () => {
   data.value = await CourseApi.info(route.params.id)
 }
-const loadSubjects = async () => {
-  const res = await CourseSubjectApi.list(route.params.id)
-  subjects.value = res.map((item) => { return { ...item, children: [] } })
-  loadResources()
-}
-const loadResources = async () => {
-  list.value = await CourseResourceApi.list(route.params.id)
+const loadItems = async () => {
+  const res = await CourseResourceApi.list(route.params.id)
+  subjects.value = (await CourseSubjectApi.list(route.params.id)).map(subject => { return { ...subject, children: res.filter(item => item.sid == subject.id) || [] } })
+  list.value = res.filter(item => !item.sid)
 }
 onMounted(() => {
   loadItem()
-  loadSubjects()
+  loadItems()
 })
 </script>
 

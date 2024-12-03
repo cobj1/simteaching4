@@ -10,9 +10,9 @@ export const CourseResourceApi = {
       },
     });
   },
-  save(data: any) {
+  save(data: any, replace: any = '', cid: any = '') {
     return axios({
-      url: "/courseResource/save",
+      url: `/courseResource/save?replace=${replace}&cid=${cid}`,
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -26,5 +26,10 @@ export const CourseResourceApi = {
       method: "post",
     });
   },
-
+  delByCourseId(cid: string) {
+    return axios({
+      url: "/courseResource/delByCourseId/" + cid,
+      method: "post",
+    });
+  },
 };

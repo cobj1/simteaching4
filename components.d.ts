@@ -15,6 +15,8 @@ declare module 'vue' {
     CourseResourceSubjectOptions: typeof import('./src/components/course/CourseResourceSubjectOptions.vue')['default']
     CourseSubjectEdit: typeof import('./src/components/course/CourseSubjectEdit.vue')['default']
     CourseSubjectOptions: typeof import('./src/components/course/CourseSubjectOptions.vue')['default']
+    CourseTabCoursework: typeof import('./src/components/course/CourseTabCoursework.vue')['default']
+    CourseTabInfo: typeof import('./src/components/course/CourseTabInfo.vue')['default']
     FileList: typeof import('./src/components/FileList.vue')['default']
     Layout: typeof import('./src/components/layout/index.vue')['default']
     Logo: typeof import('./src/components/Logo.vue')['default']
