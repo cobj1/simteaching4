@@ -8,7 +8,7 @@
         </v-col>
 
         <v-col cols="12" md="6">
-          <v-card link prepend-icon="mdi-test-tube" @click="router.push('/manage/resource/testpaper')"
+          <v-card link prepend-icon="mdi-ab-testing" @click="router.push('/manage/resource/testpaper')"
             text="试题目的添加、编辑和删除；以及测试设置。" title="创建测试"></v-card>
         </v-col>
 

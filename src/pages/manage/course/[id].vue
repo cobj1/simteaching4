@@ -67,18 +67,17 @@
                 <v-btn prepend-icon="mdi-plus" rounded="xl" size="large" color="#5865f2" v-bind="props">创建</v-btn>
               </template>
               <v-list class="mt-2" width="160">
-                <v-list-item title="作业" prepend-icon="$vuetify" link></v-list-item>
-                <v-list-item title="测试" prepend-icon="$vuetify" link>
-                  <SelectionTestpaper></SelectionTestpaper>
+                <v-list-item title="资料" prepend-icon="mdi-book-outline" link>
+                  <SelectionCourseware @confirm="handleSelectionCoursewareConfirm"></SelectionCourseware>
+                </v-list-item>
+                <v-list-item title="仿真" prepend-icon="mdi-test-tube" link>
+                  <SelectionSimulation @confirm="handleSelectionSimulationConfirm"></SelectionSimulation>
                 </v-list-item>
                 <v-list-item title="题目" prepend-icon="mdi-head-question-outline" link>
-                  <SelectionQuestions></SelectionQuestions>
+                  <SelectionQuestions @confirm="handleSelectionQuestionsConfirm"></SelectionQuestions>
                 </v-list-item>
-                <v-list-item title="资料" prepend-icon="$vuetify" link>
-                  <SelectionCourseware></SelectionCourseware>
-                </v-list-item>
-                <v-list-item title="仿真" prepend-icon="$vuetify" link>
-                  <SelectionSimulation></SelectionSimulation>
+                <v-list-item title="测试" prepend-icon="mdi-ab-testing" link>
+                  <SelectionTestpaper @confirm="handleSelectionTestpaperConfirm"></SelectionTestpaper>
                 </v-list-item>
                 <v-divider></v-divider>
                 <v-list-item title="主题" prepend-icon="mdi-list-box-outline" link
@@ -87,7 +86,8 @@
             </v-menu>
             <VueDraggable ref="el" v-model="list" class="mt-8 vue-draggable" group="Resources">
               <div v-for="item in list" :key="item.id">
-                <CourseResourceItem :item="item"></CourseResourceItem>
+                <CourseResourceItem :item="item.resource" @deleted="handleCourseResourceItemDeleted(item.id)">
+                </CourseResourceItem>
               </div>
             </VueDraggable>
             <v-card v-for="subitem in subjects" :key="subitem.name" style="box-shadow:none;">
@@ -113,7 +113,7 @@
               </v-card-text>
             </v-card>
           </v-container>
-          <CourseSubjectEdit ref="CourseSubjectEditRef"></CourseSubjectEdit>
+          <CourseSubjectEdit ref="CourseSubjectEditRef" @change="loadSubjects"></CourseSubjectEdit>
         </v-tabs-window-item>
         <v-tabs-window-item value="user">
           <v-container fluid max-width="1000px" min-height="800px">
@@ -140,6 +140,7 @@ import SelectionCourseware from '@/components/resource/SelectionCourseware.vue';
 import SelectionTestpaper from '@/components/resource/SelectionTestpaper.vue';
 import SelectionQuestions from '@/components/resource/SelectionQuestions.vue';
 import SelectionSimulation from '@/components/resource/SelectionSimulation.vue';
+import { CourseResourceApi } from '@/api/course-resource';
 
 const CourseSubjectEditRef = ref()
 const route = useRoute()
@@ -181,6 +182,52 @@ watch(() => route.params.id, () => {
   loadSubjects()
 })
 
+const handleCourseResourceItemDeleted = async (id) => {
+  await CourseResourceApi.del(id)
+  loadSubjects()
+}
+const handleSelectionCoursewareConfirm = async (value) => {
+  await CourseResourceApi.save(JSON.stringify(value.map(item => {
+    return {
+      cid: route.params.id,
+      type: 'resource',
+      rid: item
+    }
+  })))
+  loadSubjects()
+}
+const handleSelectionSimulationConfirm = async (value) => {
+  await CourseResourceApi.save(JSON.stringify(value.map(item => {
+    return {
+      cid: route.params.id,
+      type: 'simulation',
+      rid: item
+    }
+  })))
+  loadSubjects()
+}
+const handleSelectionQuestionsConfirm = async (value) => {
+  await CourseResourceApi.save(JSON.stringify(value.map(item => {
+    return {
+      cid: route.params.id,
+      type: 'questions',
+      rid: item
+    }
+  })))
+  loadSubjects()
+}
+
+const handleSelectionTestpaperConfirm = async (value) => {
+  await CourseResourceApi.save(JSON.stringify(value.map(item => {
+    return {
+      cid: route.params.id,
+      type: 'testpaper',
+      rid: item
+    }
+  })))
+  loadSubjects()
+}
+
 const loadItem = async () => {
   data.value = await CourseApi.info(route.params.id)
 }
@@ -190,7 +237,7 @@ const loadSubjects = async () => {
   loadResources()
 }
 const loadResources = async () => {
-  list.value = []
+  list.value = await CourseResourceApi.list(route.params.id)
 }
 onMounted(() => {
   loadItem()

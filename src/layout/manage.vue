@@ -101,7 +101,7 @@ const defaultManage = ref([
     link: true,
     children: [
       {
-        title: '课件',
+        title: '资料',
         path: '/manage/resource/courseware'
       },
       {

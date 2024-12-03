@@ -33,6 +33,7 @@
 import { CourseSubjectApi } from '@/api/course/course-subject';
 import { ref, computed, nextTick } from 'vue'
 
+const emit = defineEmits(['change'])
 const dialog = ref(false)
 const editedItem = ref({
   id: null,
@@ -71,6 +72,7 @@ const close = () => {
 
 const save = async () => {
   await CourseSubjectApi.save(editedItem.value)
+  emit('change')
   close()
 }
 
