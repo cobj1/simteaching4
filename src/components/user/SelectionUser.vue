@@ -16,7 +16,6 @@
 </template>
 
 <script setup>
-import { OrgApi } from '@/api/org';
 import User from '@/pages/manage/user/[rids].vue';
 import { useRoleStore } from '@/stores/role';
 import { computed, nextTick, onMounted, ref } from 'vue';
@@ -37,16 +36,7 @@ const close = () => {
 }
 
 const save = async () => {
-  const extractIds = (org) => {
-    let ids = []
-    if (org?.id)
-      ids.push(org.id)
-    if (org?.parent)
-      ids.push(...extractIds(org.parent))
-    return ids
-  }
-  const org = await OrgApi.selectOneAndParentById(selected.value.join(''))
-  emit('confirm', extractIds(org).reverse())
+  emit('confirm', selected.value)
   close()
 }
 

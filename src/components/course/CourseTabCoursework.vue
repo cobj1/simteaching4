@@ -22,7 +22,7 @@
           @click="CourseSubjectEditRef.editItem(cid, subjects.length)"></v-list-item>
       </v-list>
     </v-menu>
-    <VueDraggable ref="el" v-model="list" :animation="150" class="mt-8 vue-draggable" group="Resources"
+    <VueDraggable ref="el" v-model="list" :animation="150" class="mt-8 vue-draggable pb-4" group="Resources"
       @end="handleVueDraggableEnd">
       <div v-for="item in list" :key="item.id">
         <CourseResourceItem :item="item.resource" @deleted="handleCourseResourceItemDeleted(item.id)">
@@ -31,10 +31,7 @@
     </VueDraggable>
     <v-card v-for="subitem in subjects" :key="subitem.id" style="box-shadow:none;">
       <template #title>
-        {{ subitem.name }}
-      </template>
-      <template #subtitle>
-        {{ subitem.explain }}
+        <div class="text-h4 pl-4">{{ subitem.name }}</div>
       </template>
       <template #append>
         <div class="mr-4">
@@ -43,8 +40,9 @@
           </CourseSubjectOptions>
         </div>
       </template>
+      <VDivider class="py-2"></VDivider>
       <v-card-text class="pa-0">
-        <VueDraggable ref="el" v-model="subitem.children" :animation="150" class="vue-draggable" group="Resources"
+        <VueDraggable ref="el" v-model="subitem.children" :animation="150" class="vue-draggable pb-4" group="Resources"
           @end="handleVueDraggableEnd">
           <div v-for="item in subitem.children" :key="item.id">
             <CourseResourceItem :item="item.resource" @deleted="handleCourseResourceItemDeleted(item.id)">
@@ -53,6 +51,22 @@
         </VueDraggable>
       </v-card-text>
     </v-card>
+    <v-empty-state v-if="list.length == 0 && subjects.length == 0">
+      <template #media>
+        <VDivider class="py-2"></VDivider>
+        <v-img class="my-8" src="@/assets/svg/empty-dog.svg" height="200px"></v-img>
+      </template>
+      <template v-slot:title>
+        <div class="text-subtitle-2 mt-8">
+          您将在此处布置作业
+        </div>
+      </template>
+      <template v-slot:text>
+        <div class="text-caption">
+          您可以为课程增加作业，然后按主题整理。
+        </div>
+      </template>
+    </v-empty-state>
     <CourseSubjectEdit ref="CourseSubjectEditRef" @change="emit('change')"></CourseSubjectEdit>
   </v-container>
 </template>
@@ -104,4 +118,8 @@ const handleVueDraggableEnd = (event) => {
 
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.vue-draggable:deep(.sortable-ghost .v-card) {
+  box-shadow: 0px 2px 1px -1px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)), 0px 1px 1px 0px var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)), 0px 1px 3px 0px var(--v-shadow-key-ambient-opacity, rgba(0, 0, 0, 0.12)) !important;
+}
+</style>

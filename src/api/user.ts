@@ -14,11 +14,9 @@ export const UserApi = {
   },
   info(id: string) {
     return axios({
-      url: "/user/info",
+      url: "/user/public/info",
       method: "get",
-      params: {
-        id,
-      },
+      params: { id },
     });
   },
   permission() {

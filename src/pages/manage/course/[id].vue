@@ -19,12 +19,7 @@
           </CourseTabCoursework>
         </v-tabs-window-item>
         <v-tabs-window-item value="user">
-          <v-container fluid max-width="1000px" min-height="800px">
-            <v-btn>
-              选择用户
-              <SelectionUser></SelectionUser>
-            </v-btn>
-          </v-container>
+          <CourseTabUser :data="data"></CourseTabUser>
         </v-tabs-window-item>
         <v-tabs-window-item value="grade">
           <v-container fluid max-width="1000px" min-height="800px">
@@ -48,7 +43,7 @@ const data = ref({
   id: null,
   name: ''
 })
-const tab = ref('coursework')
+const tab = ref('user')
 const tabs = ref([
   {
     icon: 'mdi-book-open-page-variant',
@@ -60,7 +55,6 @@ const tabs = ref([
     text: '课业',
     value: 'coursework',
   },
-
   {
     icon: 'mdi-shield-lock-outline',
     text: '用户',
@@ -116,11 +110,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.vue-draggable {
-  min-height: 20px;
-}
 
-.vue-draggable:deep(.sortable-ghost .v-card) {
-  box-shadow: 0px 2px 1px -1px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)), 0px 1px 1px 0px var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)), 0px 1px 3px 0px var(--v-shadow-key-ambient-opacity, rgba(0, 0, 0, 0.12)) !important;
-}
 </style>

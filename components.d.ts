@@ -17,6 +17,7 @@ declare module 'vue' {
     CourseSubjectOptions: typeof import('./src/components/course/CourseSubjectOptions.vue')['default']
     CourseTabCoursework: typeof import('./src/components/course/CourseTabCoursework.vue')['default']
     CourseTabInfo: typeof import('./src/components/course/CourseTabInfo.vue')['default']
+    CourseTabUser: typeof import('./src/components/course/CourseTabUser.vue')['default']
     FileList: typeof import('./src/components/FileList.vue')['default']
     Layout: typeof import('./src/components/layout/index.vue')['default']
     Logo: typeof import('./src/components/Logo.vue')['default']
@@ -38,6 +39,7 @@ declare module 'vue' {
     SystemSettings: typeof import('./src/components/SystemSettings.vue')['default']
     ThemeSwitch: typeof import('./src/components/ThemeSwitch.vue')['default']
     UserList: typeof import('./src/components/UserList.vue')['default']
+    UserOptions: typeof import('./src/components/user/UserOptions.vue')['default']
     UserPanel: typeof import('./src/components/user/UserPanel.vue')['default']
     VNotifications: typeof import('./src/components/VNotifications.vue')['default']
   }
