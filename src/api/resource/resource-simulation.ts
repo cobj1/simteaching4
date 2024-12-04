@@ -1,5 +1,5 @@
 import { PagingProcessor } from "@/utils/paging-processor";
-import axios from "../axios";
+import axios from "@/axios";
 
 export interface ResourceSimulation {
   id: string;

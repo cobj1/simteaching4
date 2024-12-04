@@ -1,5 +1,5 @@
 import { PagingProcessor } from "@/utils/paging-processor";
-import axios from "../axios";
+import axios from "@/axios";
 
 export interface Course {
   id: any;
@@ -58,6 +58,13 @@ export const CourseApi = {
     return axios({
       url: "/course/" + id,
       method: "get",
+    });
+  },
+  curriculaVariable(code: string) {
+    return axios({
+      url: "/course/curricula-variable",
+      method: "post",
+      data: { code },
     });
   },
 };

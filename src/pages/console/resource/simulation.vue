@@ -105,9 +105,9 @@
 
 <script setup>
 import { computed, nextTick, ref } from 'vue';
-import { ResourceApi } from '@/api/resource';
+import { ResourceApi } from '@/api/resource/resource';
 import { FileApi } from '@/api/file';
-import { ResourceSimulationApi } from '@/api/resource-simulation';
+import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
 import { VImg } from 'vuetify/components';
 import { useDateFormat, useNow } from '@vueuse/core';
 

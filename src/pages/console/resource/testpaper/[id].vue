@@ -124,8 +124,8 @@
 
 <script setup>
 import { VueDraggable } from 'vue-draggable-plus'
-import { ResourceTestpaperApi } from '@/api/resource-paper';
-import { ResourceQuestionsApi } from '@/api/resource-questions';
+import { ResourceTestpaperApi } from '@/api/resource/resource-paper';
+import { ResourceQuestionsApi } from '@/api/resource/resource-questions';
 import { useResourceStore } from '@/stores/resource';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';

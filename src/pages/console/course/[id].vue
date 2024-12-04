@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { CourseApi } from '@/api/course';
+import { CourseApi } from '@/api/course/course';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 

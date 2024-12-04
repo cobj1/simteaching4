@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { OrgApi } from '@/api/org';
+import { OrgApi } from '@/api/user/org';
 import Org from '@/pages/console/org.vue';
 import { nextTick, ref } from 'vue';
 

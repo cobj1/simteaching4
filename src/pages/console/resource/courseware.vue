@@ -78,7 +78,7 @@
 
 <script setup>
 import { computed, nextTick, ref } from 'vue';
-import { ResourceApi } from '@/api/resource';
+import { ResourceApi } from '@/api/resource/resource';
 import { FileApi } from '@/api/file';
 
 const selected = defineModel()

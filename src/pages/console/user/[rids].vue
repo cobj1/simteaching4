@@ -120,9 +120,9 @@
 </template>
 
 <script setup>
-import { OrgApi } from '@/api/org';
-import { RoleApi } from '@/api/role';
-import { UserApi } from '@/api/user';
+import { OrgApi } from '@/api/user/org';
+import { RoleApi } from '@/api/user/role';
+import { UserApi } from '@/api/user/user';
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { VSpacer } from 'vuetify/components';

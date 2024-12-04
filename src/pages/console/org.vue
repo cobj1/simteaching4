@@ -73,7 +73,7 @@
   </v-card>
 </template>
 <script setup>
-import { OrgApi } from '@/api/org';
+import { OrgApi } from '@/api/user/org';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { VTreeview } from 'vuetify/labs/VTreeview'
 

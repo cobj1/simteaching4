@@ -81,8 +81,8 @@
 <script setup>
 import { VNumberInput } from 'vuetify/labs/VNumberInput'
 import { computed, nextTick, ref } from 'vue';
-import { ResourceApi } from '@/api/resource';
-import { ResourceTestpaperApi } from '@/api/resource-paper';
+import { ResourceApi } from '@/api/resource/resource';
+import { ResourceTestpaperApi } from '@/api/resource/resource-paper';
 import { useRouter } from 'vue-router';
 
 const router = useRouter()

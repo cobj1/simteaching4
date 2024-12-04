@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     copy: typeof import('./src/components/resource/SelectionSimulation copy.vue')['default']
     CourseCodeOptions: typeof import('./src/components/course/CourseCodeOptions.vue')['default']
+    CourseRegister: typeof import('./src/components/course/CourseRegister.vue')['default']
     CourseResourceItem: typeof import('./src/components/course/CourseResourceItem.vue')['default']
     CourseResourceItemOptions: typeof import('./src/components/course/CourseResourceItemOptions.vue')['default']
     CourseResourceOptions: typeof import('./src/components/CourseResourceOptions.vue')['default']

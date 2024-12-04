@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import { ResourceApi } from '@/api/resource';
+import { ResourceApi } from '@/api/resource/resource';
 import { useResourceStore } from '@/stores/resource';
 import { nextTick, onMounted, ref } from 'vue';
 

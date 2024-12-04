@@ -131,8 +131,8 @@
 
 <script setup>
 import { computed, nextTick, ref } from 'vue';
-import { ResourceApi } from '@/api/resource';
-import { CourseApi } from '@/api/course';
+import { ResourceApi } from '@/api/resource/resource';
+import { CourseApi } from '@/api/course/course';
 import { useClipboard } from '@vueuse/core';
 
 const { copy } = useClipboard()

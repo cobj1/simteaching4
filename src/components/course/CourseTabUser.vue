@@ -64,7 +64,7 @@
 
 <script setup>
 import { CourseUserApi } from '@/api/course/course-user';
-import { UserApi } from '@/api/user';
+import { UserApi } from '@/api/user/user';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 

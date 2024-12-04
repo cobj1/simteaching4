@@ -90,8 +90,8 @@
 
 <script setup>
 import { computed, nextTick, ref } from 'vue';
-import { ResourceApi } from '@/api/resource';
-import { ResourceQuestionsApi } from '@/api/resource-questions';
+import { ResourceApi } from '@/api/resource/resource';
+import { ResourceQuestionsApi } from '@/api/resource/resource-questions';
 
 const selected = defineModel()
 const props = defineProps({

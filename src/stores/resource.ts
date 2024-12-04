@@ -1,4 +1,4 @@
-import { ResourceApi } from "@/api/resource";
+import { ResourceApi } from "@/api/resource/resource";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 

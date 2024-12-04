@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { PermissionApi } from '@/api/permission';
+import { PermissionApi } from '@/api/user/permission';
 import { onMounted, ref } from 'vue';
 
 const items = ref([{

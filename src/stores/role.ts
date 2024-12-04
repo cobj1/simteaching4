@@ -1,4 +1,4 @@
-import { RoleApi } from "@/api/role";
+import { RoleApi } from "@/api/user/role";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 

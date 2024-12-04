@@ -78,7 +78,7 @@ import SelectionTestpaper from '@/components/resource/SelectionTestpaper.vue';
 import SelectionQuestions from '@/components/resource/SelectionQuestions.vue';
 import SelectionSimulation from '@/components/resource/SelectionSimulation.vue';
 import { onMounted, ref, watch } from 'vue';
-import { CourseResourceApi } from '@/api/course-resource';
+import { CourseResourceApi } from '@/api/course/course-resource';
 import { CourseSubjectApi } from '@/api/course/course-subject';
 import { useRoute } from 'vue-router';
 

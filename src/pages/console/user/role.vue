@@ -30,8 +30,8 @@
 </template>
 
 <script setup lang="ts">
-import { Permission, PermissionApi } from '@/api/permission';
-import { Role, RoleApi } from '@/api/role';
+import { Permission, PermissionApi } from '@/api/user/permission';
+import { Role, RoleApi } from '@/api/user/role';
 import { notify } from '@kyvg/vue3-notification';
 import { onMounted, ref } from 'vue';
 

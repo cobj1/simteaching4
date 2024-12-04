@@ -1,4 +1,4 @@
-import { OrgApi } from "@/api/org";
+import { OrgApi } from "@/api/user/org";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 

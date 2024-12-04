@@ -52,6 +52,10 @@
       <v-app-bar-nav-icon v-if="$vuetify.display.smAndDown" @click="drawer = !drawer" />
       <v-app-bar-title>智慧教育云仿真管理平台</v-app-bar-title>
       <template #append>
+        <v-btn icon class="mr-4">
+          <v-icon icon="mdi-plus"></v-icon>
+          <CourseRegister></CourseRegister>
+        </v-btn>
         <ThemeSwitch></ThemeSwitch>
         <UserPanel></UserPanel>
       </template>
@@ -65,7 +69,7 @@
 </template>
 
 <script setup>
-import { CourseApi } from '@/api/course';
+import { CourseApi } from '@/api/course/course';
 import vuetify from '@/plugins/vuetify';
 import { useAccountStore } from '@/stores/account';
 import { useRoleStore } from '@/stores/role';
@@ -90,12 +94,14 @@ const defaultManage = ref([
     path: '/console'
   },
   {
+    show: account.auth('course'),
     title: '课程管理',
     prependIcon: 'mdi-school-outline',
     link: true,
     path: '/console/course'
   },
   {
+    show: account.auth('resource'),
     title: '资源库',
     prependIcon: 'mdi-library-outline',
     link: true,
@@ -119,42 +125,49 @@ const defaultManage = ref([
     ]
   },
   {
+    show: account.auth('share'),
     title: '共享资源库',
     prependIcon: 'mdi-share-variant-outline',
     link: true,
     path: '/console/resource/share'
   },
   {
+    show: account.auth('attendance'),
     title: '考勤管理',
     prependIcon: 'mdi-calendar-check-outline',
     link: true,
     path: '/console/attendance'
   },
   {
+    show: account.auth('notice'),
     title: '通知公告',
     prependIcon: 'mdi-bell-cog-outline',
     link: true,
     path: '/console/notice'
   },
   {
+    show: account.auth('site'),
     title: '门户管理',
     prependIcon: 'mdi-web',
     link: true,
     path: '/console/site'
   },
   {
+    show: account.auth('org'),
     title: '组织管理',
     prependIcon: 'mdi-bank',
     link: true,
     path: '/console/org'
   },
   {
+    show: account.auth('user'),
     title: '用户管理',
     prependIcon: 'mdi-account-cog-outline',
     link: true,
     children: userManage
   },
   {
+    show: account.auth('apply'),
     title: '试用管理',
     prependIcon: 'mdi-account-clock-outline',
     link: true,
@@ -170,6 +183,7 @@ const defaultManage = ref([
     ]
   },
   {
+    show: account.auth('statistics'),
     title: '统计中心',
     prependIcon: 'mdi-chart-box-outline',
     link: true,
@@ -184,6 +198,7 @@ const defaultManage = ref([
     ]
   },
   {
+    show: account.auth('dc'),
     title: '系统数据',
     prependIcon: 'mdi-database-cog-outline',
     link: true,
@@ -211,7 +226,7 @@ const defaultManage = ref([
 
 
 const items = computed(() => {
-  return [...defaultManage.value, ...courseManage.value, ...courseRegister.value]
+  return [...defaultManage.value, ...courseManage.value, ...courseRegister.value].filter(item => item.show || item.show == null)
 })
 
 const loadUserManage = async () => {

@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { CourseApi } from '@/api/course';
+import { CourseApi } from '@/api/course/course';
 import { useClipboard } from '@vueuse/core';
 import { ref } from 'vue';
 
