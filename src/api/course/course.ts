@@ -67,4 +67,10 @@ export const CourseApi = {
       data: { code },
     });
   },
+  getRegisterCourse() {
+    return axios({
+      url: "/course/getRegisterCourse",
+      method: "get",
+    });
+  },
 };

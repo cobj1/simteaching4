@@ -91,7 +91,7 @@ const handleSelectionUserConfirm = async (value) => {
 }
 
 const loadCreator = async () => {
-  creator.value = await UserApi.info(props.data?.creator)
+  creator.value = await UserApi.publicInfo(props.data?.creator)
 }
 const loadItems = async () => {
   items.value = await CourseUserApi.list(route.params.id)

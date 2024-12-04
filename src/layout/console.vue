@@ -274,7 +274,9 @@ const loadCourse = async () => {
       }
     }))
   }
-  if (true) {
+  const registerCourses = await CourseApi.getRegisterCourse()
+  console.log(registerCourses)
+  if (registerCourses.length > 0) {
     courseManage.value.push({
       prependIcon: 'mdi-school-outline',
       type: 'subheader',

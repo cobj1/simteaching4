@@ -9,8 +9,12 @@ export const useAccountStore = defineStore(
     const router = useRouter();
     const token = ref();
     const info = reactive({
-      id: null,
+      account: null,
       name: null,
+      avatar: null,
+      phone: null,
+      email: null,
+      post: null,
     });
     const authoritys = ref<string[]>([]);
 
@@ -20,6 +24,13 @@ export const useAccountStore = defineStore(
         token.value = res;
         const permissions = (await UserApi.permission()) as any;
         authoritys.value = permissions.map((item: { key: string }) => item.key);
+        const user = (await UserApi.info()) as any;
+        info.account = user.account;
+        info.name = user.name;
+        info.avatar = user.avatar;
+        info.phone = user.phone;
+        info.email = user.email;
+        info.post = user.post;
       }
       return res;
     };

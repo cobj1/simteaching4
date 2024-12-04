@@ -12,11 +12,17 @@ export const UserApi = {
       },
     });
   },
-  info(id: string) {
+  publicInfo(id: string | null) {
     return axios({
       url: "/user/public/info",
       method: "get",
       params: { id },
+    });
+  },
+  info() {
+    return axios({
+      url: "/user/info",
+      method: "get",
     });
   },
   permission() {
