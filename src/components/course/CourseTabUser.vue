@@ -86,7 +86,7 @@ const handleUserOptionsDeleted = async (id) => {
 const handleSelectionUserConfirm = async (value) => {
   await CourseUserApi.save(JSON.stringify(value.map(item => {
     return { cid: route.params.id, uid: item }
-  })))
+  })), route.params.id)
   loadItems()
 }
 

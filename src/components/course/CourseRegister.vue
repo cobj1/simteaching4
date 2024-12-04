@@ -1,7 +1,6 @@
 <template>
   <v-dialog v-model="dialog" max-width="600" activator="parent">
-    <v-card prepend-icon="mdi-school-outline" title="加入课程">
-
+    <v-card prepend-icon="mdi-plus" title="加入课程">
       <v-card-text>
         <v-row dense>
           <v-col cols="12">
@@ -9,7 +8,7 @@
               <div class="text-body-2 mb-4 text-medium-emphasis">
                 您当前登录的账号是：
               </div>
-              <v-list-item title="show wang" subtitle="541980655@qq.com">
+              <v-list-item :title="accountStore.info.name" :subtitle="accountStore.info.account">
                 <template #prepend>
                   <v-avatar image="@/assets/avatar/default-avatar.svg" />
                 </template>
@@ -48,19 +47,57 @@
       <v-card-actions>
         <v-spacer></v-spacer>
 
-        <v-btn text="Close" variant="plain" @click="dialog = false"></v-btn>
+        <v-btn text="取消" variant="plain" @click="close"></v-btn>
 
-        <v-btn color="primary" text="Save" variant="tonal" @click="dialog = false"></v-btn>
+        <v-btn color="primary" text="确定" variant="tonal" @click="confirm"></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { CourseApi } from '@/api/course/course';
+import { useAccountStore } from '@/stores/account';
+import { useConsoleStore } from '@/stores/console';
+import { notify } from '@kyvg/vue3-notification';
+import { nextTick, ref } from 'vue';
 
+const accountStore = useAccountStore()
+const consoleStore = useConsoleStore()
 const dialog = ref(false)
 const code = ref('')
+
+const close = () => {
+  dialog.value = false
+  nextTick(() => {
+    code.value = ''
+  })
+}
+
+const confirm = async () => {
+  const res = await CourseApi.curriculaVariable(code.value)
+  await consoleStore.loadCourse()
+  if (res) {
+    notify({
+      title: "加入课程成功",
+      text: '请前往课程学习',
+      type: "info",
+      data: {
+        icon: "mdi-checkbox-marked-circle",
+      },
+    });
+  } else {
+    notify({
+      title: "加入课程失败",
+      text: '请检查课程代码是否正确',
+      type: "info",
+      data: {
+        icon: "mdi-alert-circle",
+      },
+    });
+  }
+  close()
+}
 
 </script>
 

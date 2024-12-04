@@ -7,9 +7,9 @@ export interface CourseUser {
 }
 
 export const CourseUserApi = {
-  save(data: any) {
+  save(data: any, cid: string) {
     return axios({
-      url: "/course-user/save",
+      url: "/course-user/save?cid=" + cid,
       method: "post",
       headers: {
         "Content-Type": "application/json",

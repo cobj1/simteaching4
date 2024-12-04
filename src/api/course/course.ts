@@ -64,6 +64,9 @@ export const CourseApi = {
     return axios({
       url: "/course/curricula-variable",
       method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
       data: { code },
     });
   },
