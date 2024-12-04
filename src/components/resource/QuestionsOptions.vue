@@ -1,7 +1,8 @@
 <template>
   <VSheet>
     <v-radio-group v-model="answer" v-if="type == '单选题'" hide-details>
-      <v-radio v-for="(item, index) in options" :key="index" :value="'' + index" :disabled="disabled">
+      <v-radio v-for="(item, index) in options" :data-label="item" :key="index" :value="'' + index"
+        :disabled="disabled">
         <template #label>
           <v-text-field v-model="options[index]" variant="underlined">
             <template #append>
@@ -13,8 +14,8 @@
       </v-radio>
     </v-radio-group>
     <div v-if="type == '多选题'">
-      <v-checkbox v-model="answer" v-for="(item, index) in options" :key="index" :value="'' + index" hide-details
-        :disabled="disabled">
+      <v-checkbox v-model="answer" v-for="(item, index) in options" :data-label="item" :key="index" :value="'' + index"
+        hide-details :disabled="disabled">
         <template #label>
           <v-text-field v-model="options[index]" variant="underlined">
             <template #append>

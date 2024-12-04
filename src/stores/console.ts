@@ -35,7 +35,7 @@ export const useConsoleStore = defineStore("console", () => {
       title: "后台首页",
       prependIcon: "mdi-home-outline",
       link: true,
-      path: "/console",
+      path: "/console/home",
     },
     {
       show: accountStore.auth("course"),

@@ -20,7 +20,6 @@ declare module 'vue-router/auto-routes' {
   export interface RouteNamedMap {
     '/apply': RouteRecordInfo<'/apply', '/apply', Record<never, never>, Record<never, never>>,
     '/console': RouteRecordInfo<'/console', '/console', Record<never, never>, Record<never, never>>,
-    '/console/': RouteRecordInfo<'/console/', '/console', Record<never, never>, Record<never, never>>,
     '/console/apply/account': RouteRecordInfo<'/console/apply/account', '/console/apply/account', Record<never, never>, Record<never, never>>,
     '/console/apply/review': RouteRecordInfo<'/console/apply/review', '/console/apply/review', Record<never, never>, Record<never, never>>,
     '/console/attendance': RouteRecordInfo<'/console/attendance', '/console/attendance', Record<never, never>, Record<never, never>>,
@@ -30,6 +29,7 @@ declare module 'vue-router/auto-routes' {
     '/console/course/[id].manage': RouteRecordInfo<'/console/course/[id].manage', '/console/course/:id/manage', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     '/console/dc/exam': RouteRecordInfo<'/console/dc/exam', '/console/dc/exam', Record<never, never>, Record<never, never>>,
     '/console/dc/student': RouteRecordInfo<'/console/dc/student', '/console/dc/student', Record<never, never>, Record<never, never>>,
+    '/console/home': RouteRecordInfo<'/console/home', '/console/home', Record<never, never>, Record<never, never>>,
     '/console/notice': RouteRecordInfo<'/console/notice', '/console/notice', Record<never, never>, Record<never, never>>,
     '/console/org': RouteRecordInfo<'/console/org', '/console/org', Record<never, never>, Record<never, never>>,
     '/console/resource/courseware': RouteRecordInfo<'/console/resource/courseware', '/console/resource/courseware', Record<never, never>, Record<never, never>>,
