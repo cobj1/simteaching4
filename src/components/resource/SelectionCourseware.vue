@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import Courseware from '@/pages/manage/resource/courseware.vue';
+import Courseware from '@/pages/console/resource/courseware.vue';
 import { nextTick, ref } from 'vue';
 
 const emit = defineEmits(['confirm'])

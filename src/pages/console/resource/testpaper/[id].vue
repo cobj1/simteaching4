@@ -208,7 +208,7 @@ const save = async () => {
     score: totalScore.value,
     questions: items.value
   })
-  router.push('/manage/resource/testpaper')
+  router.push('/console/resource/testpaper')
 }
 
 const loadItem = async () => {

@@ -74,11 +74,11 @@ watch(() => vuetify.display.smAndDown.value, (value) => drawer.value = !value)
 
 const userManage = ref([{
   title: '权限列表',
-  path: '/manage/user/permission'
+  path: '/console/user/permission'
 },
 {
   title: '角色列表',
-  path: '/manage/user/role'
+  path: '/console/user/role'
 }
 ])
 const courseManage = ref([])
@@ -87,13 +87,13 @@ const defaultManage = ref([
     title: '后台首页',
     prependIcon: 'mdi-home-outline',
     link: true,
-    path: '/manage'
+    path: '/console'
   },
   {
     title: '课程管理',
     prependIcon: 'mdi-school-outline',
     link: true,
-    path: '/manage/course'
+    path: '/console/course'
   },
   {
     title: '资源库',
@@ -102,19 +102,19 @@ const defaultManage = ref([
     children: [
       {
         title: '资料',
-        path: '/manage/resource/courseware'
+        path: '/console/resource/courseware'
       },
       {
         title: '仿真',
-        path: '/manage/resource/simulation'
+        path: '/console/resource/simulation'
       },
       {
         title: '题库',
-        path: '/manage/resource/questions'
+        path: '/console/resource/questions'
       },
       {
         title: '测试',
-        path: '/manage/resource/testpaper'
+        path: '/console/resource/testpaper'
       },
     ]
   },
@@ -122,31 +122,31 @@ const defaultManage = ref([
     title: '共享资源库',
     prependIcon: 'mdi-share-variant-outline',
     link: true,
-    path: '/manage/resource/share'
+    path: '/console/resource/share'
   },
   {
     title: '考勤管理',
     prependIcon: 'mdi-calendar-check-outline',
     link: true,
-    path: '/manage/attendance'
+    path: '/console/attendance'
   },
   {
     title: '通知公告',
     prependIcon: 'mdi-bell-cog-outline',
     link: true,
-    path: '/manage/notice'
+    path: '/console/notice'
   },
   {
     title: '门户管理',
     prependIcon: 'mdi-web',
     link: true,
-    path: '/manage/site'
+    path: '/console/site'
   },
   {
     title: '组织管理',
     prependIcon: 'mdi-bank',
     link: true,
-    path: '/manage/org'
+    path: '/console/org'
   },
   {
     title: '用户管理',
@@ -161,11 +161,11 @@ const defaultManage = ref([
     children: [
       {
         title: '审核申请',
-        path: '/manage/apply/review'
+        path: '/console/apply/review'
       },
       {
         title: '试用账号',
-        path: '/manage/apply/account'
+        path: '/console/apply/account'
       }
     ]
   },
@@ -176,10 +176,10 @@ const defaultManage = ref([
     children: [
       {
         title: '学员',
-        path: '/manage/dc/student'
+        path: '/console/dc/student'
       }, {
         title: '考试',
-        path: '/manage/dc/exam'
+        path: '/console/dc/exam'
       }
     ]
   },
@@ -190,19 +190,19 @@ const defaultManage = ref([
     children: [
       {
         title: '数据库',
-        path: '/manage/system/database'
+        path: '/console/system/database'
       },
       {
         title: '字典管理',
-        path: '/manage/system/dict'
+        path: '/console/system/dict'
       },
       {
         title: '参数设置',
-        path: '/manage/system/parameter-setting'
+        path: '/console/system/parameter-setting'
       },
       {
         title: '日志管理',
-        path: '/manage/system/log'
+        path: '/console/system/log'
       }
     ]
   },
@@ -214,7 +214,7 @@ const defaultManage = ref([
     title: '待批改',
     prependIcon: 'mdi-view-dashboard-edit',
     link: true,
-    path: '/manage/correct'
+    path: '/console/correct'
   },
 ])
 
@@ -230,7 +230,7 @@ const loadUserManage = async () => {
   userManage.value.push(...roles.map(item => {
     return {
       title: item.name,
-      path: '/manage/user/' + item.id
+      path: '/console/user/' + item.id
     }
   }))
 }
@@ -242,7 +242,7 @@ const loadCourse = async () => {
       avatar: item.name.charAt(0),
       title: item.name,
       subtitle: item.explain,
-      path: '/manage/course/' + item.id
+      path: '/console/course/' + item.id
     }
   }))
 }

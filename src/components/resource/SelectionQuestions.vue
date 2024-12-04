@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import Questions from '@/pages/manage/resource/questions.vue';
+import Questions from '@/pages/console/resource/questions.vue';
 import { nextTick, ref } from 'vue';
 
 const emit = defineEmits(['confirm'])

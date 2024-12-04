@@ -14,7 +14,7 @@
 
 <script setup>
 import { OrgApi } from '@/api/org';
-import Org from '@/pages/manage/org.vue';
+import Org from '@/pages/console/org.vue';
 import { nextTick, ref } from 'vue';
 
 const emit = defineEmits(['confirm'])

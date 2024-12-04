@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import Testpaper from '@/pages/manage/resource/testpaper/index.vue';
+import Testpaper from '@/pages/console/resource/testpaper/index.vue';
 import { nextTick, ref } from 'vue';
 
 const emit = defineEmits(['confirm'])

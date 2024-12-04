@@ -21,7 +21,8 @@
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.actions="{ item }">
-        <VBtn prepend-icon="mdi-head-question" variant="text" density="comfortable" size="small" @click="router.push(`/manage/resource/testpaper/${item.id}`)" >试题</VBtn>
+        <VBtn prepend-icon="mdi-head-question" variant="text" density="comfortable" size="small"
+          :to="`/console/resource/testpaper/${item.id}`">试题</VBtn>
         <VBtn prepend-icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)">修改
         </VBtn>
         <VBtn prepend-icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)">删除

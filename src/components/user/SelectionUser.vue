@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import User from '@/pages/manage/user/[rids].vue';
+import User from '@/pages/console/user/[rids].vue';
 import { useRoleStore } from '@/stores/role';
 import { computed, nextTick, onMounted, ref } from 'vue';
 

@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import Simulation from '@/pages/manage/resource/simulation.vue';
+import Simulation from '@/pages/console/resource/simulation.vue';
 import { nextTick, ref } from 'vue';
 
 const emit = defineEmits(['confirm'])
