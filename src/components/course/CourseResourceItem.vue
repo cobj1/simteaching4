@@ -7,31 +7,34 @@
           <v-expansion-panels>
             <v-expansion-panel>
               <v-expansion-panel-title disable-icon-rotate>
-                <v-icon v-if="item.resourceType == 'resource'" icon="mdi-book-outline" size="30" class="mr-2" />
-                <v-icon v-if="item.resourceType == 'simulation'" icon="mdi-test-tube" size="30" class="mr-2" />
-                <v-icon v-if="item.resourceType == 'questions'" icon="mdi-head-question-outline" size="30"
+                <v-icon v-if="item.resource.resourceType == 'resource'" icon="mdi-book-outline" size="30"
                   class="mr-2" />
-                <v-icon v-if="item.resourceType == 'testpaper'" icon="mdi-ab-testing" size="30" class="mr-2" />
-                {{ item.name }}
+                <v-icon v-if="item.resource.resourceType == 'simulation'" icon="mdi-test-tube" size="30" class="mr-2" />
+                <v-icon v-if="item.resource.resourceType == 'questions'" icon="mdi-head-question-outline" size="30"
+                  class="mr-2" />
+                <v-icon v-if="item.resource.resourceType == 'testpaper'" icon="mdi-ab-testing" size="30" class="mr-2" />
+                {{ item.resource.name }}
                 <template v-slot:actions v-if="manage">
+                  <v-text-field v-if="item.score" label="分数" type="number" variant="underlined" hide-details
+                    density="compact" :min="1" :max="100" @click.stop></v-text-field>
                   <CourseResourceItemOptions @deleted="emit('deleted')"></CourseResourceItemOptions>
                 </template>
               </v-expansion-panel-title>
               <v-expansion-panel-text>
-                <div v-if="item.resourceType == 'resource'">
-                  <v-btn :href="FileApi.filePath + item.url" target="_blank">查看资源</v-btn>
+                <div v-if="item.resource.resourceType == 'resource'">
+                  <v-btn :href="FileApi.filePath + item.resource.url" target="_blank">查看资源</v-btn>
                 </div>
-                <div v-if="item.resourceType == 'simulation'">
-                  <v-btn :href="FileApi.filePath + item.url" target="_blank">打开实验</v-btn>
+                <div v-if="item.resource.resourceType == 'simulation'">
+                  <v-btn :href="FileApi.filePath + item.resource.url" target="_blank">打开实验</v-btn>
                 </div>
-                <div v-if="item.resourceType == 'questions'">
-                  <QuestionsOptions disabled :type="item.type" :options="item.options.map(item => item.name)"
-                    :answer="item.answer?.split(',')">
+                <div v-if="item.resource.resourceType == 'questions'">
+                  <QuestionsOptions disabled :type="item.resource.type"
+                    :options="item.resource.options.map(item => item.name)" :answer="item.resource.answer?.split(',')">
                   </QuestionsOptions>
                 </div>
-                <div v-if="item.resourceType == 'testpaper'">
+                <div v-if="item.resource.resourceType == 'testpaper'">
                   <v-list>
-                    <v-list-item v-for="question in item.questions" :key="question.id" :title="question.name"
+                    <v-list-item v-for="question in item.resource.questions" :key="question.id" :title="question.name"
                       :subtitle="question.type"></v-list-item>
                   </v-list>
                 </div>
@@ -47,7 +50,7 @@
 <script setup>
 import { FileApi } from '@/api/file'
 
-const props = defineProps({
+defineProps({
   item: Object,
   manage: Boolean
 })

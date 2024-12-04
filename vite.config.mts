@@ -8,7 +8,7 @@ import VueRouter from 'unplugin-vue-router/vite'
 // Utilities
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
-// import vueDevTools from 'vite-plugin-vue-devtools'
+import vueDevTools from 'vite-plugin-vue-devtools'
 
 
 // https://vitejs.dev/config/
@@ -34,7 +34,7 @@ export default defineConfig({
         }],
       },
     }),
-    // vueDevTools(),
+    vueDevTools(),
   ],
   define: { 'process.env': {} },
   resolve: {

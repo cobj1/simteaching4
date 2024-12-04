@@ -25,7 +25,7 @@
     <VueDraggable ref="el" v-model="list" :animation="150" class="mt-8 vue-draggable pb-4" group="Resources"
       @end="handleVueDraggableEnd">
       <div v-for="item in list" :key="item.id">
-        <CourseResourceItem :item="item.resource" :manage="manage" @deleted="handleCourseResourceItemDeleted(item.id)">
+        <CourseResourceItem :item="item" :manage="manage" @deleted="handleCourseResourceItemDeleted(item.id)">
         </CourseResourceItem>
       </div>
     </VueDraggable>
@@ -45,7 +45,8 @@
         <VueDraggable ref="el" v-model="subitem.children" :animation="150" class="vue-draggable pb-4" group="Resources"
           @end="handleVueDraggableEnd">
           <div v-for="item in subitem.children" :key="item.id">
-            <CourseResourceItem :item="item.resource" :manage="manage" @deleted="handleCourseResourceItemDeleted(item.id)">
+            <CourseResourceItem :item="item" :manage="manage"
+              @deleted="handleCourseResourceItemDeleted(item.id)">
             </CourseResourceItem>
           </div>
         </VueDraggable>
@@ -82,7 +83,7 @@ import { CourseResourceApi } from '@/api/course/course-resource';
 import { CourseSubjectApi } from '@/api/course/course-subject';
 import { useRoute } from 'vue-router';
 
-const props = defineProps({
+defineProps({
   manage: Boolean
 })
 const route = useRoute()
@@ -107,17 +108,17 @@ const handleSelectionCoursewareConfirm = (value) => {
 }
 const handleSelectionSimulationConfirm = (value) => {
   courseworkSave(JSON.stringify(value.map((item, index) => {
-    return { cid: route.params.id, type: 'simulation', rid: item, order: list.value.length + index }
+    return { cid: route.params.id, type: 'simulation', rid: item, order: list.value.length + index, score: 100 }
   })))
 }
 const handleSelectionQuestionsConfirm = (value) => {
   courseworkSave(JSON.stringify(value.map((item, index) => {
-    return { cid: route.params.id, type: 'questions', rid: item, order: list.value.length + index }
+    return { cid: route.params.id, type: 'questions', rid: item, order: list.value.length + index, score: 100 }
   })))
 }
 const handleSelectionTestpaperConfirm = (value) => {
   courseworkSave(JSON.stringify(value.map((item, index) => {
-    return { cid: route.params.id, type: 'testpaper', rid: item, order: list.value.length + index }
+    return { cid: route.params.id, type: 'testpaper', rid: item, order: list.value.length + index, score: 100 }
   })))
 }
 const handleVueDraggableEnd = async (event) => {

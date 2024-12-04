@@ -1,7 +1,7 @@
 <template>
   <v-menu>
     <template v-slot:activator="{ props }">
-      <v-btn icon="mdi-dots-vertical" variant="text" :size="30" v-bind="props"></v-btn>
+      <v-btn icon="mdi-dots-vertical" density="comfortable" variant="text" v-bind="props"></v-btn>
     </template>
     <v-list width="160">
       <v-list-item title="删除" prepend-icon="mdi-delete" link @click="deleteItem">
