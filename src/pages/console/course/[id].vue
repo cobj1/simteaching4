@@ -13,20 +13,14 @@
           <CourseTabInfo :data="data" @change="loadItem"></CourseTabInfo>
         </v-tabs-window-item>
         <v-tabs-window-item value="coursework">
-          <CourseTabCoursework v-model:list="list" v-model:subjects="subjects" :cid="route.params.id"
-            @change="loadItems" @save="handleCourseTabCourseworkSave" @del="handleCourseTabCourseworkDel"
-            @change-order="handleCourseTabCourseworkChangeOrder">
+          <CourseTabCoursework :cid="route.params.id">
           </CourseTabCoursework>
         </v-tabs-window-item>
         <v-tabs-window-item value="user">
           <CourseTabUser :data="data"></CourseTabUser>
         </v-tabs-window-item>
         <v-tabs-window-item value="grade">
-          <v-container fluid max-width="1000px" min-height="800px">
-            <v-empty-state icon="mdi-magnify"
-              text="Try adjusting your search terms or filters. Sometimes less specific terms or broader queries can help you find what you're looking for."
-              title="We couldn't find a match."></v-empty-state>
-          </v-container>
+          <CourseTabResult></CourseTabResult>
         </v-tabs-window-item>
       </v-tabs-window>
     </v-sheet>
@@ -37,15 +31,13 @@
 import { CourseApi } from '@/api/course';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { CourseSubjectApi } from '@/api/course/course-subject';
-import { CourseResourceApi } from '@/api/course-resource';
 
 const route = useRoute()
 const data = ref({
   id: null,
   name: ''
 })
-const tab = ref('user')
+const tab = ref('coursework')
 const tabs = ref([
   {
     icon: 'mdi-book-open-page-variant',
@@ -68,46 +60,20 @@ const tabs = ref([
     value: 'grade',
   },
 ])
-const list = ref([])
-const subjects = ref([])
+
 
 watch(() => route.params.id, () => {
   loadItem()
-  loadItems()
 })
-const handleCourseTabCourseworkDel = async (id) => {
-  await CourseResourceApi.del(id)
-  loadItems()
-}
-const handleCourseTabCourseworkSave = async (array) => {
-  await CourseResourceApi.save(array)
-  loadItems()
-}
-const handleCourseTabCourseworkChangeOrder = async () => {
-  const newList = []
-  newList.push(...list.value)
-  subjects.value.forEach(subject => newList.push(...subject.children.map(item => { return { ...item, sid: subject.id } })))
-  await CourseResourceApi.save(newList.map(item => {
-    return {
-      cid: item.cid,
-      rid: item.rid,
-      sid: item.sid,
-      type: item.type
-    }
-  }), true, route.params.id)
-}
+
+
 
 const loadItem = async () => {
   data.value = await CourseApi.info(route.params.id)
 }
-const loadItems = async () => {
-  const res = await CourseResourceApi.list(route.params.id)
-  subjects.value = (await CourseSubjectApi.list(route.params.id)).map(subject => { return { ...subject, children: res.filter(item => item.sid == subject.id) || [] } })
-  list.value = res.filter(item => !item.sid)
-}
+
 onMounted(() => {
   loadItem()
-  loadItems()
 })
 </script>
 

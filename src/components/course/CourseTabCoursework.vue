@@ -19,7 +19,7 @@
         </v-list-item>
         <v-divider></v-divider>
         <v-list-item title="主题" prepend-icon="mdi-list-box-outline" link
-          @click="CourseSubjectEditRef.editItem(cid, subjects.length)"></v-list-item>
+          @click="CourseSubjectEditRef.editItem(route.params.id, subjects.length)"></v-list-item>
       </v-list>
     </v-menu>
     <VueDraggable ref="el" v-model="list" :animation="150" class="mt-8 vue-draggable pb-4" group="Resources"
@@ -35,8 +35,8 @@
       </template>
       <template #append>
         <div class="mr-4">
-          <CourseSubjectOptions :item="subitem" @change="emit('change')"
-            @rename="CourseSubjectEditRef.editItem(cid, subjects.length, subitem)">
+          <CourseSubjectOptions :item="subitem" @change="loadItems"
+            @rename="CourseSubjectEditRef.editItem(route.params.id, subjects.length, subitem)">
           </CourseSubjectOptions>
         </div>
       </template>
@@ -67,7 +67,7 @@
         </div>
       </template>
     </v-empty-state>
-    <CourseSubjectEdit ref="CourseSubjectEditRef" @change="emit('change')"></CourseSubjectEdit>
+    <CourseSubjectEdit ref="CourseSubjectEditRef" @change="loadItems"></CourseSubjectEdit>
   </v-container>
 </template>
 
@@ -77,45 +77,71 @@ import SelectionCourseware from '@/components/resource/SelectionCourseware.vue';
 import SelectionTestpaper from '@/components/resource/SelectionTestpaper.vue';
 import SelectionQuestions from '@/components/resource/SelectionQuestions.vue';
 import SelectionSimulation from '@/components/resource/SelectionSimulation.vue';
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import { CourseResourceApi } from '@/api/course-resource';
+import { CourseSubjectApi } from '@/api/course/course-subject';
+import { useRoute } from 'vue-router';
 
-const list = defineModel('list')
-const subjects = defineModel('subjects')
-const emit = defineEmits(['change', 'changeOrder', 'save', 'del'])
-const props = defineProps(['cid'])
+const route = useRoute()
+const list = ref([])
+const subjects = ref([])
 const el = ref()
 const CourseSubjectEditRef = ref()
 
-const handleCourseResourceItemDeleted = (id) => {
-  emit('del', id)
+watch(() => route.params.id, () => {
+  loadItems()
+})
+
+const handleCourseResourceItemDeleted = async (id) => {
+  await CourseResourceApi.del(id)
+  loadItems()
 }
 
 const handleSelectionCoursewareConfirm = (value) => {
-  emit('save', JSON.stringify(value.map((item, index) => {
-    return { cid: props.cid, type: 'resource', rid: item, order: list.value.length + index }
+  courseworkSave(JSON.stringify(value.map((item, index) => {
+    return { cid: route.params.id, type: 'resource', rid: item, order: list.value.length + index }
   })))
 }
 const handleSelectionSimulationConfirm = (value) => {
-  emit('save', JSON.stringify(value.map((item, index) => {
-    return { cid: props.cid, type: 'simulation', rid: item, order: list.value.length + index }
+  courseworkSave(JSON.stringify(value.map((item, index) => {
+    return { cid: route.params.id, type: 'simulation', rid: item, order: list.value.length + index }
   })))
 }
 const handleSelectionQuestionsConfirm = (value) => {
-  emit('save', JSON.stringify(value.map((item, index) => {
-    return { cid: props.cid, type: 'questions', rid: item, order: list.value.length + index }
+  courseworkSave(JSON.stringify(value.map((item, index) => {
+    return { cid: route.params.id, type: 'questions', rid: item, order: list.value.length + index }
   })))
 }
 const handleSelectionTestpaperConfirm = (value) => {
-  emit('save', JSON.stringify(value.map((item, index) => {
-    return { cid: props.cid, type: 'testpaper', rid: item, order: list.value.length + index }
+  courseworkSave(JSON.stringify(value.map((item, index) => {
+    return { cid: route.params.id, type: 'testpaper', rid: item, order: list.value.length + index }
   })))
 }
-
-const handleVueDraggableEnd = (event) => {
-  if (event.newIndex != event.oldIndex)
-    emit('changeOrder')
+const handleVueDraggableEnd = async (event) => {
+  if (event.newIndex != event.oldIndex) {
+    const newList = []
+    newList.push(...list.value)
+    subjects.value.forEach(subject => newList.push(...subject.children.map(item => { return { ...item, sid: subject.id } })))
+    await CourseResourceApi.save(newList.map(item => {
+      return { cid: item.cid, rid: item.rid, sid: item.sid, type: item.type }
+    }), true, route.params.id)
+  }
 }
 
+const courseworkSave = async (array) => {
+  await CourseResourceApi.save(array)
+  loadItems()
+}
+
+const loadItems = async () => {
+  const res = await CourseResourceApi.list(route.params.id)
+  subjects.value = (await CourseSubjectApi.list(route.params.id)).map(subject => { return { ...subject, children: res.filter(item => item.sid == subject.id) || [] } })
+  list.value = res.filter(item => !item.sid)
+}
+
+onMounted(() => {
+  loadItems()
+})
 </script>
 
 <style lang="scss" scoped>
