@@ -21,7 +21,7 @@
       <template #title>
         <div class="text-h4 pl-4">学生</div>
       </template>
-      <template #append>
+      <template #append v-if="manage">
         <v-btn size="x-large" icon density="comfortable">
           <v-icon icon="mdi-account-multiple-plus-outline"></v-icon>
           <SelectionUser @confirm="handleSelectionUserConfirm"></SelectionUser>
@@ -35,7 +35,7 @@
                 <v-avatar image="@/assets/avatar/default-avatar.svg" />
               </v-avatar>
             </template>
-            <template #append>
+            <template #append v-if="manage">
               <UserOptions @deleted="handleUserOptionsDeleted(item.id)"></UserOptions>
             </template>
           </v-list-item>
@@ -69,7 +69,10 @@ import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute()
-const props = defineProps(['data'])
+const props = defineProps({
+  data: Object,
+  manage: Boolean
+})
 const items = ref([])
 const creator = ref({})
 
@@ -96,6 +99,7 @@ const loadItems = async () => {
 
 onMounted(() => {
   loadItems()
+  loadCreator()
 })
 </script>
 

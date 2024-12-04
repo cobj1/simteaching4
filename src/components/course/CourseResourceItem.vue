@@ -13,7 +13,7 @@
                   class="mr-2" />
                 <v-icon v-if="item.resourceType == 'testpaper'" icon="mdi-ab-testing" size="30" class="mr-2" />
                 {{ item.name }}
-                <template v-slot:actions>
+                <template v-slot:actions v-if="manage">
                   <CourseResourceItemOptions @deleted="emit('deleted')"></CourseResourceItemOptions>
                 </template>
               </v-expansion-panel-title>
@@ -47,7 +47,10 @@
 <script setup>
 import { FileApi } from '@/api/file'
 
-defineProps(['item'])
+const props = defineProps({
+  item: Object,
+  manage: Boolean
+})
 const emit = defineEmits(['deleted'])
 </script>
 

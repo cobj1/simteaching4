@@ -8,10 +8,10 @@
         <v-card-title>{{ data.name }}</v-card-title>
         <v-card-subtitle>{{ data.explain }}</v-card-subtitle>
       </v-img>
-      <v-card-text class="pt-4 px-8">
+      <v-card-text class="pa-8">
         <v-row>
-          <v-col cols="12 py-1">
-            <strong class="mr-2">课程代码</strong> {{ data.code }}
+          <v-col cols="12 py-1" v-if="manage">
+            <strong class="mr-2">课程代码 </strong> {{ data.code }}
           </v-col>
           <v-col cols="12 py-1">
             <strong class="mr-2">主题</strong> {{ data.subject }}
@@ -23,7 +23,7 @@
       </v-card-text>
     </v-card>
     <v-row class="mt-4">
-      <v-col cols="12" md="3">
+      <v-col cols="12" md="3" v-if="manage">
         <v-card title="课程代码">
           <v-card-text class="text-h6 text-blue-darken-3 font-weight-medium"> {{ data.code }} </v-card-text>
           <template #append>
@@ -31,7 +31,7 @@
           </template>
         </v-card>
       </v-col>
-      <v-col cols="12" md="9">
+      <v-col cols="12" md="9" v-if="manage">
         <v-card>
           <VCardText>
             <v-textarea v-model="text" label="发布课程通知"></v-textarea>
@@ -48,7 +48,10 @@
 <script setup>
 import { ref } from 'vue';
 
-defineProps(['data'])
+defineProps({
+  data: Object,
+  manage: Boolean
+})
 const emit = defineEmits(['change'])
 const text = ref('')
 

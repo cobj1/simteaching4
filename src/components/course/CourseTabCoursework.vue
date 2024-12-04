@@ -1,10 +1,10 @@
 <template>
   <v-container fluid max-width="1000px" min-height="800px">
-    <v-menu>
+    <v-menu v-if="manage">
       <template v-slot:activator="{ props }">
         <v-btn prepend-icon="mdi-plus" rounded="xl" size="large" color="#5865f2" v-bind="props">创建</v-btn>
       </template>
-      <v-list class="mt-2" width="160">
+      <v-list class="mt-2" width="180">
         <v-list-item title="资料" prepend-icon="mdi-book-outline" link>
           <SelectionCourseware @confirm="handleSelectionCoursewareConfirm"></SelectionCourseware>
         </v-list-item>
@@ -14,7 +14,7 @@
         <v-list-item title="题目" prepend-icon="mdi-head-question-outline" link>
           <SelectionQuestions @confirm="handleSelectionQuestionsConfirm"></SelectionQuestions>
         </v-list-item>
-        <v-list-item title="测试" prepend-icon="mdi-ab-testing" link>
+        <v-list-item title="作业测试" prepend-icon="mdi-ab-testing" link>
           <SelectionTestpaper @confirm="handleSelectionTestpaperConfirm"></SelectionTestpaper>
         </v-list-item>
         <v-divider></v-divider>
@@ -25,7 +25,7 @@
     <VueDraggable ref="el" v-model="list" :animation="150" class="mt-8 vue-draggable pb-4" group="Resources"
       @end="handleVueDraggableEnd">
       <div v-for="item in list" :key="item.id">
-        <CourseResourceItem :item="item.resource" @deleted="handleCourseResourceItemDeleted(item.id)">
+        <CourseResourceItem :item="item.resource" :manage="manage" @deleted="handleCourseResourceItemDeleted(item.id)">
         </CourseResourceItem>
       </div>
     </VueDraggable>
@@ -33,7 +33,7 @@
       <template #title>
         <div class="text-h4 pl-4">{{ subitem.name }}</div>
       </template>
-      <template #append>
+      <template #append v-if="manage">
         <div class="mr-4">
           <CourseSubjectOptions :item="subitem" @change="loadItems"
             @rename="CourseSubjectEditRef.editItem(route.params.id, subjects.length, subitem)">
@@ -45,7 +45,7 @@
         <VueDraggable ref="el" v-model="subitem.children" :animation="150" class="vue-draggable pb-4" group="Resources"
           @end="handleVueDraggableEnd">
           <div v-for="item in subitem.children" :key="item.id">
-            <CourseResourceItem :item="item.resource" @deleted="handleCourseResourceItemDeleted(item.id)">
+            <CourseResourceItem :item="item.resource" :manage="manage" @deleted="handleCourseResourceItemDeleted(item.id)">
             </CourseResourceItem>
           </div>
         </VueDraggable>
@@ -82,6 +82,9 @@ import { CourseResourceApi } from '@/api/course-resource';
 import { CourseSubjectApi } from '@/api/course/course-subject';
 import { useRoute } from 'vue-router';
 
+const props = defineProps({
+  manage: Boolean
+})
 const route = useRoute()
 const list = ref([])
 const subjects = ref([])

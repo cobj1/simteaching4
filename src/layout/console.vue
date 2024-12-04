@@ -255,18 +255,24 @@ const loadCourse = async () => {
         avatar: item.name.charAt(0),
         title: item.name,
         subtitle: item.explain,
-        path: '/console/course/' + item.id
+        path: `/console/course/${item.id}/manage`
       }
     }))
   }
-  if (false) {
-    courseManage.value.push(
-      {
-        prependIcon: 'mdi-school-outline',
-        type: 'subheader',
-        title: '已注册',
+  if (true) {
+    courseManage.value.push({
+      prependIcon: 'mdi-school-outline',
+      type: 'subheader',
+      title: '已注册',
+    })
+    courseRegister.value.push(...courses.map(item => {
+      return {
+        avatar: item.name.charAt(0),
+        title: item.name,
+        subtitle: item.explain,
+        path: `/console/course/${item.id}`
       }
-    )
+    }))
   }
 }
 

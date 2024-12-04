@@ -10,13 +10,16 @@
       <VDivider></VDivider>
       <v-tabs-window v-model="tab">
         <v-tabs-window-item value="info">
-          <CourseTabInfo :data="data" @change="loadItem"></CourseTabInfo>
+          <CourseTabInfo :data="data" manage @change="loadItem"></CourseTabInfo>
         </v-tabs-window-item>
         <v-tabs-window-item value="coursework">
-          <CourseTabCoursework :cid="route.params.id"></CourseTabCoursework>
+          <CourseTabCoursework :cid="route.params.id" manage></CourseTabCoursework>
         </v-tabs-window-item>
         <v-tabs-window-item value="user">
-          <CourseTabUser :data="data"></CourseTabUser>
+          <CourseTabUser :data="data" manage></CourseTabUser>
+        </v-tabs-window-item>
+        <v-tabs-window-item value="grade">
+          <CourseTabResult></CourseTabResult>
         </v-tabs-window-item>
       </v-tabs-window>
     </v-sheet>
@@ -50,7 +53,11 @@ const tabs = ref([
     text: '用户',
     value: 'user',
   },
-
+  {
+    icon: 'mdi-license',
+    text: '成绩',
+    value: 'grade',
+  },
 ])
 
 
