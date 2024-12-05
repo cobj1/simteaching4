@@ -83,9 +83,7 @@ import { VNumberInput } from 'vuetify/labs/VNumberInput'
 import { computed, nextTick, ref } from 'vue';
 import { ResourceApi } from '@/api/resource/resource';
 import { ResourceTestpaperApi } from '@/api/resource/resource-paper';
-import { useRouter } from 'vue-router';
 
-const router = useRouter()
 const selected = defineModel()
 const props = defineProps({
   enableSelection: { type: Boolean, default: false }
