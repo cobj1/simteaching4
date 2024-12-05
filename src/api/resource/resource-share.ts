@@ -18,6 +18,7 @@ export const ResourceShareApi = {
   page(params: {
     current: number;
     size: number;
+    sortKey?: string;
     sortOrder?: string;
     category?: string;
     name?: string;

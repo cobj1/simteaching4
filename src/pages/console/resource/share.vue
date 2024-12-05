@@ -3,7 +3,7 @@
     <VToolbar :title="title"> </VToolbar>
     <div class="d-flex">
       <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="categorys"
-        item-title="title" item-value="id"></v-select>
+        item-title="title" item-value="title"></v-select>
       <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..."
         append-inner-icon="mdi-magnify"></v-text-field>
     </div>
@@ -34,15 +34,27 @@
                 <v-card-subtitle>
                   {{ item.creatorName }} | {{ item.orgName }}
                 </v-card-subtitle>
-                <v-card-actions>
+                <v-card-actions class="px-4">
+                  <v-icon icon="mdi-file-plus" size="small"></v-icon>
+                  <div class="text-caption">0</div>
                   <v-spacer></v-spacer>
                   <v-btn color="medium-emphasis" prepend-icon="mdi-plus" size="small" @click.stop>加入资源库</v-btn>
                 </v-card-actions>
+                <v-chip class="position-absolute top-0 rounded-bs-0	" label>
+                  <v-icon icon="mdi-label" start></v-icon>
+                  <span v-if="item.type == 'courseware'">资料</span>
+                  <span v-if="item.type == 'questions'">题目</span>
+                  <span v-if="item.type == 'simulation'">仿真</span>
+                  {{ item.category ? '&nbsp;-&nbsp;' + item.category : '' }}
+                </v-chip>
               </v-card>
             </v-sheet>
           </v-sheet>
           <template v-slot:empty>
-            <VSheet class="d-flex ga-2">
+            <v-empty-state v-if="items.length == 0" icon="mdi-magnify"
+              text="Try adjusting your search terms or filters. Sometimes less specific terms or broader queries can help you find what you're looking for."
+              title="We couldn't find a match."></v-empty-state>
+            <VSheet v-else class="d-flex ga-2">
               <v-icon icon="mdi-check-circle-outline"></v-icon>
               已全部加载
             </VSheet>
@@ -60,7 +72,7 @@
 
 <script setup>
 import { ResourceShareApi } from '@/api/resource/resource-share';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 const props = defineProps({
   enableSelection: { type: Boolean, default: false }
@@ -73,23 +85,26 @@ const search = ref({
 })
 const options = ref({
   page: 1,
-  itemsPerPage: 15
+  itemsPerPage: 20
 })
 const totalItems = ref(0)
 const categorys = ref([])
 const drawer = ref()
 
+watch(() => [search.value.category, search.value.name], () => {
+  options.value.page = 1;
+  options.value.itemsPerPage = 15;
+  items.value = []
+  loadItems({ side: 'end', done() { } })
+})
+
 const loadItems = async ({ side, done }) => {
   if (side === 'end') {
-    const res = await ResourceShareApi.page({ current: options.value.page, size: options.value.itemsPerPage })
+    const res = await ResourceShareApi.page({ current: options.value.page, size: options.value.itemsPerPage, category: search.value.category, name: search.value.name })
     items.value.push(...res.records)
     options.value.page++;
     totalItems.value = res.total;
-    if (res.records.length > 0) {
-      done('ok')
-    } else {
-      done('empty')
-    }
+    if (res.records.length > 0) { done('ok') } else { done('empty') }
   }
 }
 
