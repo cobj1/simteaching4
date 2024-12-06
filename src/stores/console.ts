@@ -70,7 +70,7 @@ export const useConsoleStore = defineStore("console", () => {
     },
     {
       show: accountStore.auth("share"),
-      title: "共享资源库",
+      title: "共享资源",
       prependIcon: "mdi-share-variant-outline",
       link: true,
       path: "/console/resource/share",

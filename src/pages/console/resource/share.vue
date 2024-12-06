@@ -2,6 +2,8 @@
   <VCard>
     <VToolbar :title="title"> </VToolbar>
     <div class="d-flex">
+      <v-combobox v-model="search.category" :items="categorys" label="筛选类型..." item-title="title" item-value="title"
+        multiple></v-combobox>
       <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="categorys"
         item-title="title" item-value="title"></v-select>
       <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..."
@@ -9,6 +11,7 @@
     </div>
 
     <v-layout>
+
       <v-navigation-drawer v-model="drawer" temporary location="right" width="360">
         <v-img height="200" width="100%"
           src="https://lh5.googleusercontent.com/YDbm0zyiNgt4m34LZduCVk1pVshGxnllcNzvjeWBnjHYc3jaaOudLYI2iQNPHuS1-yQfcqpWA98=w90-h90-p"></v-img>
@@ -116,6 +119,7 @@ const loadCategorys = async () => {
 onMounted(() => {
   loadCategorys()
 })
+
 </script>
 
 <style scoped></style>
