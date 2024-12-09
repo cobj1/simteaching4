@@ -1,27 +1,28 @@
 <template>
   <VCard>
-    <VToolbar :title="title"> </VToolbar>
+    <VToolbar :title="title">
+      <v-btn color="primary" dark @click="sharedResourcesDialog = true">共享资源</v-btn>
+    </VToolbar>
     <div class="d-flex">
-      <v-combobox v-model="search.category" :items="categorys" label="筛选类型..." item-title="title" item-value="title"
-        multiple></v-combobox>
-      <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="categorys"
-        item-title="title" item-value="title"></v-select>
+      <v-combobox hide-details v-model="search.category" :items="categorys" class="pa-2" label="筛选种类..."
+        item-title="title" multiple max-width="33%"></v-combobox>
+      <v-select hide-details v-model="search.type" class="pa-2" label="筛选类型..." :items="types" item-title="title"
+        item-value="value"></v-select>
       <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..."
         append-inner-icon="mdi-magnify"></v-text-field>
     </div>
-
     <v-layout>
-
       <v-navigation-drawer v-model="drawer" temporary location="right" width="360">
-        <v-img height="200" width="100%"
-          src="https://lh5.googleusercontent.com/YDbm0zyiNgt4m34LZduCVk1pVshGxnllcNzvjeWBnjHYc3jaaOudLYI2iQNPHuS1-yQfcqpWA98=w90-h90-p"></v-img>
-        <VDivider></VDivider>
+        <v-img height="200" width="100%" v-if="drawerItem.cover" :src="FileApi.filePath + drawerItem.cover"></v-img>
+        <VDivider v-if="drawerItem.cover"></VDivider>
         <v-list density="compact" nav>
-          <v-list-item prepend-icon="mdi-file-outline" title="jess-harding-lqT6NAmTaiY-unsplash.jpg"></v-list-item>
-          <v-list-item prepend-icon="mdi-calendar-range" subtitle="共享时间: 2024-12-05 10:28:52"></v-list-item>
-          <v-list-item prepend-icon="mdi-format-list-bulleted-type" subtitle="文件类型: 课件资源"></v-list-item>
-          <v-list-item prepend-icon="mdi-account-outline" subtitle="分享人: 老师"></v-list-item>
-          <v-list-item prepend-icon="mdi-bank" subtitle="组织: 清华"></v-list-item>
+          <v-list-item prepend-icon="mdi-file-outline" :title="drawerItem.rname"></v-list-item>
+          <v-list-item prepend-icon="mdi-calendar-range" :subtitle="`共享时间: ${drawerItem.createTime}`"></v-list-item>
+          <v-list-item prepend-icon="mdi-format-list-bulleted-type"
+            :subtitle="`文件类型: ${typeLabel(drawerItem.type)}`"></v-list-item>
+          <v-list-item prepend-icon="mdi-account-outline" :subtitle="`分享人: ${drawerItem.creatorName}`"></v-list-item>
+          <v-list-item prepend-icon="mdi-bank" :subtitle="`组织: ${drawerItem.orgName}`"
+            v-if="drawerItem.orgName"></v-list-item>
         </v-list>
         <v-btn color="primary" class="d-flex mx-auto" prepend-icon="mdi-plus">加入资源库</v-btn>
       </v-navigation-drawer>
@@ -29,13 +30,14 @@
         <v-infinite-scroll height="calc(100vh - 280px)" @load="loadItems">
           <v-sheet class="d-flex flex-wrap pa-4 ga-4 justify-center">
             <v-sheet v-for="(item) in items" :key="item.id">
-              <v-card width="300" hover @click.stop="drawer = !drawer">
-                <FileIcon :file="item.rname"></FileIcon>
+              <v-card width="300" hover @click.stop="viewItem(item)">
+                <FileIcon :cover="item.cover"></FileIcon>
                 <v-card-title>
                   {{ item.rname }}
                 </v-card-title>
                 <v-card-subtitle>
-                  {{ item.creatorName }} | {{ item.orgName }}
+                  {{ item.creatorName }}
+                  <span v-if="item.orgName"> | {{ item.orgName }}</span>
                 </v-card-subtitle>
                 <v-card-actions class="px-4">
                   <v-icon icon="mdi-file-plus" size="small"></v-icon>
@@ -45,9 +47,7 @@
                 </v-card-actions>
                 <v-chip class="position-absolute top-0 rounded-bs-0	" label>
                   <v-icon icon="mdi-label" start></v-icon>
-                  <span v-if="item.type == 'courseware'">资料</span>
-                  <span v-if="item.type == 'questions'">题目</span>
-                  <span v-if="item.type == 'simulation'">仿真</span>
+                  <span>{{ typeLabel(item.type) }}</span>
                   {{ item.category ? '&nbsp;-&nbsp;' + item.category : '' }}
                 </v-chip>
               </v-card>
@@ -69,13 +69,57 @@
         </div>
       </v-main>
     </v-layout>
+    <v-dialog v-model="sharedResourcesDialog" max-width="600">
+      <v-card prepend-icon="mdi-share-variant-outline" title="共享资源">
+        <v-card-text>
+          <v-row dense>
+            <v-col cols="12">
+              <v-select hide-details v-model="sharedResourcesForm.category" label="资源种类" :items="categorys"
+                item-title="title" item-value="title"></v-select>
+            </v-col>
+            <v-col cols="12">
+              <v-menu v-if="sharedResourcesForm.rids.length == 0">
+                <template v-slot:activator="{ props }">
+                  <v-btn color="primary" dark v-bind="props">选择资源</v-btn>
+                </template>
+                <v-list class="mt-2" width="180">
+                  <v-list-item title="资料" prepend-icon="mdi-book-outline" link>
+                    <SelectionCourseware @confirm="handleSelectionCoursewareConfirm"></SelectionCourseware>
+                  </v-list-item>
+                  <v-list-item title="仿真" prepend-icon="mdi-test-tube" link>
+                    <SelectionSimulation @confirm="handleSelectionSimulationConfirm"></SelectionSimulation>
+                  </v-list-item>
+                  <v-list-item title="题目" prepend-icon="mdi-head-question-outline" link>
+                    <SelectionQuestions @confirm="handleSelectionQuestionsConfirm"></SelectionQuestions>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+              <div v-else class="text-caption pl-4">
+                * 已选
+                <span>{{ sharedResourcesForm.rids.length }}</span>
+                个
+                <span>{{ typeLabel(sharedResourcesForm.type) }}</span>
+                类型资源
+              </div>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text="取消" variant="plain" @click="closeSharedResources"></v-btn>
+          <v-btn color="primary" text="确认" variant="tonal" @click="confirmSharedResources"></v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </VCard>
 
 </template>
 
 <script setup>
+import { FileApi } from '@/api/file';
 import { ResourceShareApi } from '@/api/resource/resource-share';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
 const props = defineProps({
   enableSelection: { type: Boolean, default: false }
@@ -84,7 +128,8 @@ const items = ref([])
 const title = computed(() => props.enableSelection ? '选择共享资源' : '共享资源库')
 const search = ref({
   name: '',
-  category: null,
+  type: null,
+  category: [],
 })
 const options = ref({
   page: 1,
@@ -92,18 +137,77 @@ const options = ref({
 })
 const totalItems = ref(0)
 const categorys = ref([])
+const types = ref([{ value: 'courseware', title: '资料' }, { value: 'questions', title: '题目' }, { value: 'simulation', title: '仿真' }])
 const drawer = ref()
+const drawerItem = ref({})
+const sharedResourcesDialog = ref(false)
+const sharedResourcesForm = ref({
+  type: null,
+  category: null,
+  rids: []
+})
 
-watch(() => [search.value.category, search.value.name], () => {
+watch(() => [search.value.category, search.value.type, search.value.name], () => {
+  reloadItems()
+})
+
+
+const handleSelectionCoursewareConfirm = (value) => {
+  sharedResourcesForm.value.rids = value
+  sharedResourcesForm.value.type = 'courseware'
+}
+const handleSelectionSimulationConfirm = (value) => {
+  sharedResourcesForm.value.rids = value
+  sharedResourcesForm.value.type = 'simulation'
+}
+const handleSelectionQuestionsConfirm = (value) => {
+  sharedResourcesForm.value.rids = value
+  sharedResourcesForm.value.type = 'questions'
+}
+
+const typeLabel = (key) => {
+  switch (key) {
+    case 'courseware':
+      return '资料';
+    case 'questions':
+      return '题目';
+    case 'simulation':
+      return '仿真';
+  }
+  return '';
+}
+
+const viewItem = (value) => {
+  drawerItem.value = value;
+  drawer.value = true;
+}
+
+const closeSharedResources = () => {
+  sharedResourcesDialog.value = false
+  nextTick(() => {
+    sharedResourcesForm.value.type = null
+    sharedResourcesForm.value.category = null
+    sharedResourcesForm.value.rids = []
+  })
+}
+
+const confirmSharedResources = async () => {
+  await ResourceShareApi.save({ rids: sharedResourcesForm.value.rids.join(','), type: sharedResourcesForm.value.type, category: sharedResourcesForm.value.category })
+  closeSharedResources()
+  reloadItems()
+}
+
+const reloadItems = () => {
   options.value.page = 1;
   options.value.itemsPerPage = 15;
   items.value = []
   loadItems({ side: 'end', done() { } })
-})
+}
 
 const loadItems = async ({ side, done }) => {
   if (side === 'end') {
-    const res = await ResourceShareApi.page({ current: options.value.page, size: options.value.itemsPerPage, category: search.value.category, name: search.value.name })
+    const category = search.value.category.map(item => item.title).join(',')
+    const res = await ResourceShareApi.page({ current: options.value.page, size: options.value.itemsPerPage, category, type: search.value.type, name: search.value.name })
     items.value.push(...res.records)
     options.value.page++;
     totalItems.value = res.total;

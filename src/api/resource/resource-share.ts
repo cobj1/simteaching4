@@ -22,6 +22,7 @@ export const ResourceShareApi = {
     sortOrder?: string;
     category?: string;
     name?: string;
+    type?: string;
   }) {
     params = PagingProcessor(params);
     return axios({
@@ -30,7 +31,7 @@ export const ResourceShareApi = {
       params,
     });
   },
-  save(data: ResourceShare) {
+  save(data: { rids: string; type: string; category: string }) {
     return axios({
       url: "/resource-share/save",
       method: "post",
