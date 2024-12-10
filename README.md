@@ -1,3 +1,7 @@
+![image](https://github.com/user-attachments/assets/b14f5ac5-696d-4e8e-a55d-3ec550a2bb0e)
+![image](https://github.com/user-attachments/assets/077c6afa-a462-4c32-94b4-e9cb78a7eb57)
+
+
 # Vuetify (Default)
 
 This is the official scaffolding tool for Vuetify, designed to give you a head start in building your new Vuetify application. It sets up a base template with all the necessary configurations and standard directory structure, enabling you to begin development without the hassle of setting up the project from scratch.
