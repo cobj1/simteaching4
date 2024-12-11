@@ -23,7 +23,7 @@
       </v-list>
     </v-menu>
     <VueDraggable ref="el" v-model="list" :animation="150" class="mt-8 vue-draggable pb-4" group="Resources"
-      @end="handleVueDraggableEnd">
+      :disabled="!manage" @end="handleVueDraggableEnd">
       <div v-for="item in list" :key="item.id">
         <CourseResourceItem :item="item" :manage="manage" @deleted="handleCourseResourceItemDeleted(item.id)">
         </CourseResourceItem>
@@ -43,10 +43,9 @@
       <VDivider class="py-2"></VDivider>
       <v-card-text class="pa-0">
         <VueDraggable ref="el" v-model="subitem.children" :animation="150" class="vue-draggable pb-4" group="Resources"
-          @end="handleVueDraggableEnd">
+          :disabled="!manage" @end="handleVueDraggableEnd">
           <div v-for="item in subitem.children" :key="item.id">
-            <CourseResourceItem :item="item" :manage="manage"
-              @deleted="handleCourseResourceItemDeleted(item.id)">
+            <CourseResourceItem :item="item" :manage="manage" @deleted="handleCourseResourceItemDeleted(item.id)">
             </CourseResourceItem>
           </div>
         </VueDraggable>

@@ -3,11 +3,19 @@
     <VToolbar :title="title">
       <v-btn color="primary" dark @click="sharedResourcesDialog = true">共享资源</v-btn>
     </VToolbar>
-    <div class="d-flex">
-      <v-combobox hide-details v-model="search.category" :items="categorys" class="pa-2" label="筛选种类..."
-        item-title="title" multiple max-width="33%"></v-combobox>
+    <div class="d-flex flex-wrap">
+      <v-btn-toggle v-model="search.self" class="ma-2 " style="height: 58px;">
+        <v-btn :value="false" height="58px">
+          全部资源
+        </v-btn>
+        <v-btn :value="true" height="58px">
+          共享的资源
+        </v-btn>
+      </v-btn-toggle>
       <v-select hide-details v-model="search.type" class="pa-2" label="筛选类型..." :items="types" item-title="title"
         item-value="value"></v-select>
+      <v-combobox hide-details v-model="search.category" :items="categorys" class="pa-2" label="筛选种类..."
+        item-title="title" multiple max-width="50%"></v-combobox>
       <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..."
         append-inner-icon="mdi-magnify"></v-text-field>
     </div>
@@ -43,7 +51,8 @@
                   <v-icon icon="mdi-file-plus" size="small"></v-icon>
                   <div class="text-caption">0</div>
                   <v-spacer></v-spacer>
-                  <v-btn color="medium-emphasis" prepend-icon="mdi-plus" size="small" @click.stop>加入资源库</v-btn>
+                  <v-btn color="medium-emphasis" prepend-icon="mdi-plus" size="small"
+                    @click.stop="joinTheRepository(item)">加入资源库</v-btn>
                 </v-card-actions>
                 <v-chip class="position-absolute top-0 rounded-bs-0	" label>
                   <v-icon icon="mdi-label" start></v-icon>
@@ -119,6 +128,7 @@
 <script setup>
 import { FileApi } from '@/api/file';
 import { ResourceShareApi } from '@/api/resource/resource-share';
+import { notify } from '@kyvg/vue3-notification';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
 const props = defineProps({
@@ -127,6 +137,7 @@ const props = defineProps({
 const items = ref([])
 const title = computed(() => props.enableSelection ? '选择共享资源' : '共享资源库')
 const search = ref({
+  self: false,
   name: '',
   type: null,
   category: [],
@@ -147,7 +158,7 @@ const sharedResourcesForm = ref({
   rids: []
 })
 
-watch(() => [search.value.category, search.value.type, search.value.name], () => {
+watch(() => [search.value.category, search.value.type, search.value.name, search.value.self], () => {
   reloadItems()
 })
 
@@ -167,12 +178,9 @@ const handleSelectionQuestionsConfirm = (value) => {
 
 const typeLabel = (key) => {
   switch (key) {
-    case 'courseware':
-      return '资料';
-    case 'questions':
-      return '题目';
-    case 'simulation':
-      return '仿真';
+    case 'courseware': return '资料';
+    case 'questions': return '题目';
+    case 'simulation': return '仿真';
   }
   return '';
 }
@@ -197,6 +205,19 @@ const confirmSharedResources = async () => {
   reloadItems()
 }
 
+const joinTheRepository = async (item) => {
+  const res = await ResourceShareApi.quoteResources(item.code)
+  if (res) {
+    notify({
+      title: "已加入资源库",
+      type: "info",
+      data: {
+        icon: "mdi-check-circle-outline",
+      },
+    });
+  }
+}
+
 const reloadItems = () => {
   options.value.page = 1;
   options.value.itemsPerPage = 15;
@@ -207,7 +228,7 @@ const reloadItems = () => {
 const loadItems = async ({ side, done }) => {
   if (side === 'end') {
     const category = search.value.category.map(item => item.title).join(',')
-    const res = await ResourceShareApi.page({ current: options.value.page, size: options.value.itemsPerPage, category, type: search.value.type, name: search.value.name })
+    const res = await ResourceShareApi.page({ current: options.value.page, size: options.value.itemsPerPage, category, type: search.value.type, name: search.value.name, self: search.value.self })
     items.value.push(...res.records)
     options.value.page++;
     totalItems.value = res.total;

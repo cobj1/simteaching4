@@ -23,6 +23,7 @@ export const ResourceShareApi = {
     category?: string;
     name?: string;
     type?: string;
+    self: boolean;
   }) {
     params = PagingProcessor(params);
     return axios({
@@ -57,6 +58,12 @@ export const ResourceShareApi = {
     return axios({
       url: "/resource-share/share-type/selectAll",
       method: "get",
+    });
+  },
+  quoteResources(code: string) {
+    return axios({
+      url: "/resource-share/quoteResources/" + code,
+      method: "post",
     });
   },
 };

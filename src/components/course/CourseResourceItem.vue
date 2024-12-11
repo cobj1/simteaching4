@@ -15,12 +15,12 @@
                 <v-icon v-if="item.resource.resourceType == 'testpaper'" icon="mdi-ab-testing" size="30" class="mr-2" />
                 {{ item.resource.name }}
                 <template v-slot:actions v-if="manage">
-                  <v-text-field v-if="item.score" label="分数" type="number" variant="underlined" hide-details
-                    density="compact" :min="1" :max="100" @click.stop></v-text-field>
+                  <v-text-field label="分数" v-model="score" type="number" variant="underlined" hide-details
+                    density="compact" :min="1" :max="100" @click.stop @change="onChangeScore"></v-text-field>
                   <CourseResourceItemOptions @deleted="emit('deleted')"></CourseResourceItemOptions>
                 </template>
               </v-expansion-panel-title>
-              <v-expansion-panel-text>
+              <v-expansion-panel-text v-if="manage">
                 <div v-if="item.resource.resourceType == 'resource'">
                   <v-btn :href="FileApi.filePath + item.resource.url" target="_blank">查看资源</v-btn>
                 </div>
@@ -39,6 +39,11 @@
                   </v-list>
                 </div>
               </v-expansion-panel-text>
+              <v-expansion-panel-text v-else>
+                <div>
+                  <v-btn @click="goResource">查看</v-btn>
+                </div>
+              </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
         </template>
@@ -48,13 +53,25 @@
 </template>
 
 <script setup>
+import { CourseResourceApi } from '@/api/course/course-resource';
 import { FileApi } from '@/api/file'
+import { ref } from 'vue';
 
-defineProps({
+const props = defineProps({
   item: Object,
   manage: Boolean
 })
 const emit = defineEmits(['deleted'])
+const score = ref(props.item.score)
+
+const onChangeScore = () => {
+  CourseResourceApi.updateCourseResourceScore(props.item.id, score.value)
+}
+
+const goResource = () => {
+  console.log(props.item)
+}
+
 </script>
 
 <style lang="scss" scoped></style>

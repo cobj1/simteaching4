@@ -26,6 +26,7 @@ declare module 'vue-router/auto-routes' {
     '/console/correct': RouteRecordInfo<'/console/correct', '/console/correct', Record<never, never>, Record<never, never>>,
     '/console/course/': RouteRecordInfo<'/console/course/', '/console/course', Record<never, never>, Record<never, never>>,
     '/console/course/[id]': RouteRecordInfo<'/console/course/[id]', '/console/course/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/console/course/[id].[rid]': RouteRecordInfo<'/console/course/[id].[rid]', '/console/course/:id/:rid', { id: ParamValue<true>, rid: ParamValue<true> }, { id: ParamValue<false>, rid: ParamValue<false> }>,
     '/console/course/[id].manage': RouteRecordInfo<'/console/course/[id].manage', '/console/course/:id/manage', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     '/console/dc/exam': RouteRecordInfo<'/console/dc/exam', '/console/dc/exam', Record<never, never>, Record<never, never>>,
     '/console/dc/student': RouteRecordInfo<'/console/dc/student', '/console/dc/student', Record<never, never>, Record<never, never>>,
@@ -52,5 +53,6 @@ declare module 'vue-router/auto-routes' {
     '/home/[path]/': RouteRecordInfo<'/home/[path]/', '/home/:path', { path: ParamValue<true> }, { path: ParamValue<false> }>,
     '/home/[path]/[id]': RouteRecordInfo<'/home/[path]/[id]', '/home/:path/:id', { path: ParamValue<true>, id: ParamValue<true> }, { path: ParamValue<false>, id: ParamValue<false> }>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
+    '/login_old': RouteRecordInfo<'/login_old', '/login_old', Record<never, never>, Record<never, never>>,
   }
 }

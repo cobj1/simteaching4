@@ -10,7 +10,7 @@ export const CourseResourceApi = {
       },
     });
   },
-  save(data: any, replace: any = '', cid: any = '') {
+  save(data: any, replace: any = "", cid: any = "") {
     return axios({
       url: `/courseResource/save?replace=${replace}&cid=${cid}`,
       method: "post",
@@ -30,6 +30,19 @@ export const CourseResourceApi = {
     return axios({
       url: "/courseResource/delByCourseId/" + cid,
       method: "post",
+    });
+  },
+  updateCourseResourceScore(crid: string, score: number) {
+    return axios({
+      url: "/courseResource/updateCourseResourceScore",
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        crid,
+        score,
+      },
     });
   },
 };

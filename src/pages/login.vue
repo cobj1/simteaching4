@@ -1,65 +1,65 @@
 <template>
-  <div class="bg">
-    <div class="login-box">
-      <h2>校级平台</h2>
-      <form>
-        <div class="user-box">
-          <input type="text" name="" required="" v-model="account" @keyup.enter="login">
-          <label>用户名</label>
-        </div>
-        <div class="user-box">
-          <input type="password" name="" required="" v-model="password" autocomplete="off"
-            @focus="$event.target.type = 'password'" @keyup.enter="login">
-          <label>密码</label>
-        </div>
-        <v-checkbox v-model="remember" style=" display: flex; text-align: left; color: #b5b5b5;"
-          label="记住密码"></v-checkbox>
+  <v-layout>
+    <v-main min-height="800">
+      <v-container class="h-100 pa-4" fluid>
+        <v-row align="center" class="h-100" justify="center">
+          <v-sheet class="flex-1-1 px-4" color="background" max-width="420">
+            <v-img class="mx-auto mb-4" max-width="60" src="/favicon.ico" />
 
-        <a href="#" @click="login">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          登录
-        </a>
-        <div style="position: relative;">
-          <div class="apply" @click="router.replace('/apply')">
-            <v-icon icon="mdi-card-account-details-outline" size="large" style="margin-right: 10px;"></v-icon>
-            申请试用
-          </div>
-        </div>
-      </form>
-    </div>
-    <v-snackbar v-model="snackbar" multi-line :timeout="2000" color="yellow-darken-1">
-      {{ text }}
+            <div class="text-h5 text-center mb-8 font-weight-medium">登录你的账户</div>
 
-      <template v-slot:actions>
-        <v-btn color="red" variant="text" @click="snackbar = false">
-          关闭
-        </v-btn>
-      </template>
-    </v-snackbar>
-  </div>
+            <v-sheet border="opacity-25 thin" class="overflow-hidden" rounded="lg">
+              <v-text-field v-model="account" density="compact" flat hide-details placeholder="账号" rounded="lg"
+                variant="solo" />
+
+              <v-divider />
+
+              <v-text-field v-model="password" density="compact" flat hide-details placeholder="密码" variant="solo"
+                type="password" />
+            </v-sheet>
+
+            <div class="py-4">
+              <div class="d-flex justify-space-between align-center">
+                <v-checkbox-btn v-model="remember" class="ms-n3" color="primary" label="Remember me">
+                  <template #label>
+                    <span class="text-body-2">记住账号</span>
+                  </template>
+                </v-checkbox-btn>
+
+                <a class="text-decoration-none text-primary text-body-2 font-weight-medium" href="#">
+                  忘记了密码 ?
+                </a>
+              </div>
+            </div>
+
+            <v-btn block class="text-none mb-8" color="primary" flat rounded="lg" text="登录" @click.enter="login" />
+
+            <div class="text-center text-body-2">
+              没有账户 ？ <a class="text-decoration-none text-primary font-weight-medium cursor-pointer"
+                @click="router.replace('/apply')">申请试用</a>
+            </div>
+          </v-sheet>
+        </v-row>
+      </v-container>
+    </v-main>
+  </v-layout>
 </template>
 
 <script setup>
-
-import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router';
+import { useAccountStore } from '@/stores/account';
+import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import AES from 'crypto-js/aes'
 import CryptoJS from 'crypto-js'
-import { useRouter } from 'vue-router';
-import { useAccountStore } from '@/stores/account';
+import { notify } from '@kyvg/vue3-notification';
 
-const accountStore = useAccountStore()
-const router = useRouter()
 const route = useRoute()
-const remember = ref(false)
-const redirect = ref(route.query.redirect)
+const router = useRouter()
+const accountStore = useAccountStore()
 const account = ref('')
 const password = ref('')
-const snackbar = ref(false)
-const text = ref('')
+const remember = ref(false)
+const redirect = ref(route.query.redirect)
 
 const login = async () => {
   if (account.value && password.value) {
@@ -75,14 +75,15 @@ const login = async () => {
         localStorage.removeItem('remember')
       }
       router.push(redirect.value || '/')
-    } else {
-      text.value = res.message
-      snackbar.value = true
     }
-
   } else {
-    text.value = `账号和密码不得为空`
-    snackbar.value = true
+    notify({
+      title: "账号和密码不得为空",
+      type: "info",
+      data: {
+        icon: "mdi-alert-circle",
+      },
+    });
   }
 }
 
@@ -102,368 +103,4 @@ onMounted(() => {
 
 </script>
 
-<style lang="scss" scoped>
-.page-header {
-  background: rgba(44, 44, 44, 0.2);
-  height: 100vh;
-  max-height: 1050px;
-
-  .page-header-image {
-    background-image: url('../assets/page_login/bg.jpg');
-    position: absolute;
-    background-size: cover;
-    background-position: center center;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-  }
-
-  .container {
-    max-width: 960px;
-    margin-right: auto;
-    margin-left: auto;
-    padding-right: 15px;
-    padding-left: 15px;
-    width: 100%;
-    height: 100%;
-    z-index: 2;
-    text-align: center;
-    position: relative;
-
-    .content-center {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      padding: 0 15px;
-      color: #FFFFFF;
-      width: 100%;
-      max-width: 880px;
-    }
-
-    .card {
-      border: 0;
-      display: inline-block;
-      position: relative;
-      overflow: hidden;
-      width: 100%;
-      margin-bottom: 20px;
-      background: transparent;
-      box-shadow: none;
-      border-radius: 0.25rem;
-      padding-bottom: 0.7rem;
-      max-width: 320px;
-    }
-
-    .logo-container {
-      width: 85px;
-      margin: 0 auto;
-      margin-bottom: 40px;
-
-      img {
-        width: 100%;
-      }
-    }
-
-    .form {
-      .input-group {
-        position: relative;
-        display: flex;
-        width: 100%;
-        margin-bottom: 10px;
-        border-radius: 30px;
-        transition: all .3s;
-
-        &:focus-within {
-          background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .input-group-addon {
-          margin-bottom: 0;
-          font-size: 1rem;
-          font-weight: 400;
-          line-height: 1.25;
-          text-align: center;
-          transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
-          border-radius: 30px;
-          border-top-right-radius: 0;
-          border-bottom-right-radius: 0;
-          padding: 15px 0 15px 19px;
-          background-color: rgba(255, 255, 255, 0.1);
-          border: none;
-          color: rgba(255, 255, 255, 0.8);
-        }
-
-        .form-control {
-          flex: 1 1 auto;
-          background-color: rgba(255, 255, 255, 0.1);
-          color: #FFFFFF;
-          font-size: 12px;
-          padding: 15px 18px 15px 16px;
-          border-left: 0 none;
-          border: medium none;
-          border-radius: 30px;
-          border-top-left-radius: 0;
-          border-bottom-left-radius: 0;
-          font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
-        }
-
-        .form-control::-webkit-input-placeholder {
-          color: #C0C0C0;
-        }
-
-        .form-control:-moz-placeholder {
-          color: #C0C0C0;
-        }
-
-        .form-control::-moz-placeholder {
-          color: #C0C0C0;
-        }
-
-        .form-control:-ms-input-placeholder {
-          color: #C0C0C0;
-        }
-      }
-
-      .footer.text-center {
-        text-align: center;
-
-        .btn {
-          text-align: center;
-          white-space: nowrap;
-          user-select: none;
-          transition: all .15s ease-in-out;
-          display: block;
-          font-weight: 400;
-          line-height: 1.35em;
-          margin: 5px 1px;
-          border: none;
-          cursor: pointer;
-          background-color: #6697fb;
-          color: #FFFFFF;
-          border-width: 1px;
-          border-radius: 30px;
-          font-size: 1em;
-          padding: 12px 48px;
-          text-decoration: none;
-
-          &:hover {
-            background-color: #76a7ff;
-            box-sizing: 0 0 10px #333;
-          }
-        }
-      }
-    }
-  }
-
-  &::before {
-    position: absolute;
-    z-index: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-    left: 0;
-    top: 0;
-    content: "";
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-}
-</style>
-<style scoped>
-.bg {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-  background: linear-gradient(#141e30, #243b55);
-}
-
-.login-box {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 400px;
-  padding: 40px;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, .5);
-  box-sizing: border-box;
-  box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
-  border-radius: 10px;
-  text-align: center;
-}
-
-.login-box h2 {
-  margin: 0 0 30px;
-  padding: 0;
-  color: #fff;
-  text-align: center;
-}
-
-.login-box .user-box {
-  position: relative;
-}
-
-.login-box .user-box input {
-  width: 100%;
-  padding: 10px 0;
-  font-size: 16px;
-  color: #fff;
-  margin-bottom: 30px;
-  border: none;
-  border-bottom: 1px solid #fff;
-  outline: none;
-  background: transparent;
-}
-
-.login-box .user-box label {
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 10px 0;
-  font-size: 16px;
-  color: #fff;
-  pointer-events: none;
-  transition: .4s;
-}
-
-.login-box .user-box input:focus~label,
-.login-box .user-box input:valid~label {
-  top: -20px;
-  left: 0;
-  color: #03e9f4;
-  font-size: 12px;
-}
-
-.login-box form a {
-  position: relative;
-  display: inline-block;
-  padding: 10px 20px;
-  color: #03e9f4;
-  font-size: 16px;
-  text-decoration: none;
-  text-transform: uppercase;
-  overflow: hidden;
-  transition: .5s;
-  margin-top: 40px;
-  letter-spacing: 4px
-}
-
-.login-box a:hover {
-  background: #03e9f4;
-  color: #fff;
-  border-radius: 5px;
-  box-shadow: 0 0 5px #03e9f4,
-    0 0 25px #03e9f4,
-    0 0 50px #03e9f4,
-    0 0 100px #03e9f4;
-}
-
-.login-box a span {
-  position: absolute;
-  display: block;
-}
-
-.login-box a span:nth-child(1) {
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #03e9f4);
-  animation: btn-anim1 1s linear infinite;
-}
-
-@keyframes btn-anim1 {
-  0% {
-    left: -100%;
-  }
-
-  50%,
-  100% {
-    left: 100%;
-  }
-}
-
-.login-box a span:nth-child(2) {
-  top: -100%;
-  right: 0;
-  width: 2px;
-  height: 100%;
-  background: linear-gradient(180deg, transparent, #03e9f4);
-  animation: btn-anim2 1s linear infinite;
-  animation-delay: .25s
-}
-
-@keyframes btn-anim2 {
-  0% {
-    top: -100%;
-  }
-
-  50%,
-  100% {
-    top: 100%;
-  }
-}
-
-.login-box a span:nth-child(3) {
-  bottom: 0;
-  right: -100%;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(270deg, transparent, #03e9f4);
-  animation: btn-anim3 1s linear infinite;
-  animation-delay: .5s
-}
-
-@keyframes btn-anim3 {
-  0% {
-    right: -100%;
-  }
-
-  50%,
-  100% {
-    right: 100%;
-  }
-}
-
-.login-box a span:nth-child(4) {
-  bottom: -100%;
-  left: 0;
-  width: 2px;
-  height: 100%;
-  background: linear-gradient(360deg, transparent, #03e9f4);
-  animation: btn-anim4 1s linear infinite;
-  animation-delay: .75s
-}
-
-@keyframes btn-anim4 {
-  0% {
-    bottom: -100%;
-  }
-
-  50%,
-  100% {
-    bottom: 100%;
-  }
-}
-
-.apply {
-  position: absolute;
-  right: 0;
-  font-size: 13px;
-  color: #778;
-  cursor: pointer;
-  transition: color .2s;
-  display: flex;
-  align-items: center;
-}
-
-.apply:hover {
-  color: #99a;
-}
-
-.apply .el-icon {
-  margin-right: 5px;
-}
-</style>
+<style lang="scss" scoped></style>
