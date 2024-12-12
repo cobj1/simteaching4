@@ -210,12 +210,12 @@ export const useConsoleStore = defineStore("console", () => {
             type: "subheader",
             title: "教授的课程",
           },
-          {
-            title: "待批改",
-            prependIcon: "mdi-view-dashboard-edit",
-            link: true,
-            path: "/console/correct",
-          }
+          // {
+          //   title: "待批改",
+          //   prependIcon: "mdi-view-dashboard-edit",
+          //   link: true,
+          //   path: "/console/correct",
+          // }
         );
         courseManage.value.push(
           ...courses.map((item: { name: string; explain: any; id: any }) => {

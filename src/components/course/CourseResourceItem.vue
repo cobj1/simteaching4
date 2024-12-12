@@ -65,7 +65,7 @@ const emit = defineEmits(['deleted'])
 const score = ref(props.item.score)
 
 const onChangeScore = () => {
-  CourseResourceApi.updateCourseResourceScore(props.item.id, score.value)
+  CourseResourceApi.updateScore(props.item.id, score.value)
 }
 
 const goResource = () => {

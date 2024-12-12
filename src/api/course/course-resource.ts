@@ -32,12 +32,12 @@ export const CourseResourceApi = {
       method: "post",
     });
   },
-  updateCourseResourceScore(crid: string, score: number) {
+  updateScore(crid: string, score: number) {
     return axios({
-      url: "/courseResource/updateCourseResourceScore",
+      url: "/courseResource/updateScore",
       method: "post",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
       },
       data: {
         crid,
