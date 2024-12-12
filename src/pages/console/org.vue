@@ -11,14 +11,17 @@
             {{ item.name }} {{ item.childrenCount > 0 ? ` ( ${item.childrenCount} ) ` : `` }}
           </template>
           <template #append="{ item }">
-            <v-btn prepend-icon="mdi-subdirectory-arrow-right" variant="text" @click.stop="newItem(item)">
-              添加子组织
+            <v-btn variant="text" min-width="30px" class="pa-2" @click.stop="newItem(item)">
+              <v-icon icon="mdi-subdirectory-arrow-right"></v-icon>
+              <span class="ml-1" v-show="!$vuetify.display.smAndDown">添加子组织</span>
             </v-btn>
-            <v-btn prepend-icon="mdi-pencil" variant="text" @click.stop="updateNameItem(item)">
-              修改名称
+            <v-btn variant="text" min-width="30px" class="pa-2" @click.stop="updateNameItem(item)">
+              <v-icon icon="mdi-rename"></v-icon>
+              <span class="ml-1" v-show="!$vuetify.display.smAndDown">重命名</span>
             </v-btn>
-            <v-btn prepend-icon="mdi-delete" variant="text" @click.stop="deleteItem(item)">
-              删除
+            <v-btn variant="text" min-width="30px" class="pa-2" @click.stop="deleteItem(item)">
+              <v-icon icon="mdi-delete"></v-icon>
+              <span class="ml-1" v-show="!$vuetify.display.smAndDown">删除</span>
             </v-btn>
           </template>
         </v-treeview>

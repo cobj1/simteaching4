@@ -11,7 +11,7 @@
     <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
       :items-per-page="options.itemsPerPage" :headers="headers" :items="serverItems" :items-length="totalItems"
       :loading="loading" :search="`${search.category},${search.type},${search.difficulty},${search.name}`"
-      @update:options="loadItems">
+      :mobile="$vuetify.display.smAndDown" @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
           <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="categorys"

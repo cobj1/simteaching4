@@ -6,7 +6,8 @@
       </v-btn>
     </VToolbar>
     <v-data-table-server v-model:options="options" :headers="headers" :items="serverItems" :items-length="totalItems"
-      :loading="loading" :search="search" item-value="name" @update:options="loadItems">
+      :loading="loading" :search="search" item-value="name" :mobile="$vuetify.display.smAndDown"
+      @update:options="loadItems">
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.actions="{ item }">
         <VBtn icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)"></VBtn>

@@ -10,7 +10,8 @@
     </v-toolbar>
     <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
       :headers="headers" :items="serverItems" :items-length="totalItems" :loading="loading"
-      :search="`${search.name},${search.role},${search.org}`" @update:options="loadItems">
+      :search="`${search.name},${search.role},${search.org}`" :mobile="$vuetify.display.smAndDown"
+      @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
           <v-btn prepend-icon="mdi-bank" class="ma-2 flex-1-1" size="large" min-height="56">

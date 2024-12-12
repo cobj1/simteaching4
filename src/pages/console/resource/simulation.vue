@@ -10,11 +10,12 @@
     </VToolbar>
     <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
       :items-per-page="options.itemsPerPage" :headers="headers" :items="serverItems" :items-length="totalItems"
-      :loading="loading" :search="`${search.category},${search.name}`" @update:options="loadItems">
+      :loading="loading" :search="`${search.category},${search.name}`" :mobile="$vuetify.display.smAndDown"
+      @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
-          <v-select v-model="search.category" hide-details class="pa-2" label="筛选类型..." :items="categorys" item-title="name"
-            item-value="id"></v-select>
+          <v-select v-model="search.category" hide-details class="pa-2" label="筛选类型..." :items="categorys"
+            item-title="name" item-value="id"></v-select>
           <v-text-field v-model="search.name" hide-details class="pa-2" label="检索..."></v-text-field>
         </div>
       </template>

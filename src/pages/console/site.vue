@@ -12,7 +12,8 @@
       </v-btn>
     </VToolbar>
     <v-data-table-server v-model:options="options" :headers="headers" :items="serverItems" :items-length="totalItems"
-      :loading="loading" :search="`${search.type},${search.title}`" item-value="name" @update:options="loadItems">
+      :loading="loading" :search="`${search.type},${search.title}`" item-value="name"
+      :mobile="$vuetify.display.smAndDown" @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
           <v-select v-model="search.type" class="pa-2" label="筛选类型..." :items="types" item-title="type"
