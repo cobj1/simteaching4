@@ -76,4 +76,10 @@ export const CourseApi = {
       method: "get",
     });
   },
+  transcript(id: string) {
+    return axios({
+      url: "/course/transcript/" + id,
+      method: "get",
+    });
+  },
 };

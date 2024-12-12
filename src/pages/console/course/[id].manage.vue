@@ -36,7 +36,7 @@ const data = ref({
   id: null,
   name: ''
 })
-const tab = ref('coursework')
+const tab = ref('grade')
 const tabs = ref([
   {
     icon: 'mdi-book-open-page-variant',
@@ -60,12 +60,9 @@ const tabs = ref([
   },
 ])
 
-
 watch(() => route.params.id, () => {
   loadItem()
 })
-
-
 
 const loadItem = async () => {
   data.value = await CourseApi.info(route.params.id)

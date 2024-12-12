@@ -5,7 +5,7 @@
         <v-list-subheader>
           <div class="d-flex align-center ga-1">
             <v-icon icon="mdi-console"></v-icon>
-            控制台
+            控制台 {{ vuetify.display.smAndUp }}
           </div>
         </v-list-subheader>
         <div v-for="(item) in consoleStore.items" :key="item.title">
@@ -23,7 +23,7 @@
             :to="item.path">
             <template v-slot:prepend>
               <v-icon :icon="item.prependIcon" v-if="item.prependIcon"></v-icon>
-              <v-avatar v-if="item.avatar" color="blue-darken-3" size="32" icon="item.avatar" class="mr-2 ">
+              <v-avatar v-if="item.avatar" color="blue-darken-3" size="32" :icon="item.avatar" class="mr-2 ">
                 {{ item.avatar }}
               </v-avatar>
             </template>
@@ -50,7 +50,7 @@
     </v-navigation-drawer>
 
     <v-app-bar border="b" class="ps-4 position-fixed" flat>
-      <v-app-bar-nav-icon v-if="$vuetify.display.smAndDown" @click="drawer = !drawer" />
+      <v-app-bar-nav-icon v-if="$vuetify.display.mdAndDown" @click="drawer = !drawer" />
       <v-app-bar-title>智慧教育云仿真管理平台</v-app-bar-title>
       <template #append>
         <v-btn icon class="mr-4">
@@ -77,9 +77,9 @@ import { onMounted, ref, watch } from 'vue'
 
 const consoleStore = useConsoleStore()
 const account = useAccountStore()
-const drawer = ref(!vuetify.display.smAndDown.value)
+const drawer = ref(!vuetify.display.mdAndDown.value)
 
-watch(() => vuetify.display.smAndDown.value, (value) => drawer.value = !value)
+watch(() => vuetify.display.mdAndDown.value, (value) => drawer.value = !value)
 
 onMounted(async () => {
   if (account.token) {

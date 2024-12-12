@@ -10,7 +10,7 @@
     </VToolbar>
     <v-data-table-server v-model:options="options" :items-per-page="options.itemsPerPage" :headers="headers"
       :items="serverItems" :items-length="totalItems" :loading="loading"
-      :search="`${search.category},${search.type},${search.name}`" item-value="name" @update:options="loadItems">
+      :search="`${search.category},${search.type},${search.name}`" item-value="name" :mobile="$vuetify.display.smAndDown" @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
           <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="categorys"
@@ -21,8 +21,6 @@
             append-inner-icon="mdi-magnify"></v-text-field>
         </div>
       </template>
-
-
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.cover="{ item }">
         <div class="pa-2">

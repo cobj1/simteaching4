@@ -7,7 +7,7 @@
         </ResourceCategory>
       </VToolbar>
     </VCard>
-    <div class="d-flex pt-4" :class="{ 'flex-column': $vuetify.display.mdAndDown }">
+    <div class="d-flex pt-4" :class="{ 'flex-column': $vuetify.display.smAndDown }">
       <div class="flex-1-1 text-center">
         <v-list v-model:selected="selected" mandatory max-width="1000px" class="ma-auto" bg-color="transparent"
           base-color="transparent">

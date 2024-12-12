@@ -53,12 +53,9 @@ const tabs = ref([
 
 ])
 
-
 watch(() => route.params.id, () => {
   loadItem()
 })
-
-
 
 const loadItem = async () => {
   data.value = await CourseApi.info(route.params.id)

@@ -1,7 +1,7 @@
 <template>
   <v-container max-width="1600px">
     <v-row>
-      <v-col cols="4" lg="3" xl="2" v-if="$vuetify.display.mdAndUp">
+      <v-col cols="4" lg="3" xl="2" v-if="$vuetify.display.smAndUp">
         <v-sheet rounded="lg">
           <v-list rounded="lg">
             <v-list-subheader>目录</v-list-subheader>
