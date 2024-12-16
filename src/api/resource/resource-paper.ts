@@ -56,6 +56,12 @@ export const ResourceTestpaperApi = {
       method: "get",
     });
   },
+  exam(id: string) {
+    return axios({
+      url: "/resource-paper/exam/" + id,
+      method: "get",
+    });
+  },
   paperQuestionListByParerId(pid: string) {
     return axios({
       url: "/resource-paper/paper-question/" + pid,

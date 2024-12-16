@@ -82,10 +82,17 @@ export const UserApi = {
       params,
     });
   },
-  trialPage() {
+  trialPage(params: {
+    current: number;
+    size: number;
+    sortKey: string;
+    sortOrder: string;
+    name: string;
+  }) {
     return axios({
       url: "/user/trial/page",
       method: "get",
+      params,
     });
   },
 };
