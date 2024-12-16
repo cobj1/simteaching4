@@ -133,12 +133,16 @@ export const useConsoleStore = defineStore("console", () => {
       link: true,
       children: [
         {
-          title: "学员",
-          path: "/console/dc/student",
+          title: "课程学习统计",
+          path: "/console/stats/course-browse",
         },
         {
-          title: "考试",
-          path: "/console/dc/exam",
+          title: "资源学习统计",
+          path: "/console/stats/course-resource-browse",
+        },
+        {
+          title: "用户使用统计",
+          path: "/console/stats/user-online",
         },
       ],
     },
@@ -209,7 +213,7 @@ export const useConsoleStore = defineStore("console", () => {
             prependIcon: "mdi-human-male-board",
             type: "subheader",
             title: "教授的课程",
-          },
+          }
           // {
           //   title: "待批改",
           //   prependIcon: "mdi-view-dashboard-edit",

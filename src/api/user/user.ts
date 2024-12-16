@@ -89,6 +89,7 @@ export const UserApi = {
     sortOrder: string;
     name: string;
   }) {
+    params = PagingProcessor(params);
     return axios({
       url: "/user/trial/page",
       method: "get",

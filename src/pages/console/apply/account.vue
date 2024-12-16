@@ -3,33 +3,57 @@
     <VToolbar title="试用账号">
     </VToolbar>
     <v-data-table-server v-model:options="options" :items-per-page="options.itemsPerPage" :headers="headers"
-      :items="serverItems" :items-length="totalItems" :loading="loading"
-      :search="`${search.org},${search.name},${search.date}`" item-value="name" :mobile="$vuetify.display.smAndDown"
-      @update:options="loadItems">
+      :items="serverItems" :items-length="totalItems" :loading="loading" :search="`${search.name}`" item-value="name"
+      :mobile="$vuetify.display.smAndDown" @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex flex-wrap">
           <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..."
             append-inner-icon="mdi-magnify"></v-text-field>
         </div>
       </template>
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template v-slot:item.actions="{ item }">
+        <VBtn prepend-icon="mdi-clock-edit-outline" variant="text" density="comfortable" size="small">延长时间</VBtn>
+        <VBtn prepend-icon="mdi-account-switch-outline" variant="text" density="comfortable" size="small">注册正式用户</VBtn>
+        <VBtn prepend-icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)">删除</VBtn>
+      </template>
     </v-data-table-server>
+    <v-dialog v-model="dialogDelete" max-width="500px">
+      <v-card>
+        <v-card-title class="text-h5">您确定要删除此项目吗？</v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="closeDelete">取消</v-btn>
+          <v-btn variant="text" @click="deleteItemConfirm">确定</v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </VCard>
 </template>
 
 <script setup>
-import { AttendanceApi } from '@/api/user/attendance';
 import { UserApi } from '@/api/user/user';
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 
 const options = ref({
   page: 1,
   itemsPerPage: 10
 })
 const headers = ref([
-  { title: '姓名', key: 'username', sortable: false, },
-  { title: '班级', key: 'orgName', sortable: false, },
-  { title: '岗位', key: 'post', sortable: false, },
-  { title: '登录时间', key: 'loginTime', width: '300px' },
+  {
+    title: '姓名',
+    align: 'start',
+    sortable: false,
+    key: 'name',
+  },
+  { title: '账号', key: 'account' },
+  { etitle: '岗位', key: 'post', },
+  { title: '手机号', key: 'phone', },
+  { title: '邮箱', key: 'email', },
+  { title: '组织', key: 'orgName', sortable: false, },
+  { title: '最近登录时间', key: 'lastLoginTime', },
+  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
 ])
 const search = ref({
   name: '',
@@ -37,6 +61,51 @@ const search = ref({
 const serverItems = ref([])
 const loading = ref(true)
 const totalItems = ref(0)
+const dialogDelete = ref(false)
+const editedIndex = ref(-1)
+const editedItem = ref({
+  id: null,
+  account: '',
+  name: '',
+  phone: '',
+  email: '',
+  post: '',
+  org: null,
+  avatar: '',
+  role: null,
+  orgItem: null
+})
+const defaultItem = ref({
+  id: null,
+  account: '',
+  name: '',
+  phone: '',
+  email: '',
+  post: '',
+  org: null,
+  avatar: '',
+  role: null,
+  orgItem: null
+})
+
+
+const deleteItem = (item) => {
+  editedIndex.value = serverItems.value.indexOf(item);
+  editedItem.value = Object.assign({}, item)
+  dialogDelete.value = true;
+}
+const closeDelete = () => {
+  dialogDelete.value = false;
+  nextTick(() => {
+    editedItem.value = Object.assign({}, defaultItem.value)
+    editedIndex.value = -1;
+  })
+}
+const deleteItemConfirm = async () => {
+  await UserApi.del(editedItem.value.id)
+  loadItems(options.value)
+  closeDelete()
+}
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
@@ -46,7 +115,6 @@ const loadItems = async ({ page, itemsPerPage, sortBy }) => {
     sortKey: sortBy[0] ? sortBy[0].key : null,
     sortOrder: sortBy[0] ? sortBy[0].order : null,
     name: search.value.name,
-
   })
   serverItems.value = res.records.map(item => {
     return {

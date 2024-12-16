@@ -1,6 +1,6 @@
 <template>
     <v-card>
-    <v-toolbar title="考试分析"> </v-toolbar>
+    <v-toolbar title="资源学习统计"> </v-toolbar>
     <v-empty-state icon="mdi-magnify"
       text="Try adjusting your search terms or filters. Sometimes less specific terms or broader queries can help you find what you're looking for."
       title="We couldn't find a match."></v-empty-state>
