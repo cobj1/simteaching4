@@ -53,7 +53,7 @@
               </v-col>
               <v-col cols="12">
                 <QuestionsOptions :type="editedItem.type" v-model:answer="editedItem.answer"
-                  v-model:options="editedItem.options"></QuestionsOptions>
+                  v-model:options="editedItem.options" editor></QuestionsOptions>
               </v-col>
               <v-col cols="12">
                 <v-textarea v-model="editedItem.answerAnalysis" label="答案解析" :disabled="loadingEdit"></v-textarea>

@@ -4,7 +4,7 @@
       <v-card class="mb-2 mx-2" ariant="text" style="box-shadow:none;" :class="{ 'elevation-4': isHovering }"
         v-bind="props">
         <template #default>
-          <v-expansion-panels>
+          <v-expansion-panels v-if="manage">
             <v-expansion-panel>
               <v-expansion-panel-title disable-icon-rotate>
                 <v-icon v-if="item.resource.resourceType == 'resource'" icon="mdi-book-outline" size="30"
@@ -14,13 +14,13 @@
                   class="mr-2" />
                 <v-icon v-if="item.resource.resourceType == 'testpaper'" icon="mdi-ab-testing" size="30" class="mr-2" />
                 {{ item.resource.name }}
-                <template v-slot:actions v-if="manage">
+                <template v-slot:actions>
                   <v-text-field label="分数" v-model="score" type="number" variant="underlined" hide-details
                     density="compact" :min="1" :max="100" @click.stop @change="onChangeScore"></v-text-field>
                   <CourseResourceItemOptions @deleted="emit('deleted')"></CourseResourceItemOptions>
                 </template>
               </v-expansion-panel-title>
-              <v-expansion-panel-text v-if="manage">
+              <v-expansion-panel-text>
                 <div v-if="item.resource.resourceType == 'resource'">
                   <v-btn :href="FileApi.filePath + item.resource.url" target="_blank">查看资源</v-btn>
                 </div>
@@ -39,13 +39,22 @@
                   </v-list>
                 </div>
               </v-expansion-panel-text>
-              <v-expansion-panel-text v-else>
-                <div>
-                  <v-btn @click="goResource">查看</v-btn>
-                </div>
-              </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
+          <v-list-item v-else class="px-6 py-4" :to="`/console/course/${route.params.id}/${item.id}`">
+            <VListItemTitle class="d-flex justify-space-between align-center">
+              <div>
+                <v-icon v-if="item.resource.resourceType == 'resource'" icon="mdi-book-outline" size="30"
+                  class="mr-2" />
+                <v-icon v-if="item.resource.resourceType == 'simulation'" icon="mdi-test-tube" size="30" class="mr-2" />
+                <v-icon v-if="item.resource.resourceType == 'questions'" icon="mdi-head-question-outline" size="30"
+                  class="mr-2" />
+                <v-icon v-if="item.resource.resourceType == 'testpaper'" icon="mdi-ab-testing" size="30" class="mr-2" />
+                {{ item.resource.name }}
+              </div>
+              <span class="text-caption text-medium-emphasis">发布时间: 12月4日</span>
+            </VListItemTitle>
+          </v-list-item>
         </template>
       </v-card>
     </template>
@@ -56,7 +65,9 @@
 import { CourseResourceApi } from '@/api/course/course-resource';
 import { FileApi } from '@/api/file'
 import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 
+const route = useRoute()
 const props = defineProps({
   item: Object,
   manage: Boolean

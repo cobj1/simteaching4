@@ -21,8 +21,9 @@
     </div>
     <v-layout>
       <v-navigation-drawer v-model="drawer" temporary location="right" width="360">
-        <v-img height="200" width="100%" v-if="drawerItem.cover" :src="FileApi.filePath + drawerItem.cover"></v-img>
-        <VDivider v-if="drawerItem.cover"></VDivider>
+        <v-img height="200" width="100%" v-if="drawerItem.cover && FileFormat(drawerItem.cover) == 'picture'"
+          :src="FileApi.filePath + drawerItem.cover"></v-img>
+        <VDivider v-if="drawerItem.cover && FileFormat(drawerItem.cover) == 'picture'"></VDivider>
         <v-list density="compact" nav>
           <v-list-item prepend-icon="mdi-file-outline" :title="drawerItem.rname"></v-list-item>
           <v-list-item prepend-icon="mdi-calendar-range" :subtitle="`共享时间: ${drawerItem.createTime}`"></v-list-item>
@@ -36,7 +37,7 @@
       </v-navigation-drawer>
       <v-main height="calc(100vh - 240px)">
         <v-infinite-scroll height="calc(100vh - 280px)" @load="loadItems">
-          <v-sheet class="d-flex flex-wrap pa-4 ga-4 justify-center">
+          <v-sheet class="pa-4 ga-4" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr))">
             <v-sheet v-for="(item) in items" :key="item.id">
               <v-card width="300" hover @click.stop="viewItem(item)">
                 <FileIcon :cover="item.cover"></FileIcon>
@@ -128,6 +129,7 @@
 <script setup>
 import { FileApi } from '@/api/file';
 import { ResourceShareApi } from '@/api/resource/resource-share';
+import { FileFormat } from '@/utils/file-format';
 import { notify } from '@kyvg/vue3-notification';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 

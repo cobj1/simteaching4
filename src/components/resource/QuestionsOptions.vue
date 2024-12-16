@@ -4,12 +4,14 @@
       <v-radio v-for="(item, index) in options" :data-label="item" :key="index" :value="'' + index"
         :disabled="disabled">
         <template #label>
-          <v-text-field v-model="options[index]" variant="underlined">
+          <v-text-field v-model="options[index]" variant="underlined" color="black" v-if="editor">
             <template #append>
-              <v-btn icon="mdi-close" density="comfortable" :disabled="options.length <= 1 || disabled"
-                v-show="!disabled" @click="del(index)"></v-btn>
+              <v-btn icon="mdi-close" density="comfortable" :disabled="options.length <= 1" @click="del(index)"></v-btn>
             </template>
           </v-text-field>
+          <div v-else class="pa-4">
+            {{ options[index] }}
+          </div>
         </template>
       </v-radio>
     </v-radio-group>
@@ -17,20 +19,21 @@
       <v-checkbox v-model="answer" v-for="(item, index) in options" :data-label="item" :key="index" :value="'' + index"
         hide-details :disabled="disabled">
         <template #label>
-          <v-text-field v-model="options[index]" variant="underlined">
+          <v-text-field v-model="options[index]" variant="underlined" v-if="editor">
             <template #append>
-              <v-btn icon="mdi-close" density="comfortable" :disabled="options.length <= 1 || disabled"
-                v-show="!disabled" @click="del(index)"></v-btn>
+              <v-btn icon="mdi-close" density="comfortable" :disabled="options.length <= 1" @click="del(index)"></v-btn>
             </template>
           </v-text-field>
+          <div v-else class="pa-4">
+            {{ options[index] }}
+          </div>
         </template>
       </v-checkbox>
     </div>
     <div v-if="type == '简答题'">
-      <v-text-field v-model="answer" label="简短回答问题" disabled></v-text-field>
+      <v-text-field v-model="answer" label="简短回答问题" :disabled="disabled"></v-text-field>
     </div>
-    <VBtn prepend-icon="mdi-plus" v-if="type == '单选题' || type == '多选题'" v-show="!disabled" :disabled="disabled"
-      @click="add">
+    <VBtn prepend-icon="mdi-plus" v-if="editor && (type == '单选题' || type == '多选题')" v-show="editor" @click="add">
       添加选项
     </VBtn>
   </VSheet>
@@ -47,6 +50,10 @@ const props = defineProps({
     default: '单选题'
   },
   disabled: {
+    type: Boolean,
+    default: false
+  },
+  editor: {
     type: Boolean,
     default: false
   }
@@ -91,5 +98,10 @@ onMounted(() => {
 .v-radio:deep(.v-label),
 .v-checkbox:deep(.v-label) {
   width: 100%;
+}
+</style>
+<style>
+input:disabled {
+  border-color: black !important;
 }
 </style>

@@ -45,4 +45,10 @@ export const ResourceSimulationApi = {
       method: "post",
     });
   },
+  info(id: string) {
+    return axios({
+      url: "/simulationResources/info/" + id,
+      method: "get",
+    });
+  },
 };

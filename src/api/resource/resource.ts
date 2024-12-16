@@ -70,4 +70,10 @@ export const ResourceApi = {
       method: "post",
     });
   },
+  info(id: string) {
+    return axios({
+      url: "/resource/info/" + id,
+      method: "get",
+    });
+  },
 };

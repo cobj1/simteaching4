@@ -45,4 +45,10 @@ export const CourseResourceApi = {
       },
     });
   },
+  info(crid: string) {
+    return axios({
+      url: "/courseResource/info/" + crid,
+      method: "get",
+    });
+  },
 };

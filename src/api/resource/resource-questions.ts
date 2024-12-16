@@ -66,9 +66,8 @@ export const ResourceQuestionsApi = {
   },
   info(id: string) {
     return axios({
-      url: "/testQuestions/info",
+      url: "/testQuestions/info/" + id,
       method: "get",
-      params: { id },
     });
   },
 };
