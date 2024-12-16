@@ -33,7 +33,7 @@ const data = ref({
   id: null,
   name: ''
 })
-const tab = ref('coursework')
+const tab = ref('info')
 const tabs = ref([
   {
     icon: 'mdi-book-open-page-variant',

@@ -9,28 +9,39 @@
         size="40" class="mr-2" />
       <v-icon v-if="courseResource.type == 'testpaper' && !$vuetify.display.mdAndDown" icon="mdi-ab-testing" size="40"
         class="mr-2" />
-      <span class="text-h4"> {{ item.name }}</span>
+      <span class="text-h4"> {{ title }}</span>
     </div>
     <div class="my-2 text-body-2 text-medium-emphasis">
-      {{ item.creator }} • {{ item.createTime }}
+      {{ item.creator }} • {{ useDateFormat(item.createTime, 'YYYY-MM-DD') }}
     </div>
     <div class="text-body-2 font-weight-medium">
       {{ item.score }} 分
     </div>
     <VDivider class="my-4"></VDivider>
-    <!-- <v-empty-state headline="No Messages Yet"
+    <v-skeleton-loader :loading="loading" height="240" type="image, list-item-two-line">
+      <v-responsive>
+        <!-- <v-empty-state headline="No Messages Yet"
       text="You haven't received any messages yet. When you do, they'll appear here."
       title="Check back later."></v-empty-state> -->
-    <div class="border pa-4">
-      <!-- <v-responsive :aspect-ratio="16 / 9" >
+        <!-- <v-responsive :aspect-ratio="16 / 9" >
       <iframe src="https://aliyun-x.oss-cn-hangzhou.aliyuncs.com/BJDXMY/webgl/index.html" class="w-100 h-100 border-0	">
       </iframe>
     </v-responsive> -->
-      <!-- <v-img
-        src="https://yigee-file.oss-cn-beijing.aliyuncs.com/simteaching/resource/courseware/6ca7cc0a-8fbf-4e3a-aef3-d75f93209cbe.png"></v-img> -->
-      <QuestionsOptions :type="item.type" v-model:answer="item.answer" v-model:options="item.options">
-      </QuestionsOptions>
-    </div>
+        <!-- <div class="border pa-4">
+      <v-img
+        src="https://yigee-file.oss-cn-beijing.aliyuncs.com/simteaching/resource/courseware/6ca7cc0a-8fbf-4e3a-aef3-d75f93209cbe.png"></v-img>
+    </div> -->
+        <!-- <div class="border pa-4">
+          <div class="text-h6 mb-2">
+            {{ item.name }}
+          </div>
+          <QuestionsOptions :type="item.type" v-model:answer="item.answer" v-model:options="item.options">
+          </QuestionsOptions>
+        </div> -->
+        <div class="border pa-4">
+        </div>
+      </v-responsive>
+    </v-skeleton-loader>
     <VDivider class="my-4"></VDivider>
     <!-- <v-btn prepend-icon="mdi-check" color="indigo" class="float-right	">标记已完成</v-btn> -->
     <v-btn prepend-icon="mdi-check" color="indigo" class="float-right	">提交</v-btn>
@@ -42,11 +53,12 @@ import { CourseResourceApi } from '@/api/course/course-resource';
 import { ResourceApi } from '@/api/resource/resource';
 import { ResourceQuestionsApi } from '@/api/resource/resource-questions';
 import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
-import { onMounted, ref } from 'vue';
+import { useDateFormat } from '@vueuse/core';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute()
-console.log(route)
+const loading = ref(true)
 const courseResource = ref({
   id: '',
   cid: '',
@@ -66,7 +78,12 @@ const item = ref({
   options: []
 })
 
+const title = computed(() => {
+  return item.value.name.length > 20 ? substring(0, 20) + '...' : item.value.name
+})
+
 const loadCourseResourceItem = async () => {
+  loading.value = true
   const res = await CourseResourceApi.info(route.params.crid)
   console.log(res)
   item.value.score = res.score
@@ -81,6 +98,8 @@ const loadCourseResourceItem = async () => {
     item.value.options = question.options.map(item => item.name)
     item.value.name = question.name
   } else if (res.type == 'testpaper') { }
+
+  loading.value = false
 }
 
 onMounted(() => {

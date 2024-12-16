@@ -16,7 +16,7 @@
                 {{ item.resource.name }}
                 <template v-slot:actions>
                   <v-text-field label="分数" v-model="score" type="number" variant="underlined" hide-details
-                    density="compact" :min="1" :max="100" @click.stop @change="onChangeScore"></v-text-field>
+                    density="compact" :min="1" :max="100" :disabled="item.resource.resourceType == 'testpaper'" @click.stop @change="onChangeScore"></v-text-field>
                   <CourseResourceItemOptions @deleted="emit('deleted')"></CourseResourceItemOptions>
                 </template>
               </v-expansion-panel-title>
@@ -52,7 +52,7 @@
                 <v-icon v-if="item.resource.resourceType == 'testpaper'" icon="mdi-ab-testing" size="30" class="mr-2" />
                 {{ item.resource.name }}
               </div>
-              <span class="text-caption text-medium-emphasis">发布时间: 12月4日</span>
+              <span class="text-caption text-medium-emphasis">发布时间: {{ useDateFormat(item.createTime,'YYYY-MM-DD') }}</span>
             </VListItemTitle>
           </v-list-item>
         </template>
@@ -64,6 +64,7 @@
 <script setup>
 import { CourseResourceApi } from '@/api/course/course-resource';
 import { FileApi } from '@/api/file'
+import { useDateFormat } from '@vueuse/core';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -77,10 +78,6 @@ const score = ref(props.item.score)
 
 const onChangeScore = () => {
   CourseResourceApi.updateScore(props.item.id, score.value)
-}
-
-const goResource = () => {
-  console.log(props.item)
 }
 
 </script>

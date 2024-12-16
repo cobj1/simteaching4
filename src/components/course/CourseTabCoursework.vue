@@ -81,6 +81,7 @@ import { onMounted, ref, watch } from 'vue';
 import { CourseResourceApi } from '@/api/course/course-resource';
 import { CourseSubjectApi } from '@/api/course/course-subject';
 import { useRoute } from 'vue-router';
+import { ResourceTestpaperApi } from '@/api/resource/resource-paper';
 
 defineProps({
   manage: Boolean
@@ -102,7 +103,7 @@ const handleCourseResourceItemDeleted = async (id) => {
 
 const handleSelectionCoursewareConfirm = (value) => {
   courseworkSave(JSON.stringify(value.map((item, index) => {
-    return { cid: route.params.id, type: 'resource', rid: item, order: list.value.length + index }
+    return { cid: route.params.id, type: 'resource', rid: item, order: list.value.length + index, score: 100 }
   })))
 }
 const handleSelectionSimulationConfirm = (value) => {
@@ -115,10 +116,13 @@ const handleSelectionQuestionsConfirm = (value) => {
     return { cid: route.params.id, type: 'questions', rid: item, order: list.value.length + index, score: 100 }
   })))
 }
-const handleSelectionTestpaperConfirm = (value) => {
-  courseworkSave(JSON.stringify(value.map((item, index) => {
-    return { cid: route.params.id, type: 'testpaper', rid: item, order: list.value.length + index, score: 100 }
-  })))
+const handleSelectionTestpaperConfirm = async (value) => {
+  const testpapers = []
+  for (let i = 0; i < value.length; i++) {
+    const res = await ResourceTestpaperApi.info(value[i])
+    testpapers.push({ cid: route.params.id, type: 'testpaper', rid: value[i], order: list.value.length + i, score: res.score })
+  }
+  courseworkSave(JSON.stringify(testpapers))
 }
 const handleVueDraggableEnd = async (event) => {
   if (event.newIndex != event.oldIndex) {
