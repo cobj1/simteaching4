@@ -29,9 +29,10 @@
 <script setup>
 import { CourseApi } from '@/api/course/course';
 import { onMounted, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute()
+const router = useRouter()
 const data = ref({
   id: null,
   name: ''

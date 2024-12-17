@@ -21,11 +21,20 @@
     <v-skeleton-loader :loading="loading" height="240" type="image, list-item-two-line">
       <v-responsive>
         <div class="border pa-4" v-if="item.type == 'resource'">
-          <v-img :src="item.url"></v-img>
-          <video :src="item.url" id="player"></video>
+          <a v-if="item.ext == 'png'" :href="item.url" class="glightbox">
+            <img :src="item.url" alt="image" class="w-100" />
+          </a>
+          <video v-if="item.ext == 'mp4'" :src="item.url" id="player"></video>
+          <audio v-if="item.ext == 'mp3'" :src="item.url" controls preload class="d-flex ma-auto my-8"> </audio>
+          <vue-office-docx v-if="item.ext == 'docx'" :src="item.url" style="height: calc(100vh - 300px)" />
+          <vue-office-excel v-if="item.ext == 'xlsx'" :src="item.url" style="height: calc(100vh - 300px)" />
+          <vue-office-pdf v-if="item.ext == 'pdf'" :src="item.url" style="height: calc(100vh - 300px)" />
+          <section v-if="['xml', 'txt', 'sql'].includes(item.ext)">
+            <p v-text="item.text"> </p>
+          </section>
         </div>
         <div class="border pa-4" v-else-if="item.type == 'simulation'" ref="simulationRef">
-          <v-responsive :aspect-ratio="16 / 9" class="w-100 h-100"
+          <v-responsive :aspect-ratio="16 / 9" class="w-100 h-100" min-height="300px"
             :style="angle && $vuetify.display.mdAndDown ? { 'position': 'fixed', 'top': 0, 'left': 0, 'z-index': '910' } : null">
             <iframe :src="item.url" class="w-100 h-100 border-0	">
             </iframe>
@@ -65,6 +74,7 @@
 </template>
 
 <script setup>
+import { fileTypeFromBlob } from 'file-type';
 import Plyr from 'plyr';
 import { CourseResourceApi } from '@/api/course/course-resource';
 import { FileApi } from '@/api/file';
@@ -75,6 +85,12 @@ import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
 import { useDateFormat, useFullscreen, useScreenOrientation } from '@vueuse/core';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import VueOfficeDocx from '@vue-office/docx'
+import '@vue-office/docx/lib/index.css'
+import VueOfficeExcel from '@vue-office/excel'
+import '@vue-office/excel/lib/index.css'
+import VueOfficePdf from '@vue-office/pdf'
+import GLightbox from 'glightbox';
 
 const route = useRoute()
 const loading = ref(true)
@@ -86,10 +102,13 @@ const item = ref({
   creator: '',
   createTime: new Date(),
   url: null,
+  ext: null,
+  text: null,
+  /* question */
   qtype: null,
   answer: null,
   options: [],
-  questions: []
+  questions: [],
 })
 const { enter } = useFullscreen(simulationRef)
 const { angle } = useScreenOrientation()
@@ -111,13 +130,17 @@ const loadCourseResourceItem = async () => {
   if (res.type == 'resource') {
     const resource = await ResourceApi.info(res.rid)
     item.value.name = resource.name
-    item.value.url = FileApi.filePath + resource.url
-    nextTick(() => {
-      const player = new Plyr('#player', {
-        title: 'Example Title',
-      });
-
-    })
+    const fileRes = await fetch(FileApi.filePath + resource.url)
+    const blob = await fileRes.blob()
+    const fileType = await fileTypeFromBlob(blob)
+    item.value.ext = fileType.ext
+    item.value.url = URL.createObjectURL(blob)
+    console.log(fileType.ext)
+    if (['xml', 'txt', 'sql'].includes(fileType.ext)) {
+      const reader = new FileReader()
+      reader.readAsText(blob)
+      reader.onload = () => item.value.text = reader.result
+    }
   } else if (res.type == 'simulation') {
     const simulation = await ResourceSimulationApi.info(res.rid)
     item.value.name = simulation.name
@@ -139,6 +162,9 @@ const loadCourseResourceItem = async () => {
     })
   }
   loading.value = false
+  await nextTick()
+  GLightbox()
+  new Plyr('#player');
 }
 
 onMounted(() => {
@@ -146,4 +172,10 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+p {
+  margin-bottom: 1rem;
+  line-height: 1.8;
+  overflow-wrap: break-word;
+}
+</style>
