@@ -26,14 +26,15 @@
 <script setup>
 import { CourseApi } from '@/api/course/course';
 import { onMounted, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute()
+const router = useRouter()
 const data = ref({
   id: null,
   name: ''
 })
-const tab = ref('info')
+const tab = ref(route.query.tab || 'info')
 const tabs = ref([
   {
     icon: 'mdi-book-open-page-variant',
@@ -56,6 +57,7 @@ const tabs = ref([
 watch(() => route.params.id, () => {
   loadItem()
 })
+watch(tab, (value) => router.replace({ path: route.fullPath, query: { tab: value } }))
 
 const loadItem = async () => {
   data.value = await CourseApi.info(route.params.id)

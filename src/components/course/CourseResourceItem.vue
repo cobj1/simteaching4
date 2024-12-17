@@ -16,7 +16,8 @@
                 {{ item.resource.name }}
                 <template v-slot:actions>
                   <v-text-field label="分数" v-model="score" type="number" variant="underlined" hide-details
-                    density="compact" :min="1" :max="100" :disabled="item.resource.resourceType == 'testpaper'" @click.stop @change="onChangeScore"></v-text-field>
+                    density="compact" :min="1" :max="100" :disabled="item.resource.resourceType == 'testpaper'"
+                    @click.stop @change="onChangeScore"></v-text-field>
                   <CourseResourceItemOptions @deleted="emit('deleted')"></CourseResourceItemOptions>
                 </template>
               </v-expansion-panel-title>
@@ -25,7 +26,9 @@
                   <v-btn :href="FileApi.filePath + item.resource.url" target="_blank">查看资源</v-btn>
                 </div>
                 <div v-if="item.resource.resourceType == 'simulation'">
-                  <v-btn :href="FileApi.filePath + item.resource.url" target="_blank">打开实验</v-btn>
+                  <v-btn
+                    :href="item.resource.url.includes('http') ? item.resource.url : FileApi.filePath + item.resource.url"
+                    target="_blank">打开实验</v-btn>
                 </div>
                 <div v-if="item.resource.resourceType == 'questions'">
                   <QuestionsOptions disabled :type="item.resource.type"
@@ -52,7 +55,8 @@
                 <v-icon v-if="item.resource.resourceType == 'testpaper'" icon="mdi-ab-testing" size="30" class="mr-2" />
                 {{ item.resource.name }}
               </div>
-              <span class="text-caption text-medium-emphasis">发布时间: {{ useDateFormat(item.createTime,'YYYY-MM-DD') }}</span>
+              <span class="text-caption text-medium-emphasis">发布时间: {{ useDateFormat(item.createTime, 'YYYY-MM-DD')
+                }}</span>
             </VListItemTitle>
           </v-list-item>
         </template>

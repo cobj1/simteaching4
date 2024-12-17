@@ -22,6 +22,7 @@
       <v-responsive>
         <div class="border pa-4" v-if="item.type == 'resource'">
           <v-img :src="item.url"></v-img>
+          <video :src="item.url" id="player"></video>
         </div>
         <div class="border pa-4" v-else-if="item.type == 'simulation'" ref="simulationRef">
           <v-responsive :aspect-ratio="16 / 9" class="w-100 h-100"
@@ -56,13 +57,15 @@
       </v-responsive>
     </v-skeleton-loader>
     <VDivider class="my-4"></VDivider>
-    <v-btn prepend-icon="mdi-check" color="indigo" v-if="item.type == 'questions' || item.type == 'testpaper'"
-      @click="finish">提交</v-btn>
-    <v-btn prepend-icon="mdi-check" color="indigo" class="float-right	" v-else @click="finish">标记已完成</v-btn>
+    <v-btn prepend-icon="mdi-check" color="indigo" class="d-flex" style="justify-self: end;"
+      v-if="item.type == 'questions' || item.type == 'testpaper'" @click="finish">提交</v-btn>
+    <v-btn prepend-icon="mdi-check" color="indigo" class="d-flex" style="justify-self: end;" v-else
+      @click="finish">标记已完成</v-btn>
   </v-container>
 </template>
 
 <script setup>
+import Plyr from 'plyr';
 import { CourseResourceApi } from '@/api/course/course-resource';
 import { FileApi } from '@/api/file';
 import { ResourceApi } from '@/api/resource/resource';
@@ -70,7 +73,7 @@ import { ResourceTestpaperApi } from '@/api/resource/resource-paper';
 import { ResourceQuestionsApi } from '@/api/resource/resource-questions';
 import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
 import { useDateFormat, useFullscreen, useScreenOrientation } from '@vueuse/core';
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute()
@@ -109,6 +112,12 @@ const loadCourseResourceItem = async () => {
     const resource = await ResourceApi.info(res.rid)
     item.value.name = resource.name
     item.value.url = FileApi.filePath + resource.url
+    nextTick(() => {
+      const player = new Plyr('#player', {
+        title: 'Example Title',
+      });
+
+    })
   } else if (res.type == 'simulation') {
     const simulation = await ResourceSimulationApi.info(res.rid)
     item.value.name = simulation.name

@@ -10,6 +10,7 @@
 
 <script lang="ts" setup>
 import 'ckeditor5/ckeditor5.css';
+import 'plyr/dist/plyr.css';
 import { useSettingsStore } from './stores/settings';
 import FileList from './components/FileList.vue';
 

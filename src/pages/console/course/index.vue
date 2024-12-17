@@ -74,7 +74,7 @@
                 <v-text-field v-model="editedItem.subject" label="主题" :disabled="loadingEdit"></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-text-field v-model="editedItem.classroom" label="教师" :disabled="loadingEdit"></v-text-field>
+                <v-text-field v-model="editedItem.classroom" label="教室" :disabled="loadingEdit"></v-text-field>
               </v-col>
 
               <v-col cols="12" sm="6">

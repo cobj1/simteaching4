@@ -10,13 +10,13 @@
       </v-img>
       <v-card-text class="pa-8">
         <v-row>
-          <v-col cols="12 py-1" v-if="manage">
+          <v-col cols="12 py-2" v-if="manage">
             <strong class="mr-2">课程代码 </strong> {{ data.code }}
           </v-col>
-          <v-col cols="12 py-1">
+          <v-col cols="12 py-2">
             <strong class="mr-2">主题</strong> {{ data.subject }}
           </v-col>
-          <v-col cols="12 py-1">
+          <v-col cols="12 py-2">
             <strong class="mr-2">教室</strong> {{ data.classroom }}
           </v-col>
         </v-row>

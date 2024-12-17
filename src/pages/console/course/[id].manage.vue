@@ -2,7 +2,7 @@
   <VCard>
     <VToolbar :title="data.name"> </VToolbar>
     <v-sheet elevation="3" rounded="lg">
-      <v-tabs v-model="tab" :items="tabs" height="50" slider-color="#f78166" class="pl-4 ">
+      <v-tabs v-model="tab" :items="tabs" height="50" slider-color="#f78166" class="pl-4">
         <template v-slot:tab="{ item }">
           <v-tab :prepend-icon="item.icon" :text="item.text" :value="item.value" class="text-none"></v-tab>
         </template>
@@ -36,7 +36,7 @@ const data = ref({
   id: null,
   name: ''
 })
-const tab = ref('info')
+const tab = ref(route.query.tab || 'info')
 const tabs = ref([
   {
     icon: 'mdi-book-open-page-variant',
@@ -63,6 +63,9 @@ const tabs = ref([
 watch(() => route.params.id, () => {
   loadItem()
 })
+watch(tab, (value) => router.replace({ path: route.fullPath, query: { tab: value } }))
+
+
 
 const loadItem = async () => {
   data.value = await CourseApi.info(route.params.id)
