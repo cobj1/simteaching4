@@ -15,7 +15,8 @@
       <template v-slot:item.actions="{ item }">
         <VBtn prepend-icon="mdi-clock-edit-outline" variant="text" density="comfortable" size="small"
           @click="overtimeItem(item)">延长时间</VBtn>
-        <VBtn prepend-icon="mdi-account-switch-outline" variant="text" density="comfortable" size="small">注册正式用户</VBtn>
+        <VBtn prepend-icon="mdi-account-switch-outline" variant="text" density="comfortable" size="small"
+          @click="regularizationItem(item)">注册正式用户</VBtn>
         <VBtn prepend-icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)">删除
         </VBtn>
       </template>
@@ -40,14 +41,39 @@
           <div class="mb-4 text-body-2 text-medium-emphasis">
             为了保障个人信息安全和避免法律风险，请勿通过非法手段延长软件试用期。
           </div>
-          <v-text-field color="error" density="compact" placeholder="Type deactivate" />
+          <v-date-input v-model="overtime" label="日期输入"></v-date-input>
         </template>
         <v-divider />
         <template #actions>
           <v-spacer />
-          <v-btn border class="text-none" color="surface" text="取消" variant="flat"
-            @click="dialogOvertime = false" />
-          <v-btn class="text-none" color="warning" text="延长" variant="flat" @click="dialogOvertime = false" />
+          <v-btn border class="text-none" color="surface" text="取消" variant="flat" @click="closeOvertime" />
+          <v-btn class="text-none" color="warning" text="延长" variant="flat" @click="overtimeConfirm" />
+        </template>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="dialogRegularization" max-width="500">
+      <v-card rounded="lg" title="注册正式用户">
+        <template #prepend>
+          <v-avatar color="warning" icon="mdi-alert-outline" variant="tonal" />
+        </template>
+        <template #text>
+          <div class="mb-4 text-body-2 text-medium-emphasis">
+            为了保障个人信息安全和避免法律风险，请勿通过非法手段注册正式用户。
+          </div>
+          <v-btn prepend-icon="mdi-bank" block class="mb-4" size="large" min-height="50">
+            <div v-if="editedItem.orgItem">{{ orgItemNames.at(-1) }} </div>
+            <div v-else> 选择组织</div>
+            <SelectionOrg @confirm="handleSelectionOrgConfirm"></SelectionOrg>
+            <v-tooltip v-if="editedItem.orgItem" activator="parent" location="top">
+              {{ orgItemNames.join(' / ') }}
+            </v-tooltip>
+          </v-btn>
+        </template>
+        <v-divider />
+        <template #actions>
+          <v-spacer />
+          <v-btn border class="text-none" color="surface" text="取消" variant="flat" @click="closeRegularization" />
+          <v-btn class="text-none" color="warning" text="延长" variant="flat" @click="regularizationConfirm" />
         </template>
       </v-card>
     </v-dialog>
@@ -55,8 +81,11 @@
 </template>
 
 <script setup>
+import { VDateInput } from 'vuetify/labs/VDateInput'
 import { UserApi } from '@/api/user/user';
-import { nextTick, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
+import { useDateFormat } from '@vueuse/core';
+import { OrgApi } from '@/api/user/org';
 
 const options = ref({
   page: 1,
@@ -75,6 +104,7 @@ const headers = ref([
   { title: '邮箱', key: 'email', },
   { title: '组织', key: 'orgName', sortable: false, },
   { title: '最近登录时间', key: 'lastLoginTime', },
+  { title: '截止时间', key: 'onTrialTime', },
   { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
 ])
 const search = ref({
@@ -85,6 +115,7 @@ const loading = ref(true)
 const totalItems = ref(0)
 const dialogDelete = ref(false)
 const dialogOvertime = ref(false)
+const dialogRegularization = ref(false)
 const editedIndex = ref(-1)
 const editedItem = ref({
   id: null,
@@ -110,20 +141,55 @@ const defaultItem = ref({
   role: null,
   orgItem: null
 })
+const overtime = ref(null)
 
+const handleSelectionOrgConfirm = async (value) => {
+  editedItem.value.org = value.join(',')
+  editedItem.value.orgItem = await OrgApi.selectOneAndParentById(editedItem.value.org)
+}
+const orgItemNames = computed(() => {
+  if (editedItem.value.orgItem) {
+    return orgNames(editedItem.value.orgItem).reverse()
+  }
+  return null;
+})
+const orgNames = (org) => {
+  if (org.parent) return [org.name, ...orgNames(org.parent)]
+  else return [org.name]
+}
 const deleteItem = (item) => {
   editedIndex.value = serverItems.value.indexOf(item);
   editedItem.value = Object.assign({}, item)
   dialogDelete.value = true;
 }
-
 const overtimeItem = (item) => {
   editedIndex.value = serverItems.value.indexOf(item);
   editedItem.value = Object.assign({}, item)
+  overtime.value = new Date(item.onTrialTime)
   dialogOvertime.value = true;
+}
+const regularizationItem = (item) => {
+  editedIndex.value = serverItems.value.indexOf(item);
+  editedItem.value = Object.assign({}, item)
+  dialogRegularization.value = true;
 }
 const closeDelete = () => {
   dialogDelete.value = false;
+  nextTick(() => {
+    editedItem.value = Object.assign({}, defaultItem.value)
+    editedIndex.value = -1;
+  })
+}
+const closeOvertime = () => {
+  dialogOvertime.value = false;
+  nextTick(() => {
+    editedItem.value = Object.assign({}, defaultItem.value)
+    editedIndex.value = -1;
+    overtime.value = null
+  })
+}
+const closeRegularization = () => {
+  dialogRegularization.value = false;
   nextTick(() => {
     editedItem.value = Object.assign({}, defaultItem.value)
     editedIndex.value = -1;
@@ -134,7 +200,16 @@ const deleteItemConfirm = async () => {
   loadItems(options.value)
   closeDelete()
 }
-
+const overtimeConfirm = async () => {
+  await UserApi.updateOnTrialTime(editedItem.value.id, useDateFormat(overtime.value, 'YYYY-MM-DD').value)
+  loadItems(options.value)
+  closeOvertime()
+}
+const regularizationConfirm = async () => {
+  await UserApi.trialToFormal(editedItem.value.id, editedItem.value.org)
+  loadItems(options.value)
+  closeRegularization()
+}
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
   const res = await UserApi.trialPage({

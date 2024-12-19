@@ -96,4 +96,30 @@ export const UserApi = {
       params,
     });
   },
+  updateOnTrialTime(uid: string, onTrialTime: string) {
+    return axios({
+      url: "/user/updateOnTrialTime",
+      method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data: {
+        uid,
+        onTrialTime,
+      },
+    });
+  },
+  trialToFormal(uid: string, org: string) {
+    return axios({
+      url: "/user/trialToFormal",
+      method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data: {
+        uid,
+        org,
+      },
+    });
+  },
 };
