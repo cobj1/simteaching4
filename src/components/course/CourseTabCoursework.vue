@@ -92,9 +92,7 @@ const subjects = ref([])
 const el = ref()
 const CourseSubjectEditRef = ref()
 
-watch(() => route.params.id, () => {
-  loadItems()
-})
+watch(() => route.params.id, () => loadItems())
 
 const handleCourseResourceItemDeleted = async (id) => {
   await CourseResourceApi.del(id)

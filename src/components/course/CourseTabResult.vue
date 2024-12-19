@@ -20,22 +20,25 @@
 <script setup>
 import { CourseApi } from '@/api/course/course';
 import { CourseResourceApi } from '@/api/course/course-resource';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute()
-
-const headers = ref([
-  { title: '用户', value: 'name', minWidth: '200px', fixed: true, },
-])
+const headers = ref([{ title: '用户', value: 'name', minWidth: '200px', fixed: true, }])
 const items = ref([])
 const crs = ref([]) // CourseResources
+
+watch(() => route.params.id, () => {
+  loadItems()
+  loadResources()
+})
 
 const handleResultDeleted = (crlid) => {
 
 }
 
 const loadResources = async () => {
+  headers.value.splice(1, headers.value.length)
   const coursework = { title: '课业', value: 'coursework', children: [] }
   crs.value = await CourseResourceApi.list(route.params.id)
   crs.value.forEach(item => {
@@ -49,7 +52,9 @@ const loadResources = async () => {
 }
 
 const loadItems = async () => {
+  items.value = []
   const res = await CourseApi.transcript(route.params.id)
+  console.log(res)
   res.forEach(item => {
     const findItem = items.value.find(user => user.id == item.id)
     if (findItem) {

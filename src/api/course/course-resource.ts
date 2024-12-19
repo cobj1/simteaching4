@@ -51,4 +51,24 @@ export const CourseResourceApi = {
       method: "get",
     });
   },
+  finish(crid: string, type: string, answer: string) {
+    return axios({
+      url: "/courseResource/finish",
+      method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data: {
+        crid,
+        type,
+        answer,
+      },
+    });
+  },
+  logInfo(crid: string) {
+    return axios({
+      url: "/courseResource/log/info/" + crid,
+      method: "get",
+    });
+  },
 };

@@ -13,9 +13,11 @@
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.actions="{ item }">
-        <VBtn prepend-icon="mdi-clock-edit-outline" variant="text" density="comfortable" size="small">延长时间</VBtn>
+        <VBtn prepend-icon="mdi-clock-edit-outline" variant="text" density="comfortable" size="small"
+          @click="overtimeItem(item)">延长时间</VBtn>
         <VBtn prepend-icon="mdi-account-switch-outline" variant="text" density="comfortable" size="small">注册正式用户</VBtn>
-        <VBtn prepend-icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)">删除</VBtn>
+        <VBtn prepend-icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)">删除
+        </VBtn>
       </template>
     </v-data-table-server>
     <v-dialog v-model="dialogDelete" max-width="500px">
@@ -27,6 +29,26 @@
           <v-btn variant="text" @click="deleteItemConfirm">确定</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="dialogOvertime" max-width="500">
+      <v-card rounded="lg" title="延长试用时间">
+        <template #prepend>
+          <v-avatar color="warning" icon="mdi-alert-outline" variant="tonal" />
+        </template>
+        <template #text>
+          <div class="mb-4 text-body-2 text-medium-emphasis">
+            为了保障个人信息安全和避免法律风险，请勿通过非法手段延长软件试用期。
+          </div>
+          <v-text-field color="error" density="compact" placeholder="Type deactivate" />
+        </template>
+        <v-divider />
+        <template #actions>
+          <v-spacer />
+          <v-btn border class="text-none" color="surface" text="取消" variant="flat"
+            @click="dialogOvertime = false" />
+          <v-btn class="text-none" color="warning" text="延长" variant="flat" @click="dialogOvertime = false" />
+        </template>
       </v-card>
     </v-dialog>
   </VCard>
@@ -62,6 +84,7 @@ const serverItems = ref([])
 const loading = ref(true)
 const totalItems = ref(0)
 const dialogDelete = ref(false)
+const dialogOvertime = ref(false)
 const editedIndex = ref(-1)
 const editedItem = ref({
   id: null,
@@ -88,11 +111,16 @@ const defaultItem = ref({
   orgItem: null
 })
 
-
 const deleteItem = (item) => {
   editedIndex.value = serverItems.value.indexOf(item);
   editedItem.value = Object.assign({}, item)
   dialogDelete.value = true;
+}
+
+const overtimeItem = (item) => {
+  editedIndex.value = serverItems.value.indexOf(item);
+  editedItem.value = Object.assign({}, item)
+  dialogOvertime.value = true;
 }
 const closeDelete = () => {
   dialogDelete.value = false;
