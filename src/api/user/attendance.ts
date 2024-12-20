@@ -19,4 +19,12 @@ export const AttendanceApi = {
       params,
     });
   },
+  own(params: { uid: string; current: number; size: number }) {
+    params = PagingProcessor(params);
+    return axios({
+      url: "/loginLog/own",
+      method: "get",
+      params,
+    });
+  },
 };
