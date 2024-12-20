@@ -11,12 +11,13 @@
             <v-card class="pa-10 mb-8" :elevation="$vuetify.display.smAndDown ? 0 : 3" rounded="lg" variant="text">
               <v-label class="text-subtitle-2">账号</v-label>
 
-              <v-text-field color="primary" density="compact" rounded="lg" variant="outlined" v-model="account" />
+              <v-text-field color="primary" density="compact" rounded="lg" variant="outlined" v-model="account"
+                autofocus @keyup.enter="login" />
 
               <v-label class="text-subtitle-2">密码</v-label>
 
               <v-text-field color="primary" density="compact" rounded="lg" variant="outlined" v-model="password"
-                type="password" />
+                type="password" @keyup.enter="login" />
 
               <div class="mb-4">
                 <div class="d-flex justify-space-between align-center">
@@ -31,7 +32,7 @@
                   </a>
                 </div>
               </div>
-              <v-btn block class="text-none" color="primary" flat rounded="lg" text="登录" @click.enter="login" />
+              <v-btn block class="text-none" color="primary" flat rounded="lg" text="登录" @click="login" />
             </v-card>
             <div class="text-center text-body-2">
               没有账户? <a class="text-decoration-none text-primary font-weight-medium cursor-pointer"

@@ -54,6 +54,5 @@ declare module 'vue-router/auto-routes' {
     '/home/[path]/': RouteRecordInfo<'/home/[path]/', '/home/:path', { path: ParamValue<true> }, { path: ParamValue<false> }>,
     '/home/[path]/[id]': RouteRecordInfo<'/home/[path]/[id]', '/home/:path/:id', { path: ParamValue<true>, id: ParamValue<true> }, { path: ParamValue<false>, id: ParamValue<false> }>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
-    '/login_old': RouteRecordInfo<'/login_old', '/login_old', Record<never, never>, Record<never, never>>,
   }
 }

@@ -5,7 +5,7 @@
         <v-list-subheader>
           <div class="d-flex align-center ga-1">
             <v-icon icon="mdi-console"></v-icon>
-            控制台 {{ vuetify.display.smAndUp }}
+            控制台
           </div>
         </v-list-subheader>
         <div v-for="(item) in consoleStore.items" :key="item.title">
@@ -83,6 +83,7 @@ watch(() => vuetify.display.mdAndDown.value, (value) => drawer.value = !value)
 
 onMounted(async () => {
   if (account.token) {
+    consoleStore.loadDefaultManage()
     consoleStore.loadUserManage()
     consoleStore.loadCourse()
   }
