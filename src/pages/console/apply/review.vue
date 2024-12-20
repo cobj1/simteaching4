@@ -1,5 +1,6 @@
 <template>
   <v-card>
+
     <v-data-iterator :items="list" :items-per-page="3" :search="search" :loading="loading">
       <template v-slot:header>
         <v-toolbar class="pr-2">
@@ -11,12 +12,17 @@
             <v-btn :variant="queryState == '1' ? 'tonal' : null" @click="queryState = '1'">通过</v-btn>
             <v-btn :variant="queryState == '2' ? 'tonal' : null" @click="queryState = '2'">未通过</v-btn>
           </v-btn-group>
-          <v-text-field v-model="search" class="ml-2" density="comfortable" placeholder="检索" prepend-inner-icon="mdi-magnify"
-            style="max-width: 300px;" variant="solo" clearable hide-details></v-text-field>
+          <v-text-field v-model="search" class="ml-2" density="comfortable" placeholder="检索"
+            prepend-inner-icon="mdi-magnify" style="max-width: 300px;" variant="solo" clearable
+            hide-details></v-text-field>
         </v-toolbar>
+        <v-empty-state v-if="list.length==0" icon="mdi-magnify"
+          text="Try adjusting your search terms or filters. Sometimes less specific terms or broader queries can help you find what you're looking for."
+          title="We couldn't find a match."></v-empty-state>
       </template>
 
       <template v-slot:default="{ items }">
+
         <template v-for="(item, i) in items" :key="i">
           <v-card v-bind="item.raw">
             <v-card-text v-if="item.raw.state == 0" class=" pt-4 d-flex ga-2 justify-end">
@@ -29,6 +35,7 @@
           </v-card>
           <br>
         </template>
+
       </template>
 
       <template v-slot:footer="{ page, pageCount, prevPage, nextPage }">
@@ -45,6 +52,7 @@
         </div>
       </template>
     </v-data-iterator>
+
     <v-dialog v-model="dialog" max-width="500">
       <template #default>
         <v-card rounded="lg">
@@ -98,7 +106,9 @@ import { VDateInput } from 'vuetify/labs/VDateInput'
 import { ApplayApi } from '@/api/apply';
 import { onMounted, reactive, ref, watch } from 'vue';
 import { useDateFormat } from '@vueuse/core';
+import { useSystemStore } from '@/stores/system';
 
+const systemStore = useSystemStore()
 const loading = ref(true)
 const dialog = ref(false)
 const dialogForm = reactive({
@@ -115,7 +125,9 @@ const list = ref([])
 watch(queryState, () => load())
 
 const examine = async () => {
+  systemStore.dialogLoading = true
   await ApplayApi.examine(dialogForm.id, useDateFormat(dialogForm.deadline, 'YYYY-MM-DD').value, dialogForm.describe, dialogForm.state)
+  systemStore.dialogLoading = false
   dialog.value = false
   load()
 }

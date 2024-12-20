@@ -1,44 +1,43 @@
 <template>
   <v-layout>
     <v-main min-height="800">
-      <v-container class="h-100 pa-4" fluid>
+      <v-container class="h-100 pa-0" fluid>
         <v-row align="center" class="h-100" justify="center">
-          <v-sheet class="flex-1-1 px-4" color="background" max-width="420">
+          <v-responsive class="flex-1-1 px-4" max-width="475">
             <v-img class="mx-auto mb-4" max-width="60" src="/favicon.ico" />
 
-            <div class="text-h5 text-center mb-8 font-weight-medium">登录你的账户</div>
+            <div class="text-h5 text-center mb-8 font-weight-medium">登录账户</div>
 
-            <v-sheet border="opacity-25 thin" class="overflow-hidden" rounded="lg">
-              <v-text-field v-model="account" density="compact" flat hide-details placeholder="账号" rounded="lg"
-                variant="solo" />
+            <v-card class="pa-10 mb-8" :elevation="$vuetify.display.smAndDown ? 0 : 3" rounded="lg" variant="text">
+              <v-label class="text-subtitle-2">账号</v-label>
 
-              <v-divider />
+              <v-text-field color="primary" density="compact" rounded="lg" variant="outlined" v-model="account" />
 
-              <v-text-field v-model="password" density="compact" flat hide-details placeholder="密码" variant="solo"
+              <v-label class="text-subtitle-2">密码</v-label>
+
+              <v-text-field color="primary" density="compact" rounded="lg" variant="outlined" v-model="password"
                 type="password" />
-            </v-sheet>
 
-            <div class="py-4">
-              <div class="d-flex justify-space-between align-center">
-                <v-checkbox-btn v-model="remember" class="ms-n3" color="primary" label="Remember me">
-                  <template #label>
-                    <span class="text-body-2">记住账号</span>
-                  </template>
-                </v-checkbox-btn>
+              <div class="mb-4">
+                <div class="d-flex justify-space-between align-center">
+                  <v-checkbox-btn v-model="remember" class="ms-n3" color="primary" label="Remember me">
+                    <template #label>
+                      <span class="text-body-2">记住账号</span>
+                    </template>
+                  </v-checkbox-btn>
 
-                <a class="text-decoration-none text-primary text-body-2 font-weight-medium" href="#">
-                  忘记了密码 ?
-                </a>
+                  <a class="text-decoration-none text-primary text-body-2 font-weight-medium" href="#">
+                    忘记密码?
+                  </a>
+                </div>
               </div>
-            </div>
-
-            <v-btn block class="text-none mb-8" color="primary" flat rounded="lg" text="登录" @click.enter="login" />
-
+              <v-btn block class="text-none" color="primary" flat rounded="lg" text="登录" @click.enter="login" />
+            </v-card>
             <div class="text-center text-body-2">
-              没有账户 ？ <a class="text-decoration-none text-primary font-weight-medium cursor-pointer"
+              没有账户? <a class="text-decoration-none text-primary font-weight-medium cursor-pointer"
                 @click="router.replace('/apply')">申请试用</a>
             </div>
-          </v-sheet>
+          </v-responsive>
         </v-row>
       </v-container>
     </v-main>

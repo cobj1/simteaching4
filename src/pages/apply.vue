@@ -2,38 +2,62 @@
   <div :class="{ 'apply-dark': settingsStore.isDark }">
     <div class="header">
       <div class="inner-header flex">
-        <v-sheet class="pa-8 position-absolute elevation-4	" style="z-index: 10; "
-          :style="{ 'height': $vuetify.display.smAndDown ? '100vh' : 'auto', 'top': $vuetify.display.smAndDown ? '0' : 'calc(50vh - 400px)', 'width': $vuetify.display.smAndDown ? '100%' : '600px' }">
-          <p class="mt-2 text-h7 font-weight-bold text-md-h6 pb-5">
-            申请试用
-          </p>
-          <v-alert class="my-3 py-3" border="end" type="warning" variant="outlined" elevation="2">
-            学生请勿在此注册，请联系组织者获取登录账号。
-          </v-alert>
-          <form>
-            <v-text-field v-model="state.phone" :counter="11" :error-messages="v$.phone.$errors.map(e => e.$message)"
-              label="请输入手机号码" required @blur="v$.phone.$touch" @input="v$.phone.$touch"></v-text-field>
-            <v-text-field v-model="state.code" :counter="6" :error-messages="v$.code.$errors.map(e => e.$message)"
-              label="请输入短信验证码" required @blur="v$.code.$touch" @input="v$.code.$touch">
-              <template #append-inner>
-                <v-btn prepend-icon="mdi-send" :disabled="state.phone.length < 11" @click="sendSMS">发送验证码</v-btn>
-              </template>
-            </v-text-field>
-            <v-text-field v-model="state.name" :counter="20" :error-messages="v$.name.$errors.map(e => e.$message)"
-              label="请输入姓名" required @blur="v$.name.$touch" @input="v$.name.$touch"></v-text-field>
-            <v-text-field v-model="state.org" :counter="50" :error-messages="v$.org.$errors.map(e => e.$message)"
-              label="请输入学校/公司名称" required @blur="v$.org.$touch" @input="v$.org.$touch"></v-text-field>
-            <v-textarea v-model="state.explain" label="申请说明" :counter="200"></v-textarea>
-            <v-btn class="mt-2 me-4" @click="submit()">
-              提交
-            </v-btn>
-            <v-btn class="mt-2" @click="clear">
-              清除
-            </v-btn>
-          </form>
-          <v-btn class="border-b-sm mt-2" variant="text" size="small"
-            @click="router.replace('/login')">已有帐号，直接登录</v-btn>
-        </v-sheet>
+        <v-layout class="position-fixed top-0 w-100 h-100 "
+          :class="{ 'bg-black': $vuetify.display.smAndDown && settingsStore.isDark, 'bg-white': $vuetify.display.smAndDown && !settingsStore.isDark }">
+          <v-main min-height="800">
+            <v-container class="h-100 pa-0" fluid>
+              <v-row align="center" class="h-100" justify="center">
+                <v-responsive class="flex-1-1 px-4" max-width="475">
+                  <div class="text-h5 text-center mb-8 font-weight-medium">申请试用</div>
+
+                  <v-card class="pa-10 mb-8" :elevation="$vuetify.display.smAndDown ? 0 : 3" rounded="lg">
+                    <v-label class="text-subtitle-2">手机号码</v-label>
+
+                    <v-text-field color="primary" density="compact" rounded="lg" variant="outlined"
+                      v-model="state.phone" :counter="11" :error-messages="v$.phone.$errors.map(e => e.$message)"
+                      required @blur="v$.phone.$touch" @input="v$.phone.$touch" />
+
+                    <v-label class="text-subtitle-2">短信验证码</v-label>
+
+                    <v-text-field color="primary" density="compact" rounded="lg" variant="outlined" v-model="state.code"
+                      :counter="6" :error-messages="v$.code.$errors.map(e => e.$message)" required
+                      @blur="v$.code.$touch" @input="v$.code.$touch">
+                      <template #append-inner>
+                        <v-btn variant="tonal" size="small" prepend-icon="mdi-send"
+                          :disabled="state.phone.length < 11 || isWaiting" @click="sendSMS">
+                          {{ isWaiting ? `请等待 ${clock} 秒` : '发送验证码' }} </v-btn>
+                      </template>
+                    </v-text-field>
+
+                    <v-label class="text-subtitle-2">姓名</v-label>
+
+                    <v-text-field color="primary" density="compact" rounded="lg" variant="outlined" v-model="state.name"
+                      :counter="20" :error-messages="v$.name.$errors.map(e => e.$message)" required
+                      @blur="v$.name.$touch" @input="v$.name.$touch" />
+
+                    <v-label class="text-subtitle-2">学校/公司</v-label>
+
+                    <v-text-field color="primary" density="compact" rounded="lg" variant="outlined" v-model="state.org"
+                      :counter="50" :error-messages="v$.org.$errors.map(e => e.$message)" required @blur="v$.org.$touch"
+                      @input="v$.org.$touch" />
+
+                    <v-label class="text-subtitle-2">申请说明</v-label>
+
+                    <v-textarea v-model="state.explain" :counter="200" color="primary" density="compact" rounded="lg"
+                      variant="outlined"></v-textarea>
+
+                    <v-btn block class="text-none" color="primary" flat rounded="lg" text="提交" @click="submit()" />
+                  </v-card>
+
+                  <div class="text-center text-body-2">
+                    已有帐号。 <a class="text-decoration-none text-primary font-weight-medium cursor-pointer"
+                      @click="router.replace('/login')">前往登录</a>
+                  </div>
+                </v-responsive>
+              </v-row>
+            </v-container>
+          </v-main>
+        </v-layout>
       </div>
       <div>
         <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -50,25 +74,7 @@
         </svg>
       </div>
     </div>
-    <v-snackbar v-model="successSnackbar" multi-line :timeout="2000" color="green-darken-4">
-      {{ text }}
 
-      <template v-slot:actions>
-        <v-btn variant="text" @click="successSnackbar = false">
-          关闭
-        </v-btn>
-      </template>
-    </v-snackbar>
-
-    <v-snackbar v-model="warningSnackbar" multi-line :timeout="2000" color="yellow-darken-1">
-      {{ text }}
-
-      <template v-slot:actions>
-        <v-btn color="red" variant="text" @click="warningSnackbar = false">
-          关闭
-        </v-btn>
-      </template>
-    </v-snackbar>
     <v-dialog v-model="dialog" max-width="320" persistent>
       <v-list class="py-2" color="primary" elevation="12" rounded="lg">
         <v-list-item prepend-icon="$vuetify-outline" title="提交申请试用表单...">
@@ -85,6 +91,26 @@
         </v-list-item>
       </v-list>
     </v-dialog>
+
+    <v-dialog v-model="dialogSucceed" contained max-width="400" persistent>
+      <v-card rounded="lg">
+        <template #text>
+          <div class="text-center pt-4">
+            <v-avatar class="mb-4" color="success" icon="mdi-check" size="x-large" variant="tonal" />
+
+            <div class="font-weight-bold mb-2">
+              申请已提交
+            </div>
+
+            <div class="text-body-2 text-medium-emphasis mb-6">
+              请等待管理员通过审核。
+            </div>
+
+            <v-btn block class="text-none" color="primary" text="回到首页" variant="flat" to="/" />
+          </div>
+        </template>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -97,13 +123,13 @@ import { useSettingsStore } from '@/stores/settings';
 import ProductLogo from '@/components/ProductLogo.vue';
 import { MessageApi } from '@/api/message';
 import { ApplayApi } from '@/api/apply';
+import { useCountdownTimer } from '@/utils/countdown-timer';
+import { notify } from '@kyvg/vue3-notification';
 
 const router = useRouter()
 const settingsStore = useSettingsStore()
-const successSnackbar = ref(false)
-const warningSnackbar = ref(false)
-const text = ref('')
 const dialog = ref(false)
+const dialogSucceed = ref(false)
 
 const initialState = {
   phone: '',
@@ -126,22 +152,24 @@ const rules = {
 
 const v$ = useVuelidate(rules, state)
 
-function clear() {
-  v$.value.$reset()
-
-  for (const [key, value] of Object.entries(initialState)) {
-    state[key] = value
-  }
-}
+const { isWaiting, clock, start } = useCountdownTimer()
 
 const sendSMS = async () => {
+  start(60)
   const res = await MessageApi.sendCode(state.phone)
   if (res) {
-    text.value = '短信发送成功'
-    successSnackbar.value = true
+    notify({
+      title: "短信发送成功",
+      type: "info",
+    });
   } else {
-    text.value = '短信发送失败'
-    warningSnackbar.value = true
+    notify({
+      title: "短信发送失败",
+      type: "info",
+      data: {
+        icon: "mdi-alert-circle",
+      },
+    });
   }
 }
 
@@ -157,20 +185,20 @@ const submit = async () => {
         org: state.org,
         illustrate: state.explain
       })
-      if (res2.code == 0) {
-        text.value = '申请提交成功'
-        successSnackbar.value = trued
-      } else {
-        text.value = res2.message
-        warningSnackbar.value = true
+      if (res2 == 'true' || res2) {
+        dialogSucceed.value = true
       }
     } catch (e) { /* empty */ }
     setTimeout(() => dialog.value = false, 400)
   } else {
-    text.value = '提交失败'
-    warningSnackbar.value = true
+    notify({
+      title: "提交失败",
+      type: "info",
+      data: {
+        icon: "mdi-alert-circle",
+      },
+    });
   }
-  console.log(res)
 }
 </script>
 
@@ -182,6 +210,7 @@ const submit = async () => {
 
 .apply-dark .header {
   background: linear-gradient(60deg, rgb(36 25 78) 0%, rgb(0 66 74) 100%);
+  color: white;
 }
 
 .apply-dark .waves {
@@ -190,9 +219,7 @@ const submit = async () => {
 
 .header {
   position: relative;
-  text-align: center;
   background: linear-gradient(60deg, rgba(84, 58, 183, 1) 0%, rgba(0, 172, 193, 1) 100%);
-  color: white;
 }
 
 .logo {
@@ -215,7 +242,6 @@ const submit = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
 }
 
 .waves {
@@ -231,7 +257,6 @@ const submit = async () => {
 .content {
   position: relative;
   height: 20vh;
-  text-align: center;
   background-color: white;
 }
 

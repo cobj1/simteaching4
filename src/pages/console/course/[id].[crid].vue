@@ -1,13 +1,13 @@
 <template>
   <v-container fluid max-width="1000px" min-height="800px">
-    <div class="d-flex" :style="{ 'margin-left': $vuetify.display.mdAndDown ? '0' : '-50px' }">
-      <v-icon v-if="item.type == 'resource' && !$vuetify.display.mdAndDown" icon="mdi-book-outline" size="40"
+    <div class="d-flex" :style="{ 'margin-left': $vuetify.display.smAndDown ? '0' : '-50px' }">
+      <v-icon v-if="item.type == 'resource' && !$vuetify.display.smAndDown" icon="mdi-book-outline" size="40"
         class="mr-2" />
-      <v-icon v-if="item.type == 'simulation' && !$vuetify.display.mdAndDown" icon="mdi-test-tube" size="40"
+      <v-icon v-if="item.type == 'simulation' && !$vuetify.display.smAndDown" icon="mdi-test-tube" size="40"
         class="mr-2" />
-      <v-icon v-if="item.type == 'questions' && !$vuetify.display.mdAndDown" icon="mdi-head-question-outline" size="40"
+      <v-icon v-if="item.type == 'questions' && !$vuetify.display.smAndDown" icon="mdi-head-question-outline" size="40"
         class="mr-2" />
-      <v-icon v-if="item.type == 'testpaper' && !$vuetify.display.mdAndDown" icon="mdi-ab-testing" size="40"
+      <v-icon v-if="item.type == 'testpaper' && !$vuetify.display.smAndDown" icon="mdi-ab-testing" size="40"
         class="mr-2" />
       <span class="text-h4"> {{ title }}</span>
     </div>
@@ -36,11 +36,11 @@
         </div>
         <div class="border pa-4" v-else-if="item.type == 'simulation'" ref="simulationRef">
           <v-responsive :aspect-ratio="16 / 9" class="w-100 h-100" min-height="300px"
-            :style="angle && $vuetify.display.mdAndDown ? { 'position': 'fixed', 'top': 0, 'left': 0, 'z-index': '910' } : null">
+            :style="angle && $vuetify.display.smAndDown ? { 'position': 'fixed', 'top': 0, 'left': 0, 'z-index': '910' } : null">
             <iframe :src="item.url" class="w-100 h-100 border-0	">
             </iframe>
           </v-responsive>
-          <div class="pa-2 text-center" v-if="!$vuetify.display.mdAndDown">
+          <div class="pa-2 text-center" v-if="!$vuetify.display.smAndDown">
             <v-btn variant="text" prepend-icon="mdi-fullscreen" @click="enter()">全屏模式</v-btn>
           </div>
         </div>

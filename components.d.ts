@@ -38,6 +38,7 @@ declare module 'vue' {
     UserOptions: typeof import('./src/components/user/UserOptions.vue')['default']
     UserPanel: typeof import('./src/components/user/UserPanel.vue')['default']
     VAvatarPro: typeof import('./src/components/VAvatarPro.vue')['default']
+    VLoading: typeof import('./src/components/VLoading.vue')['default']
     VNotifications: typeof import('./src/components/VNotifications.vue')['default']
   }
 }

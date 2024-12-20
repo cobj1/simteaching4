@@ -5,6 +5,7 @@
     </v-main>
     <v-notifications></v-notifications>
     <FileList></FileList>
+    <VLoading></VLoading>
   </v-app>
 </template>
 
