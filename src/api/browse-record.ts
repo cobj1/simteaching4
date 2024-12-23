@@ -1,9 +1,19 @@
 import axios from "../axios";
 
 export const BrowseRecordApi = {
-  save(data: any) {
+  time(data: any) {
     return axios({
-      url: "/resourceBrowseRecord/save",
+      url: "/browse-record/time",
+      method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data,
+    });
+  },
+  count(data: any) {
+    return axios({
+      url: "/browse-record/count",
       method: "post",
       headers: {
         "Content-Type": "multipart/form-data",

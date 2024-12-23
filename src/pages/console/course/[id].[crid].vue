@@ -9,7 +9,7 @@
         class="mr-2" />
       <v-icon v-if="item.type == 'testpaper' && !$vuetify.display.smAndDown" icon="mdi-ab-testing" size="40"
         class="mr-2" />
-      <span class="text-h4"> {{ title }}</span>
+      <span class="text-h4"> {{ title }} </span>
     </div>
     <div class="my-2 text-body-2 text-medium-emphasis">
       {{ item.creator }} • {{ useDateFormat(item.createTime, 'YYYY-MM-DD') }}
@@ -103,7 +103,7 @@ import { ResourceTestpaperApi } from '@/api/resource/resource-paper';
 import { ResourceQuestionsApi } from '@/api/resource/resource-questions';
 import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
 import { useDateFormat, useFullscreen, useScreenOrientation } from '@vueuse/core';
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import VueOfficeDocx from '@vue-office/docx'
 import '@vue-office/docx/lib/index.css'
@@ -111,6 +111,9 @@ import VueOfficeExcel from '@vue-office/excel'
 import '@vue-office/excel/lib/index.css'
 import VueOfficePdf from '@vue-office/pdf'
 import GLightbox from 'glightbox';
+import { BrowseRecordApi } from '@/api/browse-record';
+import { useIncrementTimeTrigger } from '@/utils/increment-time-trigger';
+
 
 const route = useRoute()
 const router = useRouter()
@@ -216,9 +219,33 @@ const loadCourseResourceLogItem = async () => {
   logItem.value.createTime = res.createTime
 }
 
-onMounted(() => {
+const cid = route.params.id
+const crid = route.params.crid
+
+const { timer, clock, start, stop } = useIncrementTimeTrigger()
+
+
+onMounted(async () => {
   loadCourseResourceItem()
   loadCourseResourceLogItem()
+
+  await BrowseRecordApi.count({ cid, crid })
+  // 默认两分钟保存一次
+  start(60 * 2, {
+    event() {
+      BrowseRecordApi.time({ cid, crid, time: clock.value })
+      timer.value = 0
+    }
+  })
+
+})
+
+onUnmounted(() => {
+  stop({
+    event() {
+      BrowseRecordApi.time({ cid, crid, time: timer.value })
+    }
+  })
 })
 </script>
 
