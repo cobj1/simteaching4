@@ -33,7 +33,10 @@
           <v-list-item prepend-icon="mdi-bank" :subtitle="`组织: ${drawerItem.orgName}`"
             v-if="drawerItem.orgName"></v-list-item>
         </v-list>
-        <v-btn color="primary" class="d-flex mx-auto" prepend-icon="mdi-plus">加入资源库</v-btn>
+        <v-btn color="primary" class="d-flex mx-auto" prepend-icon="mdi-plus"
+          @click="joinTheRepository(drawerItem)">加入资源库</v-btn>
+        <v-btn color="error" class="d-flex mx-auto mt-4" prepend-icon="mdi-delete" v-if="drawerItem.self"
+          @click="delShareResource">删除资源共享</v-btn>
       </v-navigation-drawer>
       <v-main height="calc(100vh - 240px)">
         <v-infinite-scroll height="calc(100vh - 280px)" @load="loadItems">
@@ -190,6 +193,12 @@ const typeLabel = (key) => {
 const viewItem = (value) => {
   drawerItem.value = value;
   drawer.value = true;
+}
+
+const delShareResource = async () => {
+  await ResourceShareApi.del(drawerItem.value.id)
+  sharedResourcesDialog.value = false
+  reloadItems()
 }
 
 const closeSharedResources = () => {
