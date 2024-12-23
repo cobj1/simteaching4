@@ -70,8 +70,8 @@
     <div v-if="logItem.id == null">
       <v-btn prepend-icon="mdi-check" color="indigo" class="d-flex" style="justify-self: end;"
         v-if="item.type == 'questions' || item.type == 'testpaper'" @click="finish">提交</v-btn>
-      <v-btn prepend-icon="mdi-check" color="indigo" class="d-flex" style="justify-self: end;" v-else
-        @click="finish">标记已完成</v-btn>
+      <v-btn prepend-icon="mdi-check" color="indigo" class="d-flex" style="justify-self: end;"
+        v-if="item.type == 'simulation'" @click="finish">标记已完成</v-btn>
     </div>
     <v-dialog v-model="finishDialog" contained max-width="400" persistent>
       <v-card rounded="lg">

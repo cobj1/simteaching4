@@ -45,7 +45,8 @@ const handleResultUpdateScore = (item) => {
 const loadResources = async () => {
   headers.value.splice(1, headers.value.length)
   const coursework = { title: '课业', value: 'coursework', children: [] }
-  crs.value = await CourseResourceApi.list(route.params.id)
+  const res = await CourseResourceApi.list(route.params.id)
+  crs.value = res.filter(item => ['questions', 'testpaper', 'simulation'].includes(item.type))
   crs.value.forEach(item => {
     coursework.children.push({
       title: `${item.resource.name} ( 满分:${item.score} )`,

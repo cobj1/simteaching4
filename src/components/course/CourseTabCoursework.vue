@@ -101,7 +101,7 @@ const handleCourseResourceItemDeleted = async (id) => {
 
 const handleSelectionCoursewareConfirm = (value) => {
   courseworkSave(JSON.stringify(value.map((item, index) => {
-    return { cid: route.params.id, type: 'resource', rid: item, order: list.value.length + index, score: 100 }
+    return { cid: route.params.id, type: 'resource', rid: item, order: list.value.length + index, score: 0 }
   })))
 }
 const handleSelectionSimulationConfirm = (value) => {
@@ -139,10 +139,13 @@ const courseworkSave = async (array) => {
 }
 
 const loadItems = async () => {
+  const logs = await CourseResourceApi.logSelf(route.params.id)
   const res = await CourseResourceApi.list(route.params.id)
+  res.forEach(item => item.log = logs.find(log => log.crid == item.id))
   subjects.value = (await CourseSubjectApi.list(route.params.id)).map(subject => { return { ...subject, children: res.filter(item => item.sid == subject.id) || [] } })
   list.value = res.filter(item => !item.sid)
 }
+
 
 onMounted(() => {
   loadItems()

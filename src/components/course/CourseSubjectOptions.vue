@@ -8,11 +8,11 @@
       </v-list-item>
       <v-list-item title="删除" prepend-icon="mdi-delete" link @click="deleteItem">
       </v-list-item>
-      <v-divider></v-divider>
+      <!-- <v-divider></v-divider>
       <v-list-item title="上移" prepend-icon="mdi-arrow-up" link>
       </v-list-item>
       <v-list-item title="下移" prepend-icon="mdi-arrow-down" link>
-      </v-list-item>
+      </v-list-item> -->
     </v-list>
   </v-menu>
   <v-dialog v-model="dialogDelete" max-width="500px">

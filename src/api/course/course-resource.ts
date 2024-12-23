@@ -80,7 +80,7 @@ export const CourseResourceApi = {
       },
       data: {
         score,
-        crlid
+        crlid,
       },
     });
   },
@@ -88,6 +88,12 @@ export const CourseResourceApi = {
     return axios({
       url: "/courseResource/log/del/" + crlid,
       method: "post",
+    });
+  },
+  logSelf(cid: string) {
+    return axios({
+      url: "/courseResource/log/self/" + cid,
+      method: "get",
     });
   },
 };

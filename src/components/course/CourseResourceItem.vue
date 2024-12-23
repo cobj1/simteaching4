@@ -17,7 +17,8 @@
                 <template v-slot:actions>
                   <v-text-field label="分数" v-model="score" type="number" variant="underlined" hide-details
                     density="compact" :min="1" :max="100" :disabled="item.resource.resourceType == 'testpaper'"
-                    @click.stop @change="onChangeScore"></v-text-field>
+                    v-if="['questions', 'testpaper', 'simulation'].includes(item.resource.resourceType)" @click.stop
+                    @change="onChangeScore"></v-text-field>
                   <CourseResourceItemOptions @deleted="emit('deleted')"></CourseResourceItemOptions>
                 </template>
               </v-expansion-panel-title>
@@ -55,8 +56,12 @@
                 <v-icon v-if="item.resource.resourceType == 'testpaper'" icon="mdi-ab-testing" size="30" class="mr-2" />
                 {{ item.resource.name }}
               </div>
-              <span class="text-caption text-medium-emphasis">发布时间: {{ useDateFormat(item.createTime, 'YYYY-MM-DD')
-                }}</span>
+              <span class="text-caption text-medium-emphasis">
+                <v-chip prepend-icon="mdi-check-decagram-outline" v-if="item.log && item.log.id" class="mr-2">
+                  已提交
+                </v-chip>
+                发布时间: {{ useDateFormat(item.createTime, 'YYYY-MM-DD') }}
+              </span>
             </VListItemTitle>
           </v-list-item>
         </template>
