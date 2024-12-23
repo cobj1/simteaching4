@@ -6,11 +6,12 @@
       {{ item.name }}
     </template>
     <template v-slot:[`item.id_${cr.id}`]="{ item, index }" v-for="(cr, crIndex) in crs" :key="cr.id">
-      <div class="d-flex" v-if="items[index].resource[crIndex].createTime">
+      <div class="d-flex" v-if="items[index].resource[crIndex].crlid">
         <v-text-field v-model="items[index].resource[crIndex].score" type="number" :min="0" :max="cr.score" hide-details
-          density="compact" variant="underlined" single-line :suffix="`/ ${cr.score} 分`" class="mr-2">
+          density="compact" variant="underlined" single-line :suffix="`/ ${cr.score} 分`" class="mr-2"
+          @change="handleResultUpdateScore(items[index].resource[crIndex])">
         </v-text-field>
-        <CourseTabResultOptions @deleted="handleResultDeleted(items[index].resource[crIndex].crlid)">
+        <CourseTabResultOptions @deleted="handleResultDeleted(items[index].resource[crIndex])">
         </CourseTabResultOptions>
       </div>
     </template>
@@ -33,8 +34,12 @@ watch(() => route.params.id, () => {
   loadResources()
 })
 
-const handleResultDeleted = (crlid) => {
-
+const handleResultDeleted = (item) => {
+  CourseResourceApi.logDel(item.crlid)
+  item.crlid = null
+}
+const handleResultUpdateScore = (item) => {
+  CourseResourceApi.logUpdateScore(item.score, item.crlid)
 }
 
 const loadResources = async () => {
@@ -54,7 +59,6 @@ const loadResources = async () => {
 const loadItems = async () => {
   items.value = []
   const res = await CourseApi.transcript(route.params.id)
-  console.log(res)
   res.forEach(item => {
     const findItem = items.value.find(user => user.id == item.id)
     if (findItem) {

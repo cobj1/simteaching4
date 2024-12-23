@@ -71,5 +71,23 @@ export const CourseResourceApi = {
       method: "get",
     });
   },
-
+  logUpdateScore(score: number, crlid: string) {
+    return axios({
+      url: "/courseResource/log/updateScore",
+      method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data: {
+        score,
+        crlid
+      },
+    });
+  },
+  logDel(crlid: string) {
+    return axios({
+      url: "/courseResource/log/del/" + crlid,
+      method: "post",
+    });
+  },
 };
