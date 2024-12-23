@@ -36,7 +36,7 @@
         <v-btn color="primary" class="d-flex mx-auto" prepend-icon="mdi-plus"
           @click="joinTheRepository(drawerItem)">加入资源库</v-btn>
         <v-btn color="error" class="d-flex mx-auto mt-4" prepend-icon="mdi-delete" v-if="drawerItem.self"
-          @click="delShareResource">删除资源共享</v-btn>
+          @click="dialogDeleteShareResource = true">取消资源共享</v-btn>
       </v-navigation-drawer>
       <v-main height="calc(100vh - 240px)">
         <v-infinite-scroll height="calc(100vh - 280px)" @load="loadItems">
@@ -125,6 +125,25 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="dialogDeleteShareResource" max-width="500">
+      <v-card rounded="lg" title="取消资源共享">
+        <template #prepend>
+          <v-avatar color="error" icon="mdi-alert-outline" variant="tonal" />
+        </template>
+        <template #text>
+          <div class="mb-4 text-body-2 text-medium-emphasis">
+            取消资源共享不会影响被其他用户引用的资源。
+          </div>
+        </template>
+        <v-divider />
+        <template #actions>
+          <v-spacer />
+          <v-btn border class="text-none" color="surface" text="取消" variant="flat"
+            @click="dialogDeleteShareResource = false" />
+          <v-btn class="text-none" color="error" text="确定" variant="flat" @click="delShareResource" />
+        </template>
+      </v-card>
+    </v-dialog>
   </VCard>
 
 </template>
@@ -162,6 +181,7 @@ const sharedResourcesForm = ref({
   category: null,
   rids: []
 })
+const dialogDeleteShareResource = ref(false)
 
 watch(() => [search.value.category, search.value.type, search.value.name, search.value.self], () => {
   reloadItems()
@@ -197,7 +217,8 @@ const viewItem = (value) => {
 
 const delShareResource = async () => {
   await ResourceShareApi.del(drawerItem.value.id)
-  sharedResourcesDialog.value = false
+  dialogDeleteShareResource.value = false
+  drawer.value = false
   reloadItems()
 }
 

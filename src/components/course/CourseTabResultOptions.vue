@@ -4,6 +4,8 @@
       <v-btn icon="mdi-dots-vertical" density="comfortable" variant="text" v-bind="props"></v-btn>
     </template>
     <v-list width="160">
+      <v-list-item title="查看作答记录" prepend-icon="mdi-delete" link @click="deleteItem">
+      </v-list-item>
       <v-list-item title="删除记录" prepend-icon="mdi-delete" link @click="deleteItem">
       </v-list-item>
     </v-list>
