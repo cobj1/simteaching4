@@ -96,4 +96,10 @@ export const CourseResourceApi = {
       method: "get",
     });
   },
+  logDataInfo(crlid: string) {
+    return axios({
+      url: "/courseResource/log/data/" + crlid,
+      method: "get",
+    });
+  },
 };

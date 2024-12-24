@@ -1,21 +1,26 @@
 <template>
-  <v-data-table-virtual :headers="headers" :items="items" item-key="name" :mobile="$vuetify.display.smAndDown">
-    <!-- eslint-disable-next-line vue/valid-v-slot -->
-    <template v-slot:item.name="{ item }">
-      <v-avatar-pro :avatar="item.avatar" :name="item.name" size="32" class="mr-2"></v-avatar-pro>
-      {{ item.name }}
-    </template>
-    <template v-slot:[`item.id_${cr.id}`]="{ item, index }" v-for="(cr, crIndex) in crs" :key="cr.id">
-      <div class="d-flex" v-if="items[index].resource[crIndex].crlid">
-        <v-text-field v-model="items[index].resource[crIndex].score" type="number" :min="0" :max="cr.score" hide-details
-          density="compact" variant="underlined" single-line :suffix="`/ ${cr.score} 分`" class="mr-2"
-          @change="handleResultUpdateScore(items[index].resource[crIndex])">
-        </v-text-field>
-        <CourseTabResultOptions @deleted="handleResultDeleted(items[index].resource[crIndex])">
-        </CourseTabResultOptions>
-      </div>
-    </template>
-  </v-data-table-virtual>
+  <div>
+    <v-data-table-virtual :headers="headers" :items="items" item-key="name" :mobile="$vuetify.display.smAndDown">
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template v-slot:item.name="{ item }">
+        <v-avatar-pro :avatar="item.avatar" :name="item.name" size="32" class="mr-2"></v-avatar-pro>
+        {{ item.name }}
+      </template>
+      <!-- eslint-disable-next-line vue/no-unused-vars -->
+      <template v-slot:[`item.id_${cr.id}`]="{ item, index }" v-for="(cr, crIndex) in crs" :key="cr.id">
+        <div class="d-flex" v-if="items[index].resource[crIndex].crlid">
+          <v-text-field v-model="items[index].resource[crIndex].score" type="number" :min="0" :max="cr.score"
+            hide-details density="compact" variant="underlined" single-line :suffix="`/ ${cr.score} 分`" class="mr-2"
+            @change="handleResultUpdateScore(items[index].resource[crIndex])">
+          </v-text-field>
+          <CourseTabResultOptions @deleted="handleResultDeleted(items[index].resource[crIndex])"
+            @view="courseTabResultViewRef.open(items[index].resource[crIndex])">
+          </CourseTabResultOptions>
+        </div>
+      </template>
+    </v-data-table-virtual>
+    <CourseTabResultView ref="courseTabResultViewRef"></CourseTabResultView>
+  </div>
 </template>
 
 <script setup>
@@ -28,6 +33,7 @@ const route = useRoute()
 const headers = ref([{ title: '用户', value: 'name', minWidth: '200px', fixed: true, }])
 const items = ref([])
 const crs = ref([]) // CourseResources
+const courseTabResultViewRef = ref()
 
 watch(() => route.params.id, () => {
   loadItems()

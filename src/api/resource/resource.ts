@@ -1,5 +1,8 @@
 import axios from "@/axios";
 import { PagingProcessor } from "@/utils/paging-processor";
+import { ResourceSimulationApi } from "./resource-simulation";
+import { ResourceQuestionsApi } from "./resource-questions";
+import { ResourceTestpaperApi } from "./resource-paper";
 
 export interface ResourceCategory {
   id: string;
@@ -70,7 +73,14 @@ export const ResourceApi = {
       method: "post",
     });
   },
-  info(id: string) {
+  info(id: string, type: string | null) {
+    if (type == "simulation") {
+      return ResourceSimulationApi.info(id);
+    } else if (type == "questions") {
+      return ResourceQuestionsApi.info(id);
+    } else if (type == "testpaper") {
+      return ResourceTestpaperApi.info(id);
+    }
     return axios({
       url: "/resource/info/" + id,
       method: "get",
