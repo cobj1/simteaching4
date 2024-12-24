@@ -31,6 +31,7 @@
 import { CourseResourceApi } from '@/api/course/course-resource';
 import { ResourceApi } from '@/api/resource/resource';
 import { ResourceTestpaperApi } from '@/api/resource/resource-paper';
+import { useAnswerFormat } from '@/utils/answer-format';
 import { ref } from 'vue';
 
 const dialog = ref(false)
@@ -60,7 +61,7 @@ const open = async (value) => {
     } catch (e) { /* empty */ }
     try {
       const res = await CourseResourceApi.logDataInfo(value.crlid)
-      questions.value.answer = questions.value.qtype == '多选题' ? res?.split(',') : res + ''
+      questions.value.answer = useAnswerFormat(res, questions.value.qtype)
     } catch (e) { /* empty */ }
   }
   if (value.type == "testpaper") {
@@ -73,7 +74,7 @@ const open = async (value) => {
       const res = await CourseResourceApi.logDataInfo(value.crlid)
       testpaper.value.questions.forEach(question => {
         const selfAnswer = res.find(item => item.qid == question.id)
-        question.answer = question.type == '多选题' ? selfAnswer.answer?.split(',') : selfAnswer.answer + ''
+        question.answer = useAnswerFormat(selfAnswer.answer, question.type)
         question.options = question.options.map(item => item.name)
       })
     } catch (e) { /* empty */ }

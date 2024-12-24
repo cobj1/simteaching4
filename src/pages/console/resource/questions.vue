@@ -92,6 +92,7 @@
 import { computed, nextTick, ref } from 'vue';
 import { ResourceApi } from '@/api/resource/resource';
 import { ResourceQuestionsApi } from '@/api/resource/resource-questions';
+import { useAnswerFormat } from '@/utils/answer-format';
 
 const selected = defineModel()
 const props = defineProps({
@@ -152,7 +153,7 @@ const editItem = async (item) => {
   if (item) {
     editedIndex.value = serverItems.value.indexOf(item)
     editedItem.value = Object.assign({}, item)
-    editedItem.value.answer = item.type == '多选题' ? item.answer.split(',') : item.answer
+    editedItem.value.answer = useAnswerFormat(item.answer, item.type)
     const res = await ResourceQuestionsApi.info(item.id)
     editedItem.value.options = res.options.map(item => item.name)
   } else {

@@ -129,6 +129,7 @@ import { ResourceQuestionsApi } from '@/api/resource/resource-questions';
 import { useResourceStore } from '@/stores/resource';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useAnswerFormat } from '@/utils/answer-format';
 
 const resourceStore = useResourceStore()
 const route = useRoute()
@@ -154,10 +155,11 @@ const handelSelectionQuestionsConfirm = async (qids, scores) => {
   const list = await ResourceQuestionsApi.listByIds(qids.join(','))
   qids.forEach((qid, index) => {
     const question = list.find(item => item.id == qid)
+    console.log(question)
     items.value.push({
       ...question,
       options: question.options.map(option => option.name),
-      answer: question.answer?.includes(',') ? question.answer.split(',') : question.answer,
+      answer: useAnswerFormat(question.answer, question.type),
       score: scores ? scores[index] : 0,
     })
   })

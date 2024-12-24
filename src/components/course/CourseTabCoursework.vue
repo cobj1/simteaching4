@@ -82,6 +82,7 @@ import { CourseResourceApi } from '@/api/course/course-resource';
 import { CourseSubjectApi } from '@/api/course/course-subject';
 import { useRoute } from 'vue-router';
 import { ResourceTestpaperApi } from '@/api/resource/resource-paper';
+import { useAnswerFormat } from '@/utils/answer-format';
 
 defineProps({
   manage: Boolean
@@ -128,7 +129,7 @@ const handleVueDraggableEnd = async (event) => {
     newList.push(...list.value)
     subjects.value.forEach(subject => newList.push(...subject.children.map(item => { return { ...item, sid: subject.id } })))
     await CourseResourceApi.save(newList.map(item => {
-      return { cid: item.cid, rid: item.rid, sid: item.sid, type: item.type }
+      return { id: item.id, cid: item.cid, rid: item.rid, sid: item.sid, type: item.type, score: item.score }
     }), true, route.params.id)
   }
 }
@@ -141,7 +142,11 @@ const courseworkSave = async (array) => {
 const loadItems = async () => {
   const logs = await CourseResourceApi.logSelf(route.params.id)
   const res = await CourseResourceApi.list(route.params.id)
-  res.forEach(item => item.log = logs.find(log => log.crid == item.id))
+  res.forEach(item => {
+    item.log = logs.find(log => log.crid == item.id)
+    if (item.type == 'questions' && item.resource)
+      item.resource.answer = useAnswerFormat(item.resource.answer, item.resource.type)
+  })
   subjects.value = (await CourseSubjectApi.list(route.params.id)).map(subject => { return { ...subject, children: res.filter(item => item.sid == subject.id) || [] } })
   list.value = res.filter(item => !item.sid)
 }

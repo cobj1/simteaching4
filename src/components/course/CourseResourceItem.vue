@@ -33,7 +33,7 @@
                 </div>
                 <div v-if="item.resource.resourceType == 'questions'">
                   <QuestionsOptions disabled :type="item.resource.type"
-                    :options="item.resource.options.map(item => item.name)" :answer="item.resource.answer?.split(',')">
+                    :options="item.resource.options.map(item => item.name)" :answer="item.resource.answer">
                   </QuestionsOptions>
                 </div>
                 <div v-if="item.resource.resourceType == 'testpaper'">
