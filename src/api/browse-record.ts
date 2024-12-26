@@ -21,4 +21,16 @@ export const BrowseRecordApi = {
       data,
     });
   },
+  resourceRecords() {
+    return axios({
+      url: "/browse-record/resource/records",
+      method: "get",
+    });
+  },
+  learnDuration() {
+    return axios({
+      url: "/browse-record/learn/duration",
+      method: "get",
+    });
+  },
 };
