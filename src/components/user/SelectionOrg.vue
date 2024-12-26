@@ -1,14 +1,26 @@
 <template>
-  <v-dialog v-model="dialog" activator="parent" max-width="800px">
-    <v-card>
-      <Org enable-selection v-model="selected"></Org>
-      <v-divider></v-divider>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text="关闭" variant="plain" @click="close()"></v-btn>
-        <v-btn color="primary" text="保存" variant="tonal" :disabled="selected.length == 0" @click="save()"></v-btn>
-      </v-card-actions>
-    </v-card>
+  <v-dialog v-model="dialog" activator="parent" max-width="600px" :fullscreen="$vuetify.display.smAndDown" scrollable>
+
+    <template #default>
+      <v-card prepend-icon="mdi-bank" title="选择组织">
+        <v-divider></v-divider>
+
+        <v-card-text class="pa-0">
+          <Org enable-selection v-model="selected"></Org>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-btn text="关闭" @click="close()"></v-btn>
+
+          <v-spacer></v-spacer>
+
+          <v-btn color="surface-variant" text="保存" variant="flat" :disabled="selected.length == 0"
+            @click="save()"></v-btn>
+        </v-card-actions>
+      </v-card>
+    </template>
   </v-dialog>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
-  <VCard>
-    <VToolbar :title="title">
+  <VCard :elevation="enableSelection ? 0 : 1">
+    <VToolbar title="课件管理" v-if="!enableSelection">
       <ResourceCategory>
         <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
       </ResourceCategory>
@@ -20,7 +20,7 @@
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:item.actions="{ item }" v-if="!enableSelection">
         <VBtn icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)"></VBtn>
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
       </template>
@@ -86,7 +86,7 @@ import { useResourceStore } from '@/stores/resource';
 
 const resourceStore = useResourceStore()
 const selected = defineModel()
-const props = defineProps({
+defineProps({
   enableSelection: { type: Boolean, default: false }
 })
 const options = ref({
@@ -96,10 +96,10 @@ const options = ref({
 const headers = ref([
   { title: '标题', align: 'start', sortable: false, key: 'name', },
   { title: '类型', key: 'categoryName', sortable: false },
-  { title: '大小', key: 'size', width: 100 },
-  { title: '时长', key: 'duration', width: 100 },
-  { title: '扩展名', key: 'extensions', width: 100 },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end', width: 100 },
+  { title: '大小', key: 'size', },
+  { title: '时长', key: 'duration', },
+  { title: '扩展名', key: 'extensions', },
+  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
 ])
 const search = ref({
   name: '',
@@ -136,7 +136,6 @@ const defaultItem = ref({
   size: null,
   file: null
 })
-const title = computed(() => props.enableSelection ? '选择课件' : '课件')
 const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
 
 const editItem = async (item) => {

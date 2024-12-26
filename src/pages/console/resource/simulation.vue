@@ -1,6 +1,6 @@
 <template>
-  <VCard>
-    <VToolbar :title="title">
+  <VCard :elevation="enableSelection ? 0 : 1">
+    <VToolbar title="仿真管理" v-if="!enableSelection">
       <ResourceCategory>
         <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
       </ResourceCategory>
@@ -9,9 +9,8 @@
       </v-btn>
     </VToolbar>
     <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
-      :items-per-page="options.itemsPerPage" :headers="headers" :items="serverItems" :items-length="totalItems"
-      :loading="loading" :search="`${search.category},${search.name}`" :mobile="$vuetify.display.smAndDown"
-      @update:options="loadItems">
+      :headers="headers" :items="serverItems" :items-length="totalItems" :loading="loading"
+      :search="`${search.category},${search.name}`" :mobile="$vuetify.display.smAndDown" @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
           <v-select v-model="search.category" hide-details class="pa-2" label="筛选类型..." :items="resourceStore.categorys"
@@ -33,7 +32,7 @@
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:item.actions="{ item }" v-if="!enableSelection">
         <VBtn icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)"></VBtn>
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
       </template>
@@ -115,10 +114,9 @@ import { useResourceStore } from '@/stores/resource';
 
 const resourceStore = useResourceStore()
 const selected = defineModel()
-const props = defineProps({
+defineProps({
   enableSelection: { type: Boolean, default: false }
 })
-const title = computed(() => props.enableSelection ? '选择仿真' : '仿真')
 const options = ref({
   page: 1,
   itemsPerPage: 5

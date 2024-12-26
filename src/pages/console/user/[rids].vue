@@ -1,6 +1,6 @@
 <template>
-  <VCard>
-    <v-toolbar :title="title">
+  <VCard :elevation="enableSelection ? 0 : 1">
+    <v-toolbar title="用户管理" v-if="!enableSelection">
       <v-btn color="primary" dark @click="addItem()">
         新增项目
       </v-btn>
@@ -29,7 +29,7 @@
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:item.actions="{ item }" v-if="!enableSelection">
         <VBtn icon="mdi-rename" variant="text" density="comfortable" size="small" @click="editItem(item)"></VBtn>
         <VBtn icon="mdi-lock-reset" variant="text" density="comfortable" size="small" @click="repwdItem(item)"></VBtn>
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
@@ -135,7 +135,6 @@ const props = defineProps({
   enableSelection: { type: Boolean, default: false }
 
 })
-const title = computed(() => props.enableSelection ? '选择用户' : '用户管理')
 const search = reactive({ name: '', role: null, org: null, orgItem: null })
 const options = ref({ page: 1, itemsPerPage: 5 })
 const headers = ref([

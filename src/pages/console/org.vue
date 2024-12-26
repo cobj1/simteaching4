@@ -1,6 +1,6 @@
 <template>
-  <v-card>
-    <v-toolbar :title="title">
+  <v-card :elevation="enableSelection ? 0 : 1">
+    <v-toolbar title="组织管理" v-if="!enableSelection">
       <v-btn prepend-icon="mdi-bank-plus" @click="newItem(defaultItem)">新增根节点</v-btn>
     </v-toolbar>
     <v-row class="pa-4" justify="space-between">
@@ -10,7 +10,7 @@
           <template #title="{ item }">
             {{ item.name }} {{ item.childrenCount > 0 ? ` ( ${item.childrenCount} ) ` : `` }}
           </template>
-          <template #append="{ item }">
+          <template #append="{ item }" v-if="!enableSelection">
             <v-btn variant="text" min-width="30px" class="pa-2" @click.stop="newItem(item)">
               <v-icon icon="mdi-subdirectory-arrow-right"></v-icon>
               <span class="ml-1" v-show="!$vuetify.display.smAndDown">添加子组织</span>
@@ -77,14 +77,14 @@
 </template>
 <script setup>
 import { OrgApi } from '@/api/user/org';
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 import { VTreeview } from 'vuetify/labs/VTreeview'
 
 const selected = defineModel()
-const props = defineProps({
+defineProps({
   enableSelection: { type: Boolean, default: false }
 })
-const title = computed(() => props.enableSelection ? '选择组织' : '组织')
+
 const serverItems = ref([])
 const dialogDelete = ref(false)
 const dialogUpdateName = ref(false)
