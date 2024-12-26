@@ -103,32 +103,11 @@ const simulation = ref({
   steps: []
 })
 const simulationStepsHeaders = [
-  {
-    title: '步骤名',
-    key: 'name',
-    align: 'start',
-    nowrap: true
-  },
-  {
-    title: '是否完成',
-    key: 'correct',
-    nowrap: true
-  },
-  {
-    title: '得分',
-    key: 'score',
-    nowrap: true
-  },
-  {
-    title: '满分',
-    key: 'fullscore',
-    nowrap: true
-  },
-  {
-    title: '赋分模型',
-    key: 'scoringModel',
-    nowrap: true
-  },
+  { title: '步骤名', key: 'name', align: 'start', nowrap: true },
+  { title: '是否完成', key: 'correct', nowrap: true },
+  { title: '得分', key: 'score', nowrap: true },
+  { title: '满分', key: 'fullscore', nowrap: true },
+  { title: '赋分模型', key: 'scoringModel', nowrap: true },
 ]
 
 const open = async (value) => {
