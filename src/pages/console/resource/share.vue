@@ -42,7 +42,8 @@
         <v-infinite-scroll height="calc(100vh - 280px)" @load="loadItems">
           <v-sheet class="pa-4 ga-4" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr))">
             <v-sheet v-for="(item) in items" :key="item.id">
-              <v-card width="300" hover @click.stop="viewItem(item)">
+              <v-card width="300" hover class="mx-auto" :class="{ 'w-100': $vuetify.display.smAndDown }"
+                @click.stop="viewItem(item)">
                 <FileIcon :cover="item.cover"></FileIcon>
                 <v-card-title>
                   {{ item.rname }}

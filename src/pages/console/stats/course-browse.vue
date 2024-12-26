@@ -26,7 +26,6 @@ const empty = ref(false)
 
 const loadItems = async () => {
   const res = await BrowseRecordApi.courseRecords()
-  console.log(res)
   if (res.length > 0) {
     try {
       const data = {
@@ -73,7 +72,6 @@ const loadItems = async () => {
   } else {
     empty.value = true
   }
-
 }
 
 onMounted(() => {

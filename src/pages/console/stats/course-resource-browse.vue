@@ -74,7 +74,6 @@ const loadItems = async () => {
   } else {
     empty.value = true
   }
-
 }
 
 onMounted(() => {
