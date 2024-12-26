@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" activator="parent" max-width="1000px">
+  <v-dialog v-model="dialog" activator="parent" max-width="1000px" :fullscreen="$vuetify.display.smAndDown" scrollable>
     <v-card>
       <Courseware enable-selection v-model="selected"></Courseware>
       <v-divider></v-divider>

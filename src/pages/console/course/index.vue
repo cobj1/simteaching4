@@ -10,7 +10,8 @@
     </VToolbar>
     <v-data-table-server v-model:options="options" :items-per-page="options.itemsPerPage" :headers="headers"
       :items="serverItems" :items-length="totalItems" :loading="loading"
-      :search="`${search.category},${search.type},${search.name}`" item-value="name" :mobile="$vuetify.display.smAndDown" @update:options="loadItems">
+      :search="`${search.category},${search.type},${search.name}`" item-value="name"
+      :mobile="$vuetify.display.smAndDown" @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
           <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="resourceStore.categorys"
@@ -56,7 +57,8 @@
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
       </template>
     </v-data-table-server>
-    <v-dialog v-model="dialog" max-width="600px" :persistent="loadingEdit">
+    <v-dialog v-model="dialog" max-width="600px" :persistent="loadingEdit" :fullscreen="$vuetify.display.smAndDown"
+      scrollable>
       <v-card :loading="loadingEdit">
         <v-card-title>
           <span class="text-h5">{{ formTitle }}</span>
@@ -82,8 +84,8 @@
                   :disabled="loadingEdit"></v-select>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name" item-value="id"
-                  :disabled="loadingEdit"></v-select>
+                <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name"
+                  item-value="id" :disabled="loadingEdit"></v-select>
               </v-col>
             </v-row>
           </v-container>

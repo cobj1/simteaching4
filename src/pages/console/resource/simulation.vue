@@ -38,7 +38,8 @@
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
       </template>
     </v-data-table-server>
-    <v-dialog v-model="dialog" max-width="600px" :persistent="loadingEdit">
+    <v-dialog v-model="dialog" max-width="600px" :persistent="loadingEdit" :fullscreen="$vuetify.display.smAndDown"
+      scrollable>
       <v-card :loading="loadingEdit">
         <v-card-title>
           <span class="text-h5">{{ formTitle }}</span>
@@ -53,8 +54,8 @@
                 <v-text-field v-model="editedItem.appid" label="Appid" :disabled="loadingEdit"></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name" item-value="id"
-                  :disabled="loadingEdit"></v-select>
+                <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name"
+                  item-value="id" :disabled="loadingEdit"></v-select>
               </v-col>
               <v-col cols="12" sm="6">
                 <v-select v-model="editedItem.type" label="种类" :items="['WebGL']" :disabled="loadingEdit"></v-select>

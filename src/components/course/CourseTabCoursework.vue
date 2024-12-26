@@ -51,22 +51,24 @@
         </VueDraggable>
       </v-card-text>
     </v-card>
-    <v-empty-state v-if="list.length == 0 && subjects.length == 0">
-      <template #media>
-        <VDivider class="py-2"></VDivider>
-        <v-img class="my-8" src="@/assets/svg/empty-dog.svg" height="200px"></v-img>
-      </template>
-      <template v-slot:title>
-        <div class="text-subtitle-2 mt-8">
-          您将在此处布置作业
-        </div>
-      </template>
-      <template v-slot:text>
-        <div class="text-caption">
-          您可以为课程增加作业，然后按主题整理。
-        </div>
-      </template>
-    </v-empty-state>
+    <v-skeleton-loader :loading="loading" type="table-heading, image ,table-heading, image  ">
+      <v-empty-state class="w-100" v-if="list.length == 0 && subjects.length == 0">
+        <template #media>
+          <VDivider class="py-2"></VDivider>
+          <v-img class="my-8" src="@/assets/svg/empty-dog.svg" height="200px"></v-img>
+        </template>
+        <template v-slot:title>
+          <div class="text-subtitle-2 mt-8">
+            您将在此处布置作业
+          </div>
+        </template>
+        <template v-slot:text>
+          <div class="text-caption">
+            您可以为课程增加作业，然后按主题整理。
+          </div>
+        </template>
+      </v-empty-state>
+    </v-skeleton-loader>
     <CourseSubjectEdit ref="CourseSubjectEditRef" @change="loadItems"></CourseSubjectEdit>
   </v-container>
 </template>
@@ -92,6 +94,7 @@ const list = ref([])
 const subjects = ref([])
 const el = ref()
 const CourseSubjectEditRef = ref()
+const loading = ref(true)
 
 watch(() => route.params.id, () => loadItems())
 
@@ -139,6 +142,7 @@ const courseworkSave = async (array) => {
 }
 
 const loadItems = async () => {
+  loading.value = true
   const logs = await CourseResourceApi.logSelf(route.params.id)
   const res = await CourseResourceApi.list(route.params.id)
   res.forEach(item => {
@@ -148,6 +152,7 @@ const loadItems = async () => {
   })
   subjects.value = (await CourseSubjectApi.list(route.params.id)).map(subject => { return { ...subject, children: res.filter(item => item.sid == subject.id) || [] } })
   list.value = res.filter(item => !item.sid)
+  loading.value = false
 }
 
 

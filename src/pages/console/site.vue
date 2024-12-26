@@ -27,7 +27,7 @@
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
       </template>
     </v-data-table-server>
-    <v-dialog v-model="dialog" max-width="800px">
+    <v-dialog v-model="dialog" max-width="800px" :fullscreen="$vuetify.display.smAndDown" scrollable>
       <v-card>
         <v-card-title>
           <span class="text-h5">{{ formTitle }}</span>

@@ -29,7 +29,8 @@
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
       </template>
     </v-data-table-server>
-    <v-dialog v-model="dialog" max-width="600px" :persistent="loadingEdit">
+    <v-dialog v-model="dialog" max-width="600px" :persistent="loadingEdit" :fullscreen="$vuetify.display.smAndDown"
+      scrollable>
       <v-card :loading="loadingEdit">
         <v-card-title>
           <span class="text-h5">{{ formTitle }}</span>
@@ -48,8 +49,8 @@
                   :disabled="loadingEdit"></v-select>
               </v-col>
               <v-col cols="12" sm="4">
-                <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name" item-value="id"
-                  :disabled="loadingEdit"></v-select>
+                <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name"
+                  item-value="id" :disabled="loadingEdit"></v-select>
               </v-col>
               <v-col cols="12">
                 <QuestionsOptions :type="editedItem.type" v-model:answer="editedItem.answer"

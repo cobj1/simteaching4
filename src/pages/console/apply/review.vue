@@ -53,7 +53,7 @@
       </template>
     </v-data-iterator>
 
-    <v-dialog v-model="dialog" max-width="500">
+    <v-dialog v-model="dialog" max-width="500" :fullscreen="$vuetify.display.smAndDown" scrollable>
       <template #default>
         <v-card rounded="lg">
           <v-card-title class="d-flex justify-space-between align-center">

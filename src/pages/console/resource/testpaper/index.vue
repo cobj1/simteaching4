@@ -30,7 +30,8 @@
         </VBtn>
       </template>
     </v-data-table-server>
-    <v-dialog v-model="dialog" max-width="600px" :persistent="loadingEdit">
+    <v-dialog v-model="dialog" max-width="600px" :persistent="loadingEdit" :fullscreen="$vuetify.display.smAndDown"
+      scrollable>
       <v-card :loading="loadingEdit">
         <v-card-title>
           <span class="text-h5">{{ formTitle }}</span>
@@ -46,8 +47,8 @@
                   :max="200"></v-number-input>
               </v-col>
               <v-col cols="12" md="6">
-                <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name" item-value="id"
-                  :disabled="loadingEdit"></v-select>
+                <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name"
+                  item-value="id" :disabled="loadingEdit"></v-select>
               </v-col>
             </v-row>
           </v-container>

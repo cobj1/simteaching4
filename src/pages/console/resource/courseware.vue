@@ -13,9 +13,10 @@
       :search="`${search.category},${search.name}`" :mobile="$vuetify.display.smAndDown" @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
-          <v-select v-model="search.category" hide-details class="pa-2" label="筛选类型..." :items="resourceStore.categorys" item-title="name"
-            item-value="id"></v-select>
-          <v-text-field v-model="search.name" hide-details class="pa-2" label="检索..." append-inner-icon="mdi-magnify"></v-text-field>
+          <v-select v-model="search.category" hide-details class="pa-2" label="筛选类型..." :items="resourceStore.categorys"
+            item-title="name" item-value="id"></v-select>
+          <v-text-field v-model="search.name" hide-details class="pa-2" label="检索..."
+            append-inner-icon="mdi-magnify"></v-text-field>
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
@@ -24,7 +25,8 @@
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
       </template>
     </v-data-table-server>
-    <v-dialog v-model="dialog" max-width="500px" :persistent="loadingEdit">
+    <v-dialog v-model="dialog" max-width="500px" :persistent="loadingEdit" :fullscreen="$vuetify.display.smAndDown"
+      scrollable>
       <v-card :loading="loadingEdit">
         <v-card-title>
           <span class="text-h5">{{ formTitle }}</span>
@@ -36,8 +38,8 @@
                 <v-text-field v-model="editedItem.name" label="标题" :disabled="loadingEdit"></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name" item-value="id"
-                  :disabled="loadingEdit"></v-select>
+                <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name"
+                  item-value="id" :disabled="loadingEdit"></v-select>
               </v-col>
               <v-col cols="12">
                 <v-file-input v-model="editedItem.file" label="选择文件..." :disabled="loadingEdit">
