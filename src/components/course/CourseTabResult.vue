@@ -11,7 +11,7 @@
         <div class="d-flex" v-if="items[index].resource[crIndex].crlid">
           <v-text-field v-model="items[index].resource[crIndex].score" type="number" :min="0" :max="cr.score"
             hide-details density="compact" variant="underlined" single-line :suffix="`/ ${cr.score} 分`" class="mr-2"
-            @change="handleResultUpdateScore(items[index].resource[crIndex])">
+            max-width="120px" @change="handleResultUpdateScore(items[index].resource[crIndex])">
           </v-text-field>
           <CourseTabResultOptions @deleted="handleResultDeleted(items[index].resource[crIndex])"
             @view="courseTabResultViewRef.open(items[index].resource[crIndex])">
@@ -30,7 +30,7 @@ import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute()
-const headers = ref([{ title: '用户', value: 'name', minWidth: '200px', fixed: true, }])
+const headers = ref([{ title: '用户', value: 'name', fixed: true, nowrap: true }])
 const items = ref([])
 const crs = ref([]) // CourseResources
 const courseTabResultViewRef = ref()
@@ -54,11 +54,8 @@ const loadResources = async () => {
   const res = await CourseResourceApi.list(route.params.id)
   crs.value = res.filter(item => ['questions', 'testpaper', 'simulation'].includes(item.type))
   crs.value.forEach(item => {
-    coursework.children.push({
-      title: `${item.resource.name} ( 满分:${item.score} )`,
-      value: `id_${item.id}`,
-      minWidth: '200px',
-    })
+    const title = `${item.resource.name} ( 满分:${item.score} )`
+    coursework.children.push({ title, value: `id_${item.id}`, nowrap: true })
   })
   headers.value.push(coursework)
 }
