@@ -152,8 +152,8 @@ export const useConsoleStore = defineStore("console", () => {
             path: "/console/stats/course-resource-browse",
           },
           {
-            title: "用户使用统计",
-            path: "/console/stats/user-online",
+            title: "用户学习统计",
+            path: "/console/stats/user-browse",
           },
         ],
       },

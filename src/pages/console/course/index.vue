@@ -37,7 +37,7 @@
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.code="{ item }">
         {{ item.code }}
-        <v-menu>
+        <v-menu width="210px">
           <template v-slot:activator="{ props }">
             <v-btn icon="mdi-dots-vertical" variant="text" :size="30" v-bind="props"></v-btn>
           </template>

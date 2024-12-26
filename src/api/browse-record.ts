@@ -21,15 +21,21 @@ export const BrowseRecordApi = {
       data,
     });
   },
+  courseRecords() {
+    return axios({
+      url: "/browse-record/course/records",
+      method: "get",
+    });
+  },
   resourceRecords() {
     return axios({
       url: "/browse-record/resource/records",
       method: "get",
     });
   },
-  learnDuration() {
+  userRecords() {
     return axios({
-      url: "/browse-record/learn/duration",
+      url: "/browse-record/user/records",
       method: "get",
     });
   },
