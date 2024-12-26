@@ -13,7 +13,7 @@
       :search="`${search.category},${search.type},${search.name}`" item-value="name" :mobile="$vuetify.display.smAndDown" @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
-          <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="categorys"
+          <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="resourceStore.categorys"
             item-title="name" item-value="id"></v-select>
           <v-select hide-details v-model="search.type" class="pa-2" label="课程种类..." :items="types" item-title="label"
             item-value="value"></v-select>
@@ -82,7 +82,7 @@
                   :disabled="loadingEdit"></v-select>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-select v-model="editedItem.category" label="类型" :items="categorys" item-title="name" item-value="id"
+                <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name" item-value="id"
                   :disabled="loadingEdit"></v-select>
               </v-col>
             </v-row>
@@ -129,10 +129,11 @@
 
 <script setup>
 import { computed, nextTick, ref } from 'vue';
-import { ResourceApi } from '@/api/resource/resource';
 import { CourseApi } from '@/api/course/course';
 import { useClipboard } from '@vueuse/core';
+import { useResourceStore } from '@/stores/resource';
 
+const resourceStore = useResourceStore()
 const { copy } = useClipboard()
 const options = ref({
   page: 1,
@@ -154,7 +155,6 @@ const search = ref({
   type: null
 })
 const serverItems = ref([])
-const categorys = ref([])
 const types = ref([{ label: '普通课程', value: 'general' }, { label: '仿真课程', value: 'simulation' }])
 const loading = ref(true)
 const loadingEdit = ref(false)
@@ -261,7 +261,7 @@ const save = async () => {
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
-  categorys.value = await ResourceApi.categorySelectAll()
+  await resourceStore.loadCategorys()
   const res = await CourseApi.page({
     current: page,
     size: itemsPerPage,
@@ -274,7 +274,7 @@ const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   serverItems.value = res.records.map(item => {
     return {
       ...item,
-      categoryName: item.category ? categorys.value.find(category => category.id == item.category)?.name : "<未分类>",
+      categoryName: item.category ? resourceStore.categorys.find(category => category.id == item.category)?.name : "<未分类>",
       typeName: item.type ? types.value.find(type => type.value == item.type)?.label : "",
     }
   })

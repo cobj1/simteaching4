@@ -14,7 +14,7 @@
       @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
-          <v-select v-model="search.category" hide-details class="pa-2" label="筛选类型..." :items="categorys"
+          <v-select v-model="search.category" hide-details class="pa-2" label="筛选类型..." :items="resourceStore.categorys"
             item-title="name" item-value="id"></v-select>
           <v-text-field v-model="search.name" hide-details class="pa-2" label="检索..."></v-text-field>
         </div>
@@ -53,7 +53,7 @@
                 <v-text-field v-model="editedItem.appid" label="Appid" :disabled="loadingEdit"></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-select v-model="editedItem.category" label="类型" :items="categorys" item-title="name" item-value="id"
+                <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name" item-value="id"
                   :disabled="loadingEdit"></v-select>
               </v-col>
               <v-col cols="12" sm="6">
@@ -106,12 +106,13 @@
 
 <script setup>
 import { computed, nextTick, ref } from 'vue';
-import { ResourceApi } from '@/api/resource/resource';
 import { FileApi } from '@/api/file';
 import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
 import { VImg } from 'vuetify/components';
 import { useDateFormat, useNow } from '@vueuse/core';
+import { useResourceStore } from '@/stores/resource';
 
+const resourceStore = useResourceStore()
 const selected = defineModel()
 const props = defineProps({
   enableSelection: { type: Boolean, default: false }
@@ -135,7 +136,6 @@ const search = ref({
   category: null
 })
 const serverItems = ref([])
-const categorys = ref([])
 const loading = ref(true)
 const loadingEdit = ref(false)
 const totalItems = ref(0)
@@ -235,7 +235,7 @@ const save = async () => {
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
-  categorys.value = await ResourceApi.categorySelectAll()
+  await resourceStore.loadCategorys()
   const res = await ResourceSimulationApi.page({
     current: page,
     size: itemsPerPage,
@@ -247,7 +247,7 @@ const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   serverItems.value = res.records.map(item => {
     return {
       ...item,
-      categoryName: item.category ? categorys.value.find(category => category.id == item.category)?.name
+      categoryName: item.category ? resourceStore.categorys.find(category => category.id == item.category)?.name
         : "<未分类>"
     }
   })

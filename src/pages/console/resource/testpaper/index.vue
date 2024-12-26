@@ -14,7 +14,7 @@
       @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
-          <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="categorys"
+          <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="resourceStore.categorys"
             item-title="name" item-value="id"></v-select>
           <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..."
             append-inner-icon="mdi-magnify"></v-text-field>
@@ -46,7 +46,7 @@
                   :max="200"></v-number-input>
               </v-col>
               <v-col cols="12" md="6">
-                <v-select v-model="editedItem.category" label="类型" :items="categorys" item-title="name" item-value="id"
+                <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name" item-value="id"
                   :disabled="loadingEdit"></v-select>
               </v-col>
             </v-row>
@@ -82,9 +82,10 @@
 <script setup>
 import { VNumberInput } from 'vuetify/labs/VNumberInput'
 import { computed, nextTick, ref } from 'vue';
-import { ResourceApi } from '@/api/resource/resource';
 import { ResourceTestpaperApi } from '@/api/resource/resource-paper';
+import { useResourceStore } from '@/stores/resource';
 
+const resourceStore = useResourceStore()
 const selected = defineModel()
 const props = defineProps({
   enableSelection: { type: Boolean, default: false }
@@ -105,7 +106,6 @@ const search = ref({
   category: null,
 })
 const serverItems = ref([])
-const categorys = ref([])
 const loading = ref(true)
 const loadingEdit = ref(false)
 const totalItems = ref(0)
@@ -177,7 +177,7 @@ const save = async () => {
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
-  categorys.value = await ResourceApi.categorySelectAll()
+  await resourceStore.loadCategorys()
   const res = await ResourceTestpaperApi.page({
     current: page,
     size: itemsPerPage,
@@ -189,7 +189,7 @@ const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   serverItems.value = res.records.map(item => {
     return {
       ...item,
-      categoryName: item.category ? categorys.value.find(category => category.id == item.category)?.name
+      categoryName: item.category ? resourceStore.categorys.find(category => category.id == item.category)?.name
         : "<未分类>"
     }
   })
