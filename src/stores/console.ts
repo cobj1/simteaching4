@@ -168,14 +168,6 @@ export const useConsoleStore = defineStore("console", () => {
             path: "/console/system/database",
           },
           {
-            title: "字典管理",
-            path: "/console/system/dict",
-          },
-          {
-            title: "参数设置",
-            path: "/console/system/parameter-setting",
-          },
-          {
             title: "日志管理",
             path: "/console/system/log",
           },
