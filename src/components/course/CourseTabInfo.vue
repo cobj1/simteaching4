@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid max-width="1000px" min-height="800px">
+  <v-container fluid max-width="1000px" min-height="600px">
     <v-card class="mx-auto">
       <v-img class="align-end text-white pa-4" height="200" src="@/assets/course/tab-info-bg.jpg" cover>
         <div class="w-100 h-100 position-absolute left-0 top-0 opacity-80 d-print-block"

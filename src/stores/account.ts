@@ -46,6 +46,8 @@ export const useAccountStore = defineStore(
       return authoritys.value.includes(key);
     };
 
+    const validateValid = async () => UserApi.valid();
+
     return {
       token,
       info,
@@ -53,6 +55,7 @@ export const useAccountStore = defineStore(
       login,
       logout,
       auth,
+      validateValid,
     };
   },
   {

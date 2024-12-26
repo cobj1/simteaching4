@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid max-width="1000px" min-height="800px">
+  <v-container fluid max-width="1000px" min-height="600px">
     <v-card style="box-shadow:none;">
       <template #title>
         <div class="text-h4 pl-4">教师</div>

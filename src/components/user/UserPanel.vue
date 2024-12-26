@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { useAccountStore } from "@/stores/account";
 import { useSettingsStore } from "@/stores/settings";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const accountStore = useAccountStore();
@@ -69,6 +69,12 @@ const dialog = ref(false);
 const goLogin = () => {
   router.push('/login?redirect=' + route.fullPath)
 }
+
+onMounted(() => {
+  if (accountStore.token) {
+    accountStore.validateValid()
+  }
+})
 </script>
 
 <style scoped></style>

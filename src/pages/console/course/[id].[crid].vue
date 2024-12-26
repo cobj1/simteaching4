@@ -37,7 +37,7 @@
         <div class="border pa-4" v-else-if="item.type == 'simulation'" ref="simulationRef">
           <v-responsive :aspect-ratio="16 / 9" class="w-100 h-100" min-height="300px"
             :style="angle && $vuetify.display.smAndDown ? { 'position': 'fixed', 'top': 0, 'left': 0, 'z-index': '910' } : null">
-            <iframe :src="item.url" class="w-100 h-100 border-0	">
+            <iframe :src="item.url" class="w-100 h-100 border-0	" style="overflow: hidden;">
             </iframe>
           </v-responsive>
           <div class="pa-2 text-center" v-if="!$vuetify.display.smAndDown">
@@ -70,8 +70,6 @@
     <div v-if="logItem.id == null">
       <v-btn prepend-icon="mdi-check" color="indigo" class="d-flex" style="justify-self: end;"
         v-if="item.type == 'questions' || item.type == 'testpaper'" @click="finish">提交</v-btn>
-      <v-btn prepend-icon="mdi-check" color="indigo" class="d-flex" style="justify-self: end;"
-        v-if="item.type == 'simulation'" @click="finish">标记已完成</v-btn>
     </div>
     <v-dialog v-model="finishDialog" contained max-width="400" persistent>
       <v-card rounded="lg">
@@ -113,8 +111,11 @@ import VueOfficePdf from '@vue-office/pdf'
 import GLightbox from 'glightbox';
 import { BrowseRecordApi } from '@/api/browse-record';
 import { useIncrementTimeTrigger } from '@/utils/increment-time-trigger';
+import { useAccountStore } from '@/stores/account';
+import Base64 from 'crypto-js/enc-base64';
+import Utf8 from 'crypto-js/enc-utf8';
 
-
+const accountStore = useAccountStore()
 const route = useRoute()
 const router = useRouter()
 const loading = ref(true)
@@ -146,6 +147,13 @@ const title = computed(() => {
   return item.value.name.length > 20 ? substring(0, 20) + '...' : item.value.name
 })
 const finishDialog = ref(false)
+
+const handleSimulationMessage = (event) => {
+  if (event && event.data && 'object' == typeof event.data) {
+    item.value.answer = JSON.stringify(event.data)
+    finish()
+  }
+}
 
 const finish = () => {
   let answer;
@@ -187,9 +195,15 @@ const loadCourseResourceItem = async () => {
       }
     }
   } else if (res.type == 'simulation') {
+    let usercode;
+    try {
+      const userinfo = JSON.stringify({ userno: accountStore.info.account, username: accountStore.info.name })
+      const words = Utf8.parse(userinfo)
+      usercode = encodeURIComponent(Base64.stringify(words))
+    } catch (e) { /* empty */ }
     const simulation = await ResourceSimulationApi.info(res.rid)
     item.value.name = simulation.name
-    item.value.url = simulation.url.includes('http') ? simulation.url : FileApi.filePath + simulation.url
+    item.value.url = `${simulation.url.includes('http') ? simulation.url : FileApi.filePath + simulation.url}?usercode=${usercode}`
   } else if (res.type == 'questions') {
     const question = await ResourceQuestionsApi.info(res.rid)
     item.value.qtype = question.type
@@ -219,11 +233,12 @@ const loadCourseResourceLogItem = async () => {
   logItem.value.createTime = res.createTime
 }
 
+
+
 const cid = route.params.id
 const crid = route.params.crid
 
 const { timer, clock, start, stop } = useIncrementTimeTrigger()
-
 
 onMounted(async () => {
   loadCourseResourceItem()
@@ -238,6 +253,8 @@ onMounted(async () => {
     }
   })
 
+  window.addEventListener('message', handleSimulationMessage)
+
 })
 
 onUnmounted(() => {
@@ -246,6 +263,8 @@ onUnmounted(() => {
       BrowseRecordApi.time({ cid, crid, time: timer.value })
     }
   })
+
+  window.removeEventListener('message', handleSimulationMessage)
 })
 </script>
 

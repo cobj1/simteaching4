@@ -25,16 +25,18 @@ service.interceptors.response.use(
   },
   (error) => {
     if (error.status == 401) {
-      notify.close(401);
-      notify({
-        id: 401,
-        title: "401 Unauthorized",
-        text: "未经授权请重新登录后尝试",
-        type: "info",
-        data: {
-          icon: "mdi-alert-circle",
-        },
-      });
+      if (!(error.config.params && error.config.params.notify == false)) {
+        notify.close(401);
+        notify({
+          id: 401,
+          title: "401 Unauthorized",
+          text: "未经授权请重新登录后尝试",
+          type: "info",
+          data: {
+            icon: "mdi-alert-circle",
+          },
+        });
+      }
       const accountStore = useAccountStore();
       accountStore.logout();
     }

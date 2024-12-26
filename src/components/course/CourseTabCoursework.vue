@@ -125,8 +125,7 @@ const handleSelectionTestpaperConfirm = async (value) => {
 }
 const handleVueDraggableEnd = async (event) => {
   if (event.newIndex != event.oldIndex) {
-    const newList = []
-    newList.push(...list.value)
+    const newList = list.value.map(item => { return { ...item, sid: null } })
     subjects.value.forEach(subject => newList.push(...subject.children.map(item => { return { ...item, sid: subject.id } })))
     await CourseResourceApi.save(newList.map(item => {
       return { id: item.id, cid: item.cid, rid: item.rid, sid: item.sid, type: item.type, score: item.score }

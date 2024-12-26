@@ -16,7 +16,8 @@
                 {{ item.resource.name }}
                 <template v-slot:actions>
                   <v-text-field label="分数" v-model="score" type="number" variant="underlined" hide-details
-                    density="compact" :min="1" :max="100" :disabled="item.resource.resourceType == 'testpaper'"
+                    density="compact" :min="1" :max="100"
+                    :disabled="['testpaper', 'simulation'].includes(item.resource.resourceType)"
                     v-if="['questions', 'testpaper', 'simulation'].includes(item.resource.resourceType)" @click.stop
                     @change="onChangeScore"></v-text-field>
                   <CourseResourceItemOptions @deleted="emit('deleted')"></CourseResourceItemOptions>

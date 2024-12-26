@@ -122,4 +122,13 @@ export const UserApi = {
       },
     });
   },
+  valid() {
+    return axios({
+      url: "/user/valid",
+      method: "get",
+      params: {
+        notify: false,
+      },
+    });
+  },
 };
