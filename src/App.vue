@@ -18,4 +18,5 @@ import FileList from './components/FileList.vue';
 
 const useSystemThemes = useSettingsStore();
 useSystemThemes.initTheme()
+
 </script>

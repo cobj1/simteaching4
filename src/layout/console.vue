@@ -66,6 +66,7 @@
         <slot></slot>
       </div>
     </v-main>
+    <VNotice></VNotice>
   </v-layout>
 </template>
 

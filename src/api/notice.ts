@@ -32,4 +32,10 @@ export const NoticeApi = {
       method: "post",
     });
   },
+  launch(type: string) {
+    return axios({
+      url: "/notice/launch/" + type,
+      method: "get",
+    });
+  },
 };
