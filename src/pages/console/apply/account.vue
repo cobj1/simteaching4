@@ -8,7 +8,7 @@
       <template v-slot:top>
         <div class="d-flex flex-wrap">
           <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..."
-            append-inner-icon="mdi-magnify"></v-text-field>
+            append-inner-icon="mdi-magnify" clearable></v-text-field>
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->

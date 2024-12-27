@@ -14,9 +14,9 @@
       <template v-slot:top>
         <div class="d-flex">
           <v-select v-model="search.category" hide-details class="pa-2" label="筛选类型..." :items="resourceStore.categorys"
-            item-title="name" item-value="id"></v-select>
+            item-title="name" item-value="id" clearable></v-select>
           <v-text-field v-model="search.name" hide-details class="pa-2" label="检索..."
-            append-inner-icon="mdi-magnify"></v-text-field>
+            append-inner-icon="mdi-magnify" clearable></v-text-field>
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->

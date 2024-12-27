@@ -15,12 +15,12 @@
       <template v-slot:top>
         <div class="d-flex">
           <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="resourceStore.categorys"
-            item-title="name" item-value="id"></v-select>
-          <v-select hide-details v-model="search.type" class="pa-2" label="筛选题型..." :items="types"></v-select>
+            item-title="name" item-value="id" clearable></v-select>
+          <v-select hide-details v-model="search.type" class="pa-2" label="筛选题型..." :items="types" clearable></v-select>
           <v-select hide-details v-model="search.difficulty" class="pa-2" label="筛选难易度..."
-            :items="difficultys"></v-select>
+            :items="difficultys" clearable></v-select>
           <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..."
-            append-inner-icon="mdi-magnify"></v-text-field>
+            append-inner-icon="mdi-magnify" clearable></v-text-field>
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
@@ -106,10 +106,10 @@ const options = ref({
 })
 const headers = ref([
   { title: '标题', key: 'name', sortable: false },
-  { title: '类型', key: 'categoryName', sortable: false, width: 100 },
-  { title: '题型', key: 'type', width: 100 },
-  { title: '难易度', key: 'difficulty', width: 100 },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end', width: 100 },
+  { title: '类型', key: 'categoryName', sortable: false },
+  { title: '题型', key: 'type'  },
+  { title: '难易度', key: 'difficulty'  },
+  { title: 'Actions', key: 'actions', sortable: false, align: 'end'  },
 ])
 const search = ref({
   name: '',

@@ -15,11 +15,11 @@
       <template v-slot:top>
         <div class="d-flex">
           <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="resourceStore.categorys"
-            item-title="name" item-value="id"></v-select>
+            item-title="name" item-value="id" clearable></v-select>
           <v-select hide-details v-model="search.type" class="pa-2" label="课程种类..." :items="types" item-title="label"
-            item-value="value"></v-select>
+            item-value="value" clearable></v-select>
           <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..."
-            append-inner-icon="mdi-magnify"></v-text-field>
+            append-inner-icon="mdi-magnify" clearable></v-text-field>
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->

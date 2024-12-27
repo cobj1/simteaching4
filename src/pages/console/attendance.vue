@@ -17,7 +17,7 @@
             </v-tooltip>
           </v-btn>
           <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..." min-width="150px"
-            append-inner-icon="mdi-magnify"></v-text-field>
+            append-inner-icon="mdi-magnify" clearable></v-text-field>
           <v-date-input hide-details v-model="search.date" label="选择范围" max-width="368" multiple="range"
             class="ma-2 flex-1-1"></v-date-input>
         </div>

@@ -17,8 +17,8 @@
       <template v-slot:top>
         <div class="d-flex">
           <v-select v-model="search.type" class="pa-2" label="筛选类型..." :items="types" item-title="type"
-            item-value="id"></v-select>
-          <v-text-field v-model="search.title" class="pa-2" label="检索..."></v-text-field>
+            item-value="id" clearable></v-select>
+          <v-text-field v-model="search.title" class="pa-2" label="检索..." clearable></v-text-field>
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->

@@ -13,11 +13,11 @@
         </v-btn>
       </v-btn-toggle>
       <v-select hide-details v-model="search.type" class="pa-2" label="筛选类型..." :items="types" item-title="title"
-        item-value="value"></v-select>
+        item-value="value" clearable></v-select>
       <v-combobox hide-details v-model="search.category" :items="categorys" class="pa-2" label="筛选种类..."
-        item-title="title" multiple max-width="50%"></v-combobox>
+        item-title="title" multiple max-width="50%" clearable></v-combobox>
       <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..."
-        append-inner-icon="mdi-magnify"></v-text-field>
+        append-inner-icon="mdi-magnify" clearable></v-text-field>
     </div>
     <v-layout>
       <v-navigation-drawer v-model="drawer" temporary location="right" width="360">
