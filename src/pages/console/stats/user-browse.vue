@@ -32,7 +32,6 @@ const loadItems = async () => {
           data: res.map(item => parseInt(item.totalTime / 60)),
         }]
       };
-      console.log(data)
       new Chart(document.getElementById('browseTotal'),
         {
           type: 'bar',

@@ -1,8 +1,8 @@
 <template>
   <v-container max-width="1600px">
-    <v-row>
-      <v-col cols="4" lg="3" xl="2" v-if="$vuetify.display.smAndUp">
-        <v-sheet rounded="lg">
+    <v-row :class="{ 'flex-column-reverse': $vuetify.display.smAndDown }">
+      <v-col cols="12" md="3">
+        <v-sheet rounded="lg" :class="{ 'pa-4': $vuetify.display.smAndDown }">
           <v-list rounded="lg">
             <v-list-subheader>目录</v-list-subheader>
             <v-skeleton-loader :loading="loading" type="paragraph,paragraph">
@@ -18,7 +18,8 @@
         </v-sheet>
       </v-col>
       <v-col>
-        <v-skeleton-loader :loading="loading" type="list-item,list-item,paragraph,paragraph,paragraph,paragraph,paragraph,paragraph"  >
+        <v-skeleton-loader :loading="loading"
+          type="list-item,list-item,paragraph,paragraph,paragraph,paragraph,paragraph,paragraph">
           <v-responsive>
             <router-view></router-view>
             <v-empty-state v-if="empty" headline="还没有消息" title="稍后再来查看。" height="800px"

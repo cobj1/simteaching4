@@ -155,7 +155,6 @@ const handelSelectionQuestionsConfirm = async (qids, scores) => {
   const list = await ResourceQuestionsApi.listByIds(qids.join(','))
   qids.forEach((qid, index) => {
     const question = list.find(item => item.id == qid)
-    console.log(question)
     items.value.push({
       ...question,
       options: question.options.map(option => option.name),

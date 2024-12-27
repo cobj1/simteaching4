@@ -2,7 +2,7 @@
   <v-layout class="rounded rounded-md">
     <v-navigation-drawer v-model="drawer" disable-resize-watcher class="position-fixed	">
       <v-list density="compact" nav>
-        <v-list-subheader>Navigation</v-list-subheader>
+        <v-list-subheader>导航</v-list-subheader>
         <v-list-item v-for="(item, i) in homeStore.NavigationItems" :key="i" :active="item.path == route.fullPath" link
           :title="item.text" @click="router.push(item.path)" />
       </v-list>
@@ -28,7 +28,7 @@
 
     <v-footer name="footer" app>
       <v-btn class="mx-auto" variant="text">
-        Copyright@北京大学数学科学学院
+        Copyright@北京易格通智仿真技术有限公司
       </v-btn>
     </v-footer>
   </v-layout>

@@ -114,7 +114,6 @@ const openLog = async (item) => {
     current: 1,
     size: 50
   })
-  console.log(res.records)
   logs.value = res.records.map(item => {
     return {
       title: useDateFormat(item.login_time, 'YYYY-MM-DD HH:mm:ss').value,
