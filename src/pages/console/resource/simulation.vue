@@ -63,13 +63,23 @@
                 <v-text-field v-model="editedItem.cover" label="封面(url)" :disabled="loadingEdit"></v-text-field>
               </v-col>
               <v-col cols="12">
+                <v-radio-group v-model="editedItem.inputType" inline>
+                  <v-radio label="选择文件" value="file"></v-radio>
+                  <v-radio label="输入链接" value="url"></v-radio>
+                </v-radio-group>
+              </v-col>
+              <v-col cols="12" v-show="editedItem.inputType == 'file'">
                 <v-file-input v-model="editedItem.file" label="根节点包含index.html文件，选择文件(Zip)..." :disabled="loadingEdit"
                   accept=".zip">
                   <template #details v-if="editedItem.url">
-                    <small class="text-caption text-medium-emphasis" style="word-break:break-all;"> {{ FileApi.filePath
-                      + editedItem.url }}</small>
+                    <small class="text-caption text-medium-emphasis" style="word-break:break-all;">
+                      {{ editedItem.url.includes('http') ? editedItem.url : FileApi.filePath + editedItem.url }}
+                    </small>
                   </template>>
                 </v-file-input>
+              </v-col>
+              <v-col cols="12" v-show="editedItem.inputType == 'url'">
+                <v-text-field v-model="editedItem.url" label="仿真(url)" :disabled="loadingEdit"></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-textarea v-model="editedItem.introduce" label="简介" :disabled="loadingEdit"></v-textarea>
@@ -153,7 +163,8 @@ const editedItem = ref({
   url: null,
   urlOld: null,
   size: null,
-  file: null
+  file: null,
+  inputType: 'file'
 })
 const defaultItem = ref({
   id: null,
@@ -166,7 +177,8 @@ const defaultItem = ref({
   url: null,
   urlOld: null,
   size: null,
-  file: null
+  file: null,
+  inputType: 'file'
 })
 const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
 
@@ -175,6 +187,7 @@ const editItem = async (item) => {
     editedIndex.value = serverItems.value.indexOf(item)
     editedItem.value = Object.assign({}, item)
     editedItem.value.urlOld = editedItem.value.url
+    editedItem.value.inputType = 'file'
   } else {
     editedItem.value = Object.assign({}, defaultItem.value)
     editedIndex.value = -1;
