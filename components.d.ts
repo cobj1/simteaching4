@@ -41,9 +41,11 @@ declare module 'vue' {
     UserOptions: typeof import('./src/components/user/UserOptions.vue')['default']
     UserPanel: typeof import('./src/components/user/UserPanel.vue')['default']
     VAvatarPro: typeof import('./src/components/VAvatarPro.vue')['default']
+    VFileIcon: typeof import('./src/components/VFileIcon.vue')['default']
     VLoading: typeof import('./src/components/VLoading.vue')['default']
     VNotice: typeof import('./src/components/VNotice.vue')['default']
     VNotifications: typeof import('./src/components/VNotifications.vue')['default']
+    VResourceIcon: typeof import('./src/components/VResourceIcon.vue')['default']
     VSimulationResultView: typeof import('./src/components/VSimulationResultView.vue')['default']
   }
 }
