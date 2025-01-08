@@ -16,6 +16,10 @@ export const useHomeStore = defineStore("home", () => {
           text: "首页",
           path: "/home",
         },
+        {
+          text: "实验中心",
+          path: "/home/center",
+        },
         ...res.map((item: SiteType) => {
           return {
             text: item.type,

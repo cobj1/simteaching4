@@ -11,6 +11,7 @@ declare module 'vue' {
     CourseRegister: typeof import('./src/components/course/CourseRegister.vue')['default']
     CourseResourceItem: typeof import('./src/components/course/CourseResourceItem.vue')['default']
     CourseResourceItemOptions: typeof import('./src/components/course/CourseResourceItemOptions.vue')['default']
+    CourseScoreWeight: typeof import('./src/components/course/CourseScoreWeight.vue')['default']
     CourseSubjectEdit: typeof import('./src/components/course/CourseSubjectEdit.vue')['default']
     CourseSubjectOptions: typeof import('./src/components/course/CourseSubjectOptions.vue')['default']
     CourseTabCoursework: typeof import('./src/components/course/CourseTabCoursework.vue')['default']
@@ -19,6 +20,7 @@ declare module 'vue' {
     CourseTabResultOptions: typeof import('./src/components/course/CourseTabResultOptions.vue')['default']
     CourseTabResultView: typeof import('./src/components/course/CourseTabResultView.vue')['default']
     CourseTabUser: typeof import('./src/components/course/CourseTabUser.vue')['default']
+    CourseWScore: typeof import('./src/components/course/CourseWScore.vue')['default']
     FileIcon: typeof import('./src/components/FileIcon.vue')['default']
     FileList: typeof import('./src/components/FileList.vue')['default']
     ProductLogo: typeof import('./src/components/ProductLogo.vue')['default']
@@ -42,5 +44,6 @@ declare module 'vue' {
     VLoading: typeof import('./src/components/VLoading.vue')['default']
     VNotice: typeof import('./src/components/VNotice.vue')['default']
     VNotifications: typeof import('./src/components/VNotifications.vue')['default']
+    VSimulationResultView: typeof import('./src/components/VSimulationResultView.vue')['default']
   }
 }

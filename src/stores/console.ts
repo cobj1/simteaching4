@@ -173,6 +173,20 @@ export const useConsoleStore = defineStore("console", () => {
           },
         ],
       },
+      {
+        show: accountStore.auth("declare"),
+        title: "申报管理",
+        prependIcon: "mdi-book-cog-outline",
+        link: true,
+        path: "/console/declare/manage",
+      },
+      {
+        show: accountStore.auth("declare-check"),
+        title: "申报审核",
+        prependIcon: "mdi-book-check-outline",
+        link: true,
+        path: "/console/declare/check",
+      },
     ];
   };
   const loadUserManage = async () => {

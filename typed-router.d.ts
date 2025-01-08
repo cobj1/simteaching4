@@ -28,6 +28,8 @@ declare module 'vue-router/auto-routes' {
     '/console/course/[id]': RouteRecordInfo<'/console/course/[id]', '/console/course/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     '/console/course/[id].[crid]': RouteRecordInfo<'/console/course/[id].[crid]', '/console/course/:id/:crid', { id: ParamValue<true>, crid: ParamValue<true> }, { id: ParamValue<false>, crid: ParamValue<false> }>,
     '/console/course/[id].manage': RouteRecordInfo<'/console/course/[id].manage', '/console/course/:id/manage', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/console/declare/check': RouteRecordInfo<'/console/declare/check', '/console/declare/check', Record<never, never>, Record<never, never>>,
+    '/console/declare/manage': RouteRecordInfo<'/console/declare/manage', '/console/declare/manage', Record<never, never>, Record<never, never>>,
     '/console/home': RouteRecordInfo<'/console/home', '/console/home', Record<never, never>, Record<never, never>>,
     '/console/notice': RouteRecordInfo<'/console/notice', '/console/notice', Record<never, never>, Record<never, never>>,
     '/console/org': RouteRecordInfo<'/console/org', '/console/org', Record<never, never>, Record<never, never>>,
@@ -51,6 +53,8 @@ declare module 'vue-router/auto-routes' {
     '/home/[path]': RouteRecordInfo<'/home/[path]', '/home/:path', { path: ParamValue<true> }, { path: ParamValue<false> }>,
     '/home/[path]/': RouteRecordInfo<'/home/[path]/', '/home/:path', { path: ParamValue<true> }, { path: ParamValue<false> }>,
     '/home/[path]/[id]': RouteRecordInfo<'/home/[path]/[id]', '/home/:path/:id', { path: ParamValue<true>, id: ParamValue<true> }, { path: ParamValue<false>, id: ParamValue<false> }>,
+    '/home/center/': RouteRecordInfo<'/home/center/', '/home/center', Record<never, never>, Record<never, never>>,
+    '/home/center/[id]': RouteRecordInfo<'/home/center/[id]', '/home/center/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
   }
 }
