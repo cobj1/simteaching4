@@ -228,19 +228,11 @@ export const useConsoleStore = defineStore("console", () => {
     if (accountStore.auth("course")) {
       const courses = (await CourseApi.list()) as any;
       if (courses.length > 0) {
-        courseManage.value.push(
-          {
-            prependIcon: "mdi-human-male-board",
-            type: "subheader",
-            title: "教授的课程",
-          }
-          // {
-          //   title: "待批改",
-          //   prependIcon: "mdi-view-dashboard-edit",
-          //   link: true,
-          //   path: "/console/correct",
-          // }
-        );
+        courseManage.value.push({
+          prependIcon: "mdi-human-male-board",
+          type: "subheader",
+          title: "教授的课程",
+        });
         courseManage.value.push(
           ...courses.map((item: { name: string; explain: any; id: any }) => {
             return {

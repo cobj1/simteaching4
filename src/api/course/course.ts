@@ -22,7 +22,7 @@ export const CourseApi = {
     });
   },
   save(data: object) {
-    data = FormDataTimeFormat(data)
+    data = FormDataTimeFormat(data);
     return axios({
       url: "/course/save",
       method: "post",
@@ -82,6 +82,29 @@ export const CourseApi = {
     return axios({
       url: "/course/transcript/" + id,
       method: "get",
+    });
+  },
+  checkPage(params: {
+    current: number;
+    size: number;
+    sortKey: string;
+    sortOrder: string;
+  }) {
+    params = PagingProcessor(params);
+    return axios({
+      url: "/course/check/page",
+      method: "get",
+      params,
+    });
+  },
+  checked(id: string, checked: number) {
+    return axios({
+      url: "/course/checked",
+      method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data: { id, checked },
     });
   },
 };

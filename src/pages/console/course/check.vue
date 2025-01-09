@@ -36,21 +36,41 @@
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.actions="{ item }">
-        <VBtn prepend-icon="mdi-clipboard-check-outline" variant="text" text="审核"></VBtn>
+        <VBtn prepend-icon="mdi-clipboard-check-outline" variant="text" text="审核" @click="checkItem(item)"></VBtn>
       </template>
     </v-data-table-server>
+    <v-dialog v-model="dialogCheck" max-width="500">
+      <v-card rounded="lg" title="审核课程">
+        <template #prepend>
+          <v-avatar color="warning" icon="mdi-alert-outline" variant="tonal" />
+        </template>
+        <template #text>
+          <div class="mb-4 text-body-2 text-medium-emphasis">
+            课程审核可以规范教师的教学行为，促使教师认真备课、精心设计教学环节，按照教学大纲的要求进行教学。这有助于提高教师的教学水平，促进教师的专业发展。
+          </div>
+          <v-radio-group v-model="editedItem.status" inline>
+            <v-radio label="审核通过" :value="1"></v-radio>
+            <v-radio label="审核不通过" :value="2"></v-radio>
+          </v-radio-group>
+        </template>
+        <v-divider />
+        <template #actions>
+          <v-spacer />
+          <v-btn border class="text-none" color="surface" text="取消" variant="flat" @click="closeCheck" />
+          <v-btn class="text-none" color="warning" text="确定" variant="flat" @click="confirmCheck" />
+        </template>
+      </v-card>
+    </v-dialog>
   </VCard>
-
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import { CourseApi } from '@/api/course/course';
-import { useClipboard } from '@vueuse/core';
 import { useResourceStore } from '@/stores/resource';
 
 const resourceStore = useResourceStore()
-const { copy } = useClipboard()
+const dialogCheck = ref(false)
 const options = ref({
   page: 1,
   itemsPerPage: 10
@@ -74,11 +94,36 @@ const serverItems = ref([])
 const types = ref([{ label: '普通课程', value: 'general' }, { label: '仿真课程', value: 'simulation' }])
 const loading = ref(true)
 const totalItems = ref(0)
+const editedItem = ref({
+  id: null
+})
+const defaultItem = ref({
+  id: null
+})
+
+const checkItem = (item) => {
+  editedItem.value = Object.assign({}, item)
+  editedItem.value.status = 1
+  dialogCheck.value = true;
+}
+
+const closeCheck = () => {
+  dialogCheck.value = false;
+  nextTick(() => {
+    editedItem.value = Object.assign({}, defaultItem.value)
+  })
+}
+
+const confirmCheck = async () => {
+  await CourseApi.checked(editedItem.value.id, editedItem.value.status)
+  loadItems(options.value)
+  closeCheck()
+}
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
   await resourceStore.loadCategorys()
-  const res = await CourseApi.page({
+  const res = await CourseApi.checkPage({
     current: page,
     size: itemsPerPage,
     sortKey: sortBy[0] ? sortBy[0].key : null,

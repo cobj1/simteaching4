@@ -1,4 +1,7 @@
 <template>
+  <v-alert density="compact" icon="mdi-book-open-variant-outline" class="mb-1">
+    Tip: 修改课程会进行重新审核。
+  </v-alert>
   <VCard>
     <VToolbar title="课程管理">
       <ResourceCategory>
@@ -54,6 +57,18 @@
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.startTime="{ item }">
         {{ useDateFormat(item.startTime, "YYYY-MM-DD") }} - {{ useDateFormat(item.stopTime, "YYYY-MM-DD") }}
+      </template>
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template v-slot:item.checked="{ item }">
+        <v-badge v-if="item.checked == 0" dot inline color="grey">
+          <span v-if="item.checked == 0" class="mr-2"> 审核中 </span>
+        </v-badge>
+        <v-badge v-if="item.checked == 1" dot inline color="green">
+          <span v-if="item.checked == 1" class="mr-2"> 审核通过 </span>
+        </v-badge>
+        <v-badge v-if="item.checked == 2" dot inline color="red">
+          <span v-if="item.checked == 2" class="mr-2"> 审核未通过 </span>
+        </v-badge>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.actions="{ item }">
