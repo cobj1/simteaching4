@@ -9,9 +9,14 @@
 //   $color-pack: false
 // );
 
+:root {
+  --ck-color-base-background: var(--v-theme-surface);
+}
+
 body.ckeditor-dark {
   /* 背景颜色 */
   --ck-color-base-background: var(--v-theme-surface);
+  --ck-color-base-border: rgba(var(--v-border-color), var(--v-border-opacity));
 
   /* Helper variables to avoid duplication in the colors. */
   --ck-custom-background: rgb(var(--v-theme-surface-light));

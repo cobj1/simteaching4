@@ -75,7 +75,11 @@ const acadeamic = ref([])
 const news = ref([])
 const loading = ref(true)
 const carouselIndex = ref(0)
+import { useLocale } from 'vuetify'
 
+const a = useLocale()
+// const text = t('$vuetify.badge')
+console.log(a, a.t('$vuetify.close'))
 const loadItems = async () => {
   loading.value = true
   if (homeStore.TypeItems.length > 0) {

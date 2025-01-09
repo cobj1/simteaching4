@@ -77,6 +77,10 @@ export const useConsoleStore = defineStore("console", () => {
             title: "测试",
             path: "/console/resource/testpaper",
           },
+          {
+            title: "报告模板",
+            path: "/console/resource/report-template",
+          },
         ],
       },
       {
