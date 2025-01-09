@@ -48,8 +48,17 @@
           <div class="mb-2">
             {{ item.name }}
           </div>
-          <QuestionsOptions :type="item.qtype" v-model:answer="item.answer" v-model:options="item.options">
+          <QuestionsOptions :type="item.qtype" v-model:answer="item.answer" v-model:options="item.options" :disabled="logItem.id != null">
           </QuestionsOptions>
+          <section v-if="logItem.id != null">
+            <h3 class="text-subtitle-1 font-weight-bold mb-2">
+              试题解析:
+            </h3>
+
+            <div class="text-body-2 text-medium-emphasis mb-4 w-100 w-md-75">
+              {{ item.answerAnalysis ? item.answerAnalysis : '暂无解析' }}
+            </div>
+          </section>
         </div>
         <div v-else-if="item.type == 'testpaper'">
           <v-card class="pa-4 ma-1 mb-4" v-for="(question, index) in item.questions" :key="index">
@@ -57,8 +66,17 @@
               {{ question.name }}
               <span class="text-caption	text-medium-emphasis float-right">{{ question.score }} 分</span>
             </div>
-            <QuestionsOptions :type="question.type" v-model:answer="question.answer" v-model:options="question.options">
+            <QuestionsOptions :type="question.type" v-model:answer="question.answer" v-model:options="question.options" :disabled="logItem.id != null">
             </QuestionsOptions>
+            <section v-if="logItem.id != null">
+            <h3 class="text-subtitle-1 font-weight-bold mb-2">
+              试题解析:
+            </h3>
+
+            <div class="text-body-2 text-medium-emphasis mb-4 w-100 w-md-75">
+              {{ item.answerAnalysis ? item.answerAnalysis : '暂无解析' }}
+            </div>
+          </section>
           </v-card>
         </div>
         <v-empty-state v-else headline="No Messages Yet"
@@ -209,7 +227,8 @@ const loadCourseResourceItem = async () => {
     item.value.qtype = question.type
     item.value.options = question.options.map(item => item.name)
     item.value.name = question.name
-    item.value.answer = question.type == '多选题' ? [] : ''
+    item.value.answer = question.type == '多选题' ? [] : '',
+      item.value.answerAnalysis = question.answerAnalysis
   } else if (res.type == 'testpaper') {
     const testpaper = await ResourceTestpaperApi.exam(res.rid)
     item.value.name = testpaper.name
@@ -217,7 +236,8 @@ const loadCourseResourceItem = async () => {
       return {
         ...item,
         options: item.options.map(item => item.name),
-        answer: item.type == '多选题' ? [] : ''
+        answer: item.type == '多选题' ? [] : '',
+        answerAnalysis: item.answerAnalysis
       }
     })
   }
@@ -232,7 +252,6 @@ const loadCourseResourceLogItem = async () => {
   logItem.value.score = res.score
   logItem.value.createTime = res.createTime
 }
-
 
 
 const cid = route.params.id
