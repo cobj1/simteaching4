@@ -53,7 +53,14 @@ export const useConsoleStore = defineStore("console", () => {
         title: "课程管理",
         prependIcon: "mdi-school-outline",
         link: true,
-        path: "/console/course",
+        path: "/console/course/manage",
+      },
+      {
+        show: accountStore.auth("course-check"),
+        title: "课程审核",
+        prependIcon: "mdi-check-network-outline",
+        link: true,
+        path: "/console/course/check",
       },
       {
         show: accountStore.auth("resource"),

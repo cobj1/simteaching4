@@ -1,5 +1,6 @@
 import { PagingProcessor } from "@/utils/paging-processor";
 import axios from "@/axios";
+import { FormDataTimeFormat } from "@/utils/form-data-time-format";
 
 export interface Course {
   id: any;
@@ -21,6 +22,7 @@ export const CourseApi = {
     });
   },
   save(data: object) {
+    data = FormDataTimeFormat(data)
     return axios({
       url: "/course/save",
       method: "post",

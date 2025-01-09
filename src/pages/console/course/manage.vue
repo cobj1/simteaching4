@@ -18,8 +18,8 @@
             item-title="name" item-value="id" clearable></v-select>
           <v-select hide-details v-model="search.type" class="pa-2" label="课程种类..." :items="types" item-title="label"
             item-value="value" clearable></v-select>
-          <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..."
-            append-inner-icon="mdi-magnify" clearable></v-text-field>
+          <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..." append-inner-icon="mdi-magnify"
+            clearable></v-text-field>
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
@@ -52,9 +52,13 @@
         </v-menu>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template v-slot:item.startTime="{ item }">
+        {{ useDateFormat(item.startTime, "YYYY-MM-DD") }} - {{ useDateFormat(item.stopTime, "YYYY-MM-DD") }}
+      </template>
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.actions="{ item }">
-        <VBtn icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)"></VBtn>
-        <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
+        <VBtn prepend-icon="mdi-pencil" variant="text" text="编辑" @click="editItem(item)"></VBtn>
+        <VBtn prepend-icon="mdi-delete" variant="text" text="删除" @click="deleteItem(item)"></VBtn>
       </template>
     </v-data-table-server>
     <v-dialog v-model="dialog" max-width="600px" :persistent="loadingEdit" :fullscreen="$vuetify.display.smAndDown"
@@ -86,6 +90,9 @@
               <v-col cols="12" sm="6">
                 <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name"
                   item-value="id" :disabled="loadingEdit"></v-select>
+              </v-col>
+              <v-col cols="12">
+                <v-date-input v-model="editedItem.time" label="开放时间" multiple="range"></v-date-input>
               </v-col>
             </v-row>
           </v-container>
@@ -130,10 +137,12 @@
 </template>
 
 <script setup>
+import { VDateInput } from 'vuetify/labs/VDateInput'
 import { computed, nextTick, ref } from 'vue';
 import { CourseApi } from '@/api/course/course';
-import { useClipboard } from '@vueuse/core';
+import { useClipboard, useDateFormat } from '@vueuse/core';
 import { useResourceStore } from '@/stores/resource';
+import { TimeRangeGenerators } from '@/utils/time-range-generators';
 
 const resourceStore = useResourceStore()
 const { copy } = useClipboard()
@@ -149,6 +158,8 @@ const headers = ref([
   { title: '类型', key: 'categoryName', sortable: false },
   { title: '种类', key: 'typeName', sortable: false },
   { title: '课程代码', key: 'code' },
+  { title: '开放时间', key: 'startTime' },
+  { title: '审核状态', key: 'checked' },
   { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
 ])
 const search = ref({
@@ -175,6 +186,7 @@ const editedItem = ref({
   subject: '',
   classroom: '',
   cover: '',
+  time: []
 })
 const defaultItem = ref({
   id: null,
@@ -185,6 +197,7 @@ const defaultItem = ref({
   subject: '',
   classroom: '',
   cover: '',
+  time: []
 })
 const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
 
@@ -192,6 +205,7 @@ const editItem = async (item) => {
   if (item) {
     editedIndex.value = serverItems.value.indexOf(item)
     editedItem.value = Object.assign({}, item)
+    editedItem.value.time = TimeRangeGenerators(item.startTime, item.stopTime)
   } else {
     editedItem.value = Object.assign({}, defaultItem.value)
     editedIndex.value = -1;
@@ -254,7 +268,11 @@ const copycode = (code) => {
 const save = async () => {
   loadingEdit.value = true
   try {
-    await CourseApi.save(editedItem.value)
+    await CourseApi.save({
+      ...editedItem.value,
+      startTime: editedItem.value.time[0],
+      stopTime: editedItem.value.time.at(-1)
+    })
     close()
     loadItems(options.value)
   } catch (e) { /* empty */ }
