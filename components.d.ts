@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    copy: typeof import('./src/components/resource/SelectionTestpaper copy.vue')['default']
     CourseCodeOptions: typeof import('./src/components/course/CourseCodeOptions.vue')['default']
     CourseRegister: typeof import('./src/components/course/CourseRegister.vue')['default']
     CourseResourceItem: typeof import('./src/components/course/CourseResourceItem.vue')['default']
@@ -31,6 +32,7 @@ declare module 'vue' {
     SelectionCourseware: typeof import('./src/components/resource/SelectionCourseware.vue')['default']
     SelectionOrg: typeof import('./src/components/user/SelectionOrg.vue')['default']
     SelectionQuestions: typeof import('./src/components/resource/SelectionQuestions.vue')['default']
+    SelectionReportTemplate: typeof import('./src/components/resource/SelectionReportTemplate.vue')['default']
     SelectionSimulation: typeof import('./src/components/resource/SelectionSimulation.vue')['default']
     SelectionTestpaper: typeof import('./src/components/resource/SelectionTestpaper.vue')['default']
     SelectionUser: typeof import('./src/components/user/SelectionUser.vue')['default']
@@ -47,5 +49,7 @@ declare module 'vue' {
     VNotifications: typeof import('./src/components/VNotifications.vue')['default']
     VResourceIcon: typeof import('./src/components/VResourceIcon.vue')['default']
     VSimulationResultView: typeof import('./src/components/VSimulationResultView.vue')['default']
+    VTeam: typeof import('./src/components/declare/VTeam.vue')['default']
+    VVideo: typeof import('./src/components/declare/VVideo.vue')['default']
   }
 }

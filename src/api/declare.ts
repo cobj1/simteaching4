@@ -46,4 +46,14 @@ export const DeclareApi = {
       data,
     });
   },
+  detailsSave(data: object) {
+    return axios({
+      url: "/declare/details/save",
+      method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data,
+    });
+  },
 };

@@ -17,6 +17,9 @@
         <v-list-item title="作业测试" prepend-icon="mdi-ab-testing" link>
           <SelectionTestpaper @confirm="handleSelectionTestpaperConfirm"></SelectionTestpaper>
         </v-list-item>
+        <v-list-item title="报告" prepend-icon="mdi-file-word-box-outline" link>
+          <SelectionReportTemplate ></SelectionReportTemplate>
+        </v-list-item>
         <v-divider></v-divider>
         <v-list-item title="主题" prepend-icon="mdi-list-box-outline" link
           @click="CourseSubjectEditRef.editItem(route.params.id, subjects.length)"></v-list-item>

@@ -73,7 +73,7 @@
                   accept=".zip">
                   <template #details v-if="editedItem.url">
                     <small class="text-caption text-medium-emphasis" style="word-break:break-all;">
-                      {{ editedItem.url.includes('http') ? editedItem.url : FileApi.filePath + editedItem.url }}
+                      {{ SimulationUri(editedItem.url) }}
                     </small>
                   </template>>
                 </v-file-input>
@@ -121,6 +121,7 @@ import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
 import { VImg } from 'vuetify/components';
 import { useDateFormat, useNow } from '@vueuse/core';
 import { useResourceStore } from '@/stores/resource';
+import { SimulationUri } from '@/utils/simulation-uri';
 
 const resourceStore = useResourceStore()
 const selected = defineModel()

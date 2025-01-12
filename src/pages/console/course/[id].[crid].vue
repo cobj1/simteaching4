@@ -132,6 +132,7 @@ import { useIncrementTimeTrigger } from '@/utils/increment-time-trigger';
 import { useAccountStore } from '@/stores/account';
 import Base64 from 'crypto-js/enc-base64';
 import Utf8 from 'crypto-js/enc-utf8';
+import { SimulationUri } from '@/utils/simulation-uri';
 
 const accountStore = useAccountStore()
 const route = useRoute()
@@ -221,7 +222,7 @@ const loadCourseResourceItem = async () => {
     } catch (e) { /* empty */ }
     const simulation = await ResourceSimulationApi.info(res.rid)
     item.value.name = simulation.name
-    item.value.url = `${simulation.url.includes('http') ? simulation.url : FileApi.filePath + simulation.url}?usercode=${usercode}`
+    item.value.url =  `${SimulationUri(simulation.url)}?usercode=${usercode}`
   } else if (res.type == 'questions') {
     const question = await ResourceQuestionsApi.info(res.rid)
     item.value.qtype = question.type

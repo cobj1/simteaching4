@@ -15,8 +15,8 @@
         <div class="d-flex">
           <v-select v-model="search.category" hide-details class="pa-2" label="筛选类型..." :items="resourceStore.categorys"
             item-title="name" item-value="id" clearable></v-select>
-          <v-text-field v-model="search.name" hide-details class="pa-2" label="检索..."
-            append-inner-icon="mdi-magnify" clearable></v-text-field>
+          <v-text-field v-model="search.name" hide-details class="pa-2" label="检索..." append-inner-icon="mdi-magnify"
+            clearable></v-text-field>
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
@@ -44,8 +44,8 @@
               <v-col cols="12">
                 <v-file-input v-model="editedItem.file" label="选择文件..." :disabled="loadingEdit">
                   <template #details v-if="editedItem.url">
-                    <small class="text-caption text-medium-emphasis" style="word-break:break-all;"> {{ FileApi.filePath
-                      + editedItem.url }}</small>
+                    <small class="text-caption text-medium-emphasis" style="word-break:break-all;">
+                      {{ FileApi.filePath + editedItem.url }}</small>
                   </template>>
                 </v-file-input>
               </v-col>
