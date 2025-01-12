@@ -9,7 +9,7 @@
     <v-row>
       <v-col cols="12" sm="6">
         <v-btn :disabled="!introVideo" prepend-icon="mdi-play-circle-outline" size="x-large" width="100%" class="mb-2"
-          @click="playVideo(null, introVideo)">
+          @click="playVideo(null, FileApi.filePath + introVideo)">
           简介视频
           <span v-show="!!introVideo">(已上传)</span>
         </v-btn>
@@ -26,7 +26,7 @@
       </v-col>
       <v-col cols="12" sm="6">
         <v-btn :disabled="!guideVideo" prepend-icon="mdi-play-circle-outline" size="x-large" width="100%" class="mb-2"
-          @click="playVideo(null, guideVideo)">
+          @click="playVideo(null, FileApi.filePath + guideVideo)">
           引导视频
           <span v-show="!!guideVideo">(已上传)</span>
         </v-btn>
@@ -49,6 +49,7 @@
 import { VFileUpload, VFileUploadItem } from 'vuetify/labs/VFileUpload'
 import { useObjectUrl } from '@vueuse/core';
 import GLightbox from 'glightbox'
+import { FileApi } from '@/api/file';
 
 const introVideo = defineModel('intro-video')
 const guideVideo = defineModel('guide-video')
