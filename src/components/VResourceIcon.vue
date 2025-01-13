@@ -19,20 +19,24 @@ defineProps({
 const configs = {
   // 课程资源
   resource: {
-    color: 'info',
+    color: 'blue',
     icon: 'mdi-book-outline'
   },
   simulation: {
-    color: 'info',
-    icon: 'mdi-book-outline'
+    color: 'deep-purple',
+    icon: 'mdi-test-tube'
   },
   questions: {
-    color: 'info',
-    icon: 'mdi-book-outline'
+    color: 'teal',
+    icon: 'mdi-head-question-outline'
   },
   testpaper: {
-    color: 'info',
-    icon: 'mdi-book-outline'
+    color: 'cyan',
+    icon: 'mdi-ab-testing'
+  },
+  report_template: {
+    color: 'red',
+    icon: 'mdi-file-word-box-outline'
   },
   // 文件资源
   excel: {

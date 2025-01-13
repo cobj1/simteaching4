@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" activator="parent" max-width="1000px" :fullscreen="$vuetify.display.smAndDown" scrollable>
     <template #default>
-      <v-card prepend-icon="mdi-ab-testing" title="选择报告模板">
+      <v-card prepend-icon="mdi-file-word-box-outline" title="选择报告模板">
         <v-divider></v-divider>
 
         <v-card-text class="pa-0">
