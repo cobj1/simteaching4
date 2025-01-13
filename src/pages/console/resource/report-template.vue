@@ -17,29 +17,35 @@
         <v-container class="pa-2" fluid>
           <v-row dense>
             <v-col v-for="item in items" :key="item.title" cols="auto" sm="6" md="4" lg="3">
-              <v-card class="pb-3" border flat>
-                <v-btn icon="mdi-delete" class="position-absolute	" style="top: 10px; right: 10px; z-index: 1;"
-                  @click="deleteItem(item.raw)"></v-btn>
+              <v-hover>
+                <template v-slot:default="{ isHovering, props }">
+                  <v-card v-bind="props" :color="selected == item.raw.id || isHovering ? 'surface-light' : undefined"
+                    class="pb-3" border flat :class="{ 'cursor-pointer': enableSelection }"
+                    :elevation="selected == item.raw.id || isHovering ? 4 : 0" @click="selected = item.raw.id">
+                    <v-btn icon="mdi-delete" class="position-absolute" style="top: 10px; right: 10px; z-index: 1;"
+                      v-if="!enableSelection" @click="deleteItem(item.raw)"></v-btn>
 
-                <v-img :aspect-ratio="1 / 1" :src="FileApi.filePath + item.raw.cover"></v-img>
+                    <v-img :aspect-ratio="1 / 1" :src="FileApi.filePath + item.raw.cover"></v-img>
 
-                <v-list-item :subtitle="item.raw.subtitle" class="mb-2">
-                  <template v-slot:title>
-                    <strong class="text-h6 mb-2">{{ item.raw.title }}</strong>
-                  </template>
-                </v-list-item>
+                    <v-list-item :subtitle="item.raw.subtitle" class="mb-2">
+                      <template v-slot:title>
+                        <strong class="text-h6 mb-2">{{ item.raw.title }}</strong>
+                      </template>
+                    </v-list-item>
 
-                <div class="d-flex justify-space-between px-4">
-                  <div class="d-flex align-center text-caption text-medium-emphasis me-1">
-                    <v-icon icon="mdi-clock" start></v-icon>
+                    <div class="d-flex justify-space-between px-4">
+                      <div class="d-flex align-center text-caption text-medium-emphasis me-1">
+                        <v-icon icon="mdi-clock" start></v-icon>
 
-                    <div class="text-truncate">{{ item.raw.createTime }}</div>
-                  </div>
+                        <div class="text-truncate">{{ item.raw.createTime }}</div>
+                      </div>
 
-                  <v-btn class="text-none" size="small" text="查看" border flat @click="editItem(item.raw)">
-                  </v-btn>
-                </div>
-              </v-card>
+                      <v-btn class="text-none" size="small" text="查看" border flat @click="editItem(item.raw)">
+                      </v-btn>
+                    </div>
+                  </v-card>
+                </template>
+              </v-hover>
             </v-col>
           </v-row>
         </v-container>
@@ -69,13 +75,16 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field v-model="editedItem.title" label="标题" :disabled="saving"></v-text-field>
+                <v-text-field v-model="editedItem.title" label="标题"
+                  :disabled="saving || enableSelection"></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-text-field v-model="editedItem.describe" label="描述" :disabled="saving"></v-text-field>
+                <v-text-field v-model="editedItem.describe" label="描述"
+                  :disabled="saving || enableSelection"></v-text-field>
               </v-col>
               <v-col cols="12" class="report-template">
-                <ckeditor v-model="editedItem.content" :editor="editor" :config="editorConfig" :disabled="saving" />
+                <ckeditor v-model="editedItem.content" :editor="editor" :config="editorConfig"
+                  :disabled="saving || enableSelection" />
               </v-col>
             </v-row>
           </v-container>
@@ -83,10 +92,10 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue-darken-1" variant="text" :disabled="saving" @click="close">
+          <v-btn variant="text" :disabled="saving" @click="close">
             取消
           </v-btn>
-          <v-btn color="blue-darken-1" variant="text" :loading="saving" @click="save">
+          <v-btn color="blue-darken-1" variant="text" :loading="saving" v-if="!enableSelection" @click="save">
             保存
           </v-btn>
         </v-card-actions>
@@ -114,6 +123,7 @@ import { useSettingsStore } from '@/stores/settings';
 import { FileApi } from '@/api/file';
 import { ResourceReportTemplateApi } from '@/api/resource/resource-report-template';
 
+const selected = defineModel()
 defineProps({
   enableSelection: { type: Boolean, default: false }
 })
@@ -154,7 +164,7 @@ const defaultItem = ref({
   content: '',
   cover: ''
 })
-const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
+const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '查看项目')
 
 const editItem = async (item) => {
   if (item) {

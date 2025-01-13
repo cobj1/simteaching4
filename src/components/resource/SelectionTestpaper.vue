@@ -11,11 +11,11 @@
         <v-divider></v-divider>
 
         <v-card-actions>
-          <v-btn text="关闭" @click="close()"></v-btn>
+          <div> <strong>已选: </strong> {{ selected.length }} </div>
 
           <v-spacer></v-spacer>
 
-          <div> <strong>已选: </strong> {{ selected.length }} </div>
+          <v-btn text="关闭" @click="close()"></v-btn>
 
           <v-btn color="surface-variant" text="保存" variant="flat" :disabled="selected.length == 0"
             @click="save()"></v-btn>

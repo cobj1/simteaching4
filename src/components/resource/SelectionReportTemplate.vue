@@ -11,13 +11,14 @@
         <v-divider></v-divider>
 
         <v-card-actions>
-          <v-btn text="关闭" @click="close()"></v-btn>
+          <div v-show="selected"> 已选择  </div>
+          <div v-show="!selected"> 未选择  </div>
 
           <v-spacer></v-spacer>
 
-          <div> <strong>已选: </strong> {{ selected.length }} </div>
+          <v-btn text="关闭" @click="close()"></v-btn>
 
-          <v-btn color="surface-variant" text="保存" variant="flat" :disabled="selected.length == 0"
+          <v-btn color="surface-variant" text="保存" variant="flat" :disabled="!selected"
             @click="save()"></v-btn>
         </v-card-actions>
       </v-card>
@@ -31,12 +32,12 @@ import { nextTick, ref } from 'vue';
 
 const emit = defineEmits(['confirm'])
 const dialog = ref(false)
-const selected = ref([])
+const selected = ref()
 
 const close = () => {
   dialog.value = false
   nextTick(() => {
-    selected.value = []
+    selected.value = null
   })
 }
 
