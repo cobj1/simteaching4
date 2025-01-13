@@ -18,7 +18,7 @@
           <SelectionTestpaper @confirm="handleSelectionTestpaperConfirm"></SelectionTestpaper>
         </v-list-item>
         <v-list-item title="报告" prepend-icon="mdi-file-word-box-outline" link>
-          <SelectionReportTemplate ></SelectionReportTemplate>
+          <SelectionReportTemplate @confirm="handleSelectionReportTemplateConfirm"></SelectionReportTemplate>
         </v-list-item>
         <v-divider></v-divider>
         <v-list-item title="主题" prepend-icon="mdi-list-box-outline" link
@@ -128,6 +128,9 @@ const handleSelectionTestpaperConfirm = async (value) => {
     testpapers.push({ cid: route.params.id, type: 'testpaper', rid: value[i], order: list.value.length + i, score: res.score })
   }
   courseworkSave(JSON.stringify(testpapers))
+}
+const handleSelectionReportTemplateConfirm = async (value) => {
+  courseworkSave(JSON.stringify([{ cid: route.params.id, type: 'report_template', rid: value, order: list.value.length, score: 100 }]))
 }
 const handleVueDraggableEnd = async (event) => {
   if (event.newIndex != event.oldIndex) {

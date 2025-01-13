@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    copy: typeof import('./src/components/course/resource-view/ResourceViewQuestions copy.vue')['default']
     CourseCodeOptions: typeof import('./src/components/course/CourseCodeOptions.vue')['default']
     CourseRegister: typeof import('./src/components/course/CourseRegister.vue')['default']
     CourseResourceItem: typeof import('./src/components/course/CourseResourceItem.vue')['default']
@@ -27,8 +28,14 @@ declare module 'vue' {
     FileIcon: typeof import('./src/components/FileIcon.vue')['default']
     FileList: typeof import('./src/components/FileList.vue')['default']
     ProductLogo: typeof import('./src/components/ProductLogo.vue')['default']
+    Questions: typeof import('./src/components/course/resource-view/Questions.vue')['default']
     QuestionsOptions: typeof import('./src/components/resource/QuestionsOptions.vue')['default']
     ResourceCategory: typeof import('./src/components/resource/ResourceCategory.vue')['default']
+    ResourceViewQuestions: typeof import('./src/components/course/resource-view/ResourceViewQuestions.vue')['default']
+    ResourceViewReportTemplate: typeof import('./src/components/course/resource-view/ResourceViewReportTemplate.vue')['default']
+    ResourceViewResource: typeof import('./src/components/course/resource-view/ResourceViewResource.vue')['default']
+    ResourceViewSimulation: typeof import('./src/components/course/resource-view/ResourceViewSimulation.vue')['default']
+    ResourceViewTestpaper: typeof import('./src/components/course/resource-view/ResourceViewTestpaper.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectionCourseware: typeof import('./src/components/resource/SelectionCourseware.vue')['default']

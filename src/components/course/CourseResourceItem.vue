@@ -13,13 +13,15 @@
                 <v-icon v-if="item.resource.resourceType == 'questions'" icon="mdi-head-question-outline" size="30"
                   class="mr-2" />
                 <v-icon v-if="item.resource.resourceType == 'testpaper'" icon="mdi-ab-testing" size="30" class="mr-2" />
+                <v-icon v-if="item.resource.resourceType == 'report_template'" icon="mdi-file-word-box-outline"
+                  size="30" class="mr-2" />
                 {{ item.resource.name }}
                 <template v-slot:actions>
                   <v-text-field label="分数" v-model="score" type="number" variant="underlined" hide-details
                     density="compact" :min="1" :max="100"
                     :disabled="['testpaper', 'simulation'].includes(item.resource.resourceType)"
-                    v-if="['questions', 'testpaper', 'simulation'].includes(item.resource.resourceType)" @click.stop
-                    @change="onChangeScore"></v-text-field>
+                    v-if="['questions', 'testpaper', 'simulation', 'report_template'].includes(item.resource.resourceType)"
+                    @click.stop @change="onChangeScore"></v-text-field>
                   <CourseResourceItemOptions @deleted="emit('deleted')"></CourseResourceItemOptions>
                 </template>
               </v-expansion-panel-title>
@@ -41,6 +43,9 @@
                       :subtitle="question.type"></v-list-item>
                   </v-list>
                 </div>
+                <div v-if="item.resource.resourceType == 'report_template'">
+                  {{ item.resource.describe }}
+                </div>
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
@@ -53,6 +58,8 @@
                 <v-icon v-if="item.resource.resourceType == 'questions'" icon="mdi-head-question-outline" size="30"
                   class="mr-2" />
                 <v-icon v-if="item.resource.resourceType == 'testpaper'" icon="mdi-ab-testing" size="30" class="mr-2" />
+                <v-icon v-if="item.resource.resourceType == 'report_template'" icon="mdi-file-word-box-outline"
+                  size="30" class="mr-2" />
                 {{ item.resource.name }}
               </div>
               <span class="text-caption text-medium-emphasis">
