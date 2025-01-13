@@ -89,7 +89,7 @@ const loadResources = async () => {
   headers.value.splice(1, headers.value.length)
   const coursework = { title: '课业', value: 'coursework', children: [] }
   const res = await CourseResourceApi.list(route.params.id)
-  crs.value = res.filter(item => ['questions', 'testpaper', 'simulation'].includes(item.type))
+  crs.value = res.filter(item => ['questions', 'testpaper', 'simulation', 'report_template'].includes(item.type))
   crs.value.forEach(item => {
     const title = `${item.resource.name} ( 满分:${item.score} )`
     coursework.children.push({ title, value: `id_${item.id}`, nowrap: true, minWidth: '180px' })

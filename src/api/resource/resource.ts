@@ -3,6 +3,7 @@ import { PagingProcessor } from "@/utils/paging-processor";
 import { ResourceSimulationApi } from "./resource-simulation";
 import { ResourceQuestionsApi } from "./resource-questions";
 import { ResourceTestpaperApi } from "./resource-paper";
+import { ResourceReportTemplateApi } from "./resource-report-template";
 
 export interface ResourceCategory {
   id: string;
@@ -80,6 +81,8 @@ export const ResourceApi = {
       return ResourceQuestionsApi.info(id);
     } else if (type == "testpaper") {
       return ResourceTestpaperApi.info(id);
+    } else if (type == "report_template") {
+      return ResourceReportTemplateApi.info(id);
     }
     return axios({
       url: "/resource/info/" + id,

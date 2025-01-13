@@ -24,6 +24,8 @@
         <div v-else-if="item.type == 'simulation'">
           <VSimulationResultView :simulation="simulation"></VSimulationResultView>
         </div>
+        <div v-else-if="item.type == 'report_template'" v-html="reportTemplate.content">
+        </div>
       </template>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -61,6 +63,9 @@ const simulation = ref({
   score: null,
   steps: []
 })
+const reportTemplate = ref({
+  content: ''
+})
 
 const open = async (value) => {
   item.value.type = value.type
@@ -80,7 +85,7 @@ const open = async (value) => {
     try {
       const res = await ResourceTestpaperApi.exam(value.rid)
       item.value.name = res.name
-      testpaper.value.questions = res.questions
+      testpaper.value.questions = res.questions.map(question => { return { ...question, options: question.options.map(option => option.name) } })
     } catch (e) { /* empty */ }
     try {
       const res = await CourseResourceApi.logDataInfo(value.crlid)
@@ -109,6 +114,16 @@ const open = async (value) => {
 
         }
       })
+    } catch (e) { /* empty */ }
+  }
+  if (value.type == 'report_template') {
+    try {
+      const res = await ResourceApi.info(value.rid, value.type)
+      item.value.name = res.title
+    } catch (e) { /* empty */ }
+    try {
+      const res = await CourseResourceApi.logDataInfo(value.crlid)
+      reportTemplate.value.content = res
     } catch (e) { /* empty */ }
   }
   dialog.value = true
