@@ -46,6 +46,12 @@ export const DeclareApi = {
       data,
     });
   },
+  detailsInfo(did: string) {
+    return axios({
+      url: "/declare/details/" + did,
+      method: "get",
+    });
+  },
   detailsSave(data: object) {
     return axios({
       url: "/declare/details/save",
@@ -54,6 +60,16 @@ export const DeclareApi = {
         "Content-Type": "multipart/form-data",
       },
       data,
+    });
+  },
+  check(did: string, status: number, msg: string) {
+    return axios({
+      url: "/declare/check",
+      method: "post",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data: { did, status, msg },
     });
   },
 };

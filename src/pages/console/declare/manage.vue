@@ -1,4 +1,7 @@
 <template>
+  <v-alert density="compact" icon="mdi-book-open-variant-outline" class="mb-1">
+    Tip: 修改实验申报会进行重新审核。
+  </v-alert>
   <VCard>
     <VToolbar title="申报管理">
       <v-btn color="primary" @click="addItem()">
@@ -28,6 +31,11 @@
         <v-badge v-if="item.checkStatus == 2" dot inline color="red">
           <span class="mr-2"> 审核未通过 </span>
         </v-badge>
+        <v-tooltip v-if="item.checkMsg" :text="item.checkMsg">
+          <template v-slot:activator="{ props }">
+            <v-icon v-bind="props" icon="mdi-help-circle-outline" size="20px" class="ml-2"></v-icon>
+          </template>
+        </v-tooltip>
       </template>
 
       <!-- eslint-disable-next-line vue/valid-v-slot -->
@@ -46,7 +54,7 @@
         <v-card-text>
           <declare-edit v-model:editedItem="editedItem" v-model:editedItemDetails="editedItemDetails"
             v-model:coverFile="coverFile" v-model:introVideoFile="introVideoFile"
-            v-model:guideVideoFile="guideVideoFile" :saving="saving"></declare-edit>
+            v-model:guideVideoFile="guideVideoFile" :disabled="saving"></declare-edit>
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
@@ -172,17 +180,7 @@ const editItem = async (item) => {
   introVideoFile.value = null
   guideVideoFile.value = null
 
-  const itemDetails = {
-    "id": '9e8e1a7e7bd536ec60ae215fec7fe7c1',
-    "introVideo": "simteaching/declare/guide-video/78056027-a6e0-44f0-977a-f4ac9e6fbc50.mp4",
-    "guideVideo": "simteaching/declare/guide-video/1b626cd5-487b-483c-a2e0-ab17997d21dd.mp4",
-    "team": 'simteaching/declare/team/eb30f84f-8eb9-4a91-bb70-964f6f34e868.txt',
-    "deviceCondition": "simteaching/declare/device-condition/06524222-d5b3-49a1-8d43-de90f1d8f345.txt",
-    "target": "simteaching/declare/target/bf4406fe-6251-48bc-8f66-087664d0734c.txt",
-    "principle": "simteaching/declare/principle/8c359314-514b-4085-9d77-ca4a8783be5b.txt",
-    "steps": "simteaching/declare/steps/7e5077df-50a9-4c88-b7e0-734cdab4c576.txt"
-  }
-
+  const itemDetails = await DeclareApi.detailsInfo(item.id)
   editedItemDetails.value.id = itemDetails.id
   editedItemDetails.value.introVideo = itemDetails.introVideo
   editedItemDetails.value.guideVideo = itemDetails.guideVideo
@@ -253,7 +251,7 @@ const save = async () => {
 
   if (guideVideoFile.value) {
     const guideVideoConfig = await FileApi.upload(guideVideoFile.value, 'simteaching/declare/guide-video', true)
-    editedItemDetails.value.introVideo = guideVideoConfig.url
+    editedItemDetails.value.guideVideo = guideVideoConfig.url
   }
 
   const teamBlob = new Blob([JSON.stringify(editedItemDetails.value.team)])
@@ -280,7 +278,7 @@ const save = async () => {
     id: editedItemDetails.value.id,
     did,
     introVideo: editedItemDetails.value.introVideo,
-    guideVideo: editedItemDetails.value.introVideo,
+    guideVideo: editedItemDetails.value.guideVideo,
     deviceCondition: deviceConditionConfig.url,
     target: targetConfig.url,
     principle: principleConfig.url,

@@ -10,7 +10,7 @@
 
     <v-data-iterator :items="team" :items-per-page="3" :search="search">
       <template v-slot:header>
-        <v-toolbar class="px-2 rounded-lg" title="团队">
+        <v-toolbar class="px-2 rounded-lg" title="团队" v-if="!readOnly">
           <v-text-field v-model="search" density="comfortable" placeholder="姓名" prepend-inner-icon="mdi-magnify"
             style="max-width: 300px;" variant="solo" clearable hide-details></v-text-field>
           <v-btn prepend-icon="mdi-plus" class="ml-2" @click="addItem">新增成员</v-btn>
@@ -40,14 +40,14 @@
                 <v-btn prepend-icon="mdi-check-decagram-outline" variant="text" text="负责人" size="x-large"
                   :color="item.raw.organizer ? 'info' : ''"
                   class="position-absolute right-0 bottom-0 rounded-0 rounded-ts-xl" :disabled="disabled"
-                  @click="onChangeOrganizer((page - 1) * 3 + index)"></v-btn>
+                  v-if="!readOnly" @click="onChangeOrganizer((page - 1) * 3 + index)"></v-btn>
 
                 <v-btn density="comfortable" icon="mdi-close" variant="text" size="x-large"
-                  class="position-absolute right-0 top-0 mr-2 mt-2" :disabled="disabled"
+                  class="position-absolute right-0 top-0 mr-2 mt-2" :disabled="disabled" v-if="!readOnly"
                   @click="deleteItem(item.raw)"></v-btn>
 
                 <v-btn density="comfortable" icon="mdi-account-edit-outline" variant="text" size="x-large"
-                  class="position-absolute right-0 top-0 mr-14 mt-2" :disabled="disabled"
+                  v-if="!readOnly" class="position-absolute right-0 top-0 mr-14 mt-2" :disabled="disabled"
                   @click="editItem(item.raw)"></v-btn>
               </v-card>
             </v-col>
@@ -135,6 +135,10 @@ import { nextTick, ref } from 'vue';
 
 defineProps({
   disabled: {
+    type: Boolean,
+    default: false
+  },
+  readOnly: {
     type: Boolean,
     default: false
   }

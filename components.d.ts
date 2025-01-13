@@ -23,6 +23,7 @@ declare module 'vue' {
     DeclareEdit: typeof import('./src/components/declare/DeclareEdit.vue')['default']
     DeclareTeam: typeof import('./src/components/declare/DeclareTeam.vue')['default']
     DeclareVideo: typeof import('./src/components/declare/DeclareVideo.vue')['default']
+    DeclareView: typeof import('./src/components/declare/DeclareView.vue')['default']
     FileIcon: typeof import('./src/components/FileIcon.vue')['default']
     FileList: typeof import('./src/components/FileList.vue')['default']
     ProductLogo: typeof import('./src/components/ProductLogo.vue')['default']
