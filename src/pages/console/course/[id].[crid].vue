@@ -11,7 +11,7 @@
         class="mr-2" />
       <v-icon v-if="item.type == 'report_template' && !$vuetify.display.smAndDown" icon="mdi-file-word-box-outline"
         size="40" class="mr-2" />
-      <span class="text-h4"> {{ title }} </span>
+      <span class="text-h4"> {{ title || '资源丢失' }} </span>
     </div>
     <div class="my-2 text-body-2 text-medium-emphasis">
       {{ item.creator }} • {{ useDateFormat(item.createTime, 'YYYY-MM-DD') }}
@@ -21,7 +21,7 @@
     </div>
     <VDivider class="my-4"></VDivider>
     <v-skeleton-loader :loading="loading" height="240" type="image, list-item-two-line">
-      <v-responsive>
+      <v-responsive v-if="resourceItem">
         <ResourceViewResource v-if="item.type == 'resource'" v-model="resourceItem" :completed="completed">
         </ResourceViewResource>
         <ResourceViewSimulation v-else-if="item.type == 'simulation'" v-model="resourceItem" :completed="completed">
@@ -37,6 +37,7 @@
           text="You haven't received any messages yet. When you do, they'll appear here."
           title="Check back later."></v-empty-state>
       </v-responsive>
+      <v-empty-state v-else headline="资源丢失" title="如果资源丢失，及时联系老师说明情况。" class="w-100 ma-8"></v-empty-state>
     </v-skeleton-loader>
     <VDivider class="my-4"></VDivider>
     <div v-if="item.type == 'questions' || item.type == 'testpaper' || item.type == 'report_template'">
@@ -146,22 +147,24 @@ const loadCourseResourceItem = async () => {
   item.value.creator = res.uname
   if (res.type == 'resource') {
     const resource = await ResourceApi.info(res.rid)
-    item.value.name = resource.name
-    resource.url = FileApi.filePath + resource.url
-    //支持在线预览的资源
-    if (SupportExts.includes(resource.url.substring(resource.url.lastIndexOf('.') + 1))) {
-      const fileRes = await fetch(resource.url)
-      const blob = await fileRes.blob()
-      const fileType = await fileTypeFromBlob(blob)
-      resource.ext = fileType.ext
-      resource.url = URL.createObjectURL(blob)
-      if (['xml', 'txt', 'sql'].includes(fileType.ext)) {
-        const reader = new FileReader()
-        reader.readAsText(blob)
-        reader.onload = () => resource.text = reader.result
+    if (resource) {
+      item.value.name = resource.name
+      resource.url = FileApi.filePath + resource.url
+      //支持在线预览的资源
+      if (SupportExts.includes(resource.url.substring(resource.url.lastIndexOf('.') + 1))) {
+        const fileRes = await fetch(resource.url)
+        const blob = await fileRes.blob()
+        const fileType = await fileTypeFromBlob(blob)
+        resource.ext = fileType.ext
+        resource.url = URL.createObjectURL(blob)
+        if (['xml', 'txt', 'sql'].includes(fileType.ext)) {
+          const reader = new FileReader()
+          reader.readAsText(blob)
+          reader.onload = () => resource.text = reader.result
+        }
       }
+      resourceItem.value = resource
     }
-    resourceItem.value = resource
   } else if (res.type == 'simulation') {
     let usercode;
     try {
@@ -170,33 +173,41 @@ const loadCourseResourceItem = async () => {
       usercode = encodeURIComponent(Base64.stringify(words))
     } catch (e) { /* empty */ }
     const simulation = await ResourceSimulationApi.info(res.rid)
-    item.value.name = simulation.name
-    simulation.url = `${useFileUri(simulation.url)}?usercode=${usercode}`
-    resourceItem.value = simulation
+    if (simulation) {
+      item.value.name = simulation.name
+      simulation.url = `${useFileUri(simulation.url)}?usercode=${usercode}`
+      resourceItem.value = simulation
+    }
   } else if (res.type == 'questions') {
     const question = await ResourceQuestionsApi.info(res.rid)
-    item.value.name = question.name
-    question.options = question.options.map(item => item.name)
-    question.answer = question.type == '多选题' ? [] : ''
-    resourceItem.value = question
+    if (question) {
+      item.value.name = question.name
+      question.options = question.options.map(item => item.name)
+      question.answer = question.type == '多选题' ? [] : ''
+      resourceItem.value = question
+    }
   } else if (res.type == 'testpaper') {
     const testpaper = await ResourceTestpaperApi.exam(res.rid)
-    item.value.name = testpaper.name
-    testpaper.questions = testpaper.questions.map(item => {
-      return {
-        ...item,
-        options: item.options.map(item => item.name),
-        answer: item.type == '多选题' ? [] : '',
-        answerAnalysis: item.answerAnalysis
-      }
-    })
-    resourceItem.value = testpaper
+    if (testpaper) {
+      item.value.name = testpaper.name
+      testpaper.questions = testpaper.questions.map(item => {
+        return {
+          ...item,
+          options: item.options.map(item => item.name),
+          answer: item.type == '多选题' ? [] : '',
+          answerAnalysis: item.answerAnalysis
+        }
+      })
+      resourceItem.value = testpaper
+    }
   } else if (res.type == 'report_template') {
     const reportTemplate = await ResourceReportTemplateApi.info(res.rid)
-    item.value.name = reportTemplate.title
-    const content = await FileApi.downloadTxt(reportTemplate.content)
-    reportTemplate.content = content
-    resourceItem.value = reportTemplate
+    if (reportTemplate) {
+      item.value.name = reportTemplate.title
+      const content = await FileApi.downloadTxt(reportTemplate.content)
+      reportTemplate.content = content
+      resourceItem.value = reportTemplate
+    }
   }
   loading.value = false
   await nextTick()
