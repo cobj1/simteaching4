@@ -9,11 +9,11 @@
     <v-row>
       <v-col cols="12" sm="6">
         <v-btn :disabled="!introVideo" prepend-icon="mdi-play-circle-outline" size="x-large" width="100%" class="mb-2"
-          @click="playVideo(null, FileApi.filePath + introVideo)">
+          @click="playVideo(null, useFileUri(introVideo))">
           简介视频
           <span v-show="!!introVideo">(已上传)</span>
         </v-btn>
-        <VFileUpload v-model="introVideoFile" density="compact" accept=".mp4" title="点击或拖拽文件到此处"
+        <VFileUpload v-model="introVideoFile" density="compact" accept=".mp4" title="点击或拖拽文件到此处" :disabled="disabled"
           @update:model-value="handleIntroVideoFileUpdate">
           <template v-slot:item="{ props: itemProps, file }">
             <v-file-upload-item v-bind="itemProps" lines="one" nav>
@@ -26,11 +26,11 @@
       </v-col>
       <v-col cols="12" sm="6">
         <v-btn :disabled="!guideVideo" prepend-icon="mdi-play-circle-outline" size="x-large" width="100%" class="mb-2"
-          @click="playVideo(null, FileApi.filePath + guideVideo)">
+          @click="playVideo(null, useFileUri(guideVideo))">
           引导视频
           <span v-show="!!guideVideo">(已上传)</span>
         </v-btn>
-        <VFileUpload v-model="guideVideoFile" density="compact" accept=".mp4" title="点击或拖拽文件到此处"
+        <VFileUpload v-model="guideVideoFile" density="compact" accept=".mp4" title="点击或拖拽文件到此处" :disabled="disabled"
           @update:model-value="handleGuideVideoFileUpdate">
           <template v-slot:item="{ props: itemProps, file }">
             <v-file-upload-item v-bind="itemProps" lines="one" nav>
@@ -49,7 +49,14 @@
 import { VFileUpload, VFileUploadItem } from 'vuetify/labs/VFileUpload'
 import { useObjectUrl } from '@vueuse/core';
 import GLightbox from 'glightbox'
-import { FileApi } from '@/api/file';
+import { useFileUri } from '@/utils/simulation-uri';
+
+defineProps({
+  disabled: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const introVideo = defineModel('intro-video')
 const guideVideo = defineModel('guide-video')

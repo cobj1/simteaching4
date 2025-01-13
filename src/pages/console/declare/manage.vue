@@ -14,114 +14,48 @@
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template v-slot:item.cover="{ item }">
+        <v-img :src="FileApi.filePath + item.cover"></v-img>
+      </template>
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template v-slot:item.checkStatus="{ item }">
+        <v-badge v-if="item.checkStatus == 0" dot inline color="grey">
+          <span class="mr-2"> 审核中 </span>
+        </v-badge>
+        <v-badge v-if="item.checkStatus == 1" dot inline color="green">
+          <span class="mr-2"> 审核通过 </span>
+        </v-badge>
+        <v-badge v-if="item.checkStatus == 2" dot inline color="red">
+          <span class="mr-2"> 审核未通过 </span>
+        </v-badge>
+      </template>
+
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.actions="{ item }">
         <VBtn prepend-icon="mdi-pencil" variant="text" text="编辑" @click="editItem(item)"></VBtn>
         <VBtn prepend-icon="mdi-delete" variant="text" text="删除" @click="deleteItem(item)"></VBtn>
       </template>
     </v-data-table-server>
-    <v-dialog v-model="dialog" max-width="1200px" :fullscreen="$vuetify.display.smAndDown" scrollable>
-      <v-card>
+    <v-dialog v-model="dialog" :persistent="saving" max-width="1200px" :fullscreen="$vuetify.display.smAndDown"
+      scrollable>
+      <v-card :loading="saving">
         <v-card-title>
           <span class="text-h5">{{ formTitle }}</span>
         </v-card-title>
         <VDivider></VDivider>
         <v-card-text>
-          <v-container class="declare-documents">
-            <v-row>
-              <v-col cols="12">
-                <v-hover v-if="editedItem.cover" v-slot="{ isHovering, props }">
-                  <v-card v-bind="props" color="surface-light" height="300px">
-                    <v-img :src="FileApi.filePath + editedItem.cover" height="300px"></v-img>
-                    <v-btn icon="mdi-close" class="opacity-0 position-absolute" :class="{ 'opacity-100': isHovering }"
-                      style="left: 50%; top: 50%; transform: translate(-50%,-50%);"
-                      @click="editedItem.cover = null; coverFile = null"></v-btn>
-                  </v-card>
-                </v-hover>
-                <v-file-upload v-else v-model="coverFile" density="comfortable" title="封面" height="300px"
-                  accept=".png,.jpg" @update:model-value="handleCoverFileUpdate"></v-file-upload>
-              </v-col>
-              <v-col cols="12" sm="12">
-                <v-text-field v-model="editedItem.name" label="申报名称"></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-text-field v-model="editedItem.author" label="作者"></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-text-field v-model="editedItem.org" label="组织"></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-text-field v-model="editedItem.category" label="专业类型"></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-text-field v-model="editedItem.type" label="实验类型"></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="8">
-                <v-text-field v-model="editedItem.uri" label="实验链接(uri)"></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="4">
-                <v-btn :prepend-icon="IconsAdapter('simulation')" size="x-large" width="100%">
-                  选择仿真实验
-                  <SelectionSimulation @confirm="handleSelectionSimulationConfirm"></SelectionSimulation>
-                </v-btn>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field v-model="editedItem.intro" label="简介"></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <VVideo v-model:intro-video="editedItemDetails.introVideo"
-                  v-model:guide-video="editedItemDetails.guideVideo" v-model:intro-video-file="introVideoFile"
-                  v-model:guide-video-file="guideVideoFile">
-                </VVideo>
-              </v-col>
-              <v-col cols="12">
-                <VTeam v-model="editedItemDetails.team"></VTeam>
-              </v-col>
-              <v-col cols="12">
-                <v-responsive class="text-center mx-auto my-10" max-width="700">
-                  <p class="font-weight-bold text-h4 mb-2">设备要求</p>
-                  <p class="text-subtitle-1 text-medium-emphasis">
-                    满足电脑设备要求，可以确保软件正常运行，获得最佳使用体验，提高工作效率，并避免不必要的经济损失。
-                  </p>
-                </v-responsive>
-                <ckeditor v-model="editedItemDetails.deviceCondition" :editor="editor" :config="editorConfig" />
-              </v-col>
-              <v-col cols="12">
-                <v-responsive class="text-center mx-auto my-10" max-width="700">
-                  <p class="font-weight-bold text-h4 mb-2">教学目标</p>
-                  <p class="text-subtitle-1 text-medium-emphasis">
-                    教学目标在科学教育中具有重要的地位和作用。它不仅可以帮助学生更好地理解和掌握科学知识，更重要的是可以培养学生的科学素养、实践能力、创新意识和探究精神，为他们未来的学习和发展打下坚实的基础。
-                  </p>
-                </v-responsive>
-                <ckeditor v-model="editedItemDetails.target" :editor="editor" :config="editorConfig" />
-              </v-col>
-              <v-col cols="12">
-                <v-responsive class="text-center mx-auto my-10" max-width="700">
-                  <p class="font-weight-bold text-h4 mb-2">实验原理</p>
-                  <p class="text-subtitle-1 text-medium-emphasis">
-                    实验原理的重要性体现在各个方面，它不仅是科学研究的重要手段，也是工程技术进步的重要推动力，同时对我们的日常生活也有着重要的意义。通过实验，我们可以更好地认识世界、改造世界，不断推动社会的发展和进步。
-                  </p>
-                </v-responsive>
-                <ckeditor v-model="editedItemDetails.principle" :editor="editor" :config="editorConfig" />
-              </v-col>
-              <v-col cols="12">
-                <v-responsive class="text-center mx-auto my-10" max-width="700">
-                  <p class="font-weight-bold text-h4 mb-2">实验步骤</p>
-                  <p class="text-subtitle-1 text-medium-emphasis">
-                    实验步骤是实验成功的关键。无论是科学研究还是学习，都应该重视实验步骤的制定和执行，以确保实验结果的准确性、可靠性和有效性，并培养科学思维和探究能力。
-                  </p>
-                </v-responsive>
-                <ckeditor v-model="editedItemDetails.steps" :editor="editor" :config="editorConfig" />
-              </v-col>
-            </v-row>
-          </v-container>
+          <declare-edit v-model:editedItem="editedItem" v-model:editedItemDetails="editedItemDetails"
+            v-model:coverFile="coverFile" v-model:introVideoFile="introVideoFile"
+            v-model:guideVideoFile="guideVideoFile" :saving="saving"></declare-edit>
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
+          <small v-show="saving" class="text-caption text-medium-emphasis">*保存过程会提交文件请耐心等待。</small>
           <v-spacer></v-spacer>
-          <v-btn variant="text" @click="close">
+          <v-btn variant="text" :disabled="saving" @click="close">
             取消
           </v-btn>
-          <v-btn color="surface-variant" variant="flat" @click="save">
+          <v-btn color="surface-variant" variant="flat" :loading="saving" @click="save">
             保存
           </v-btn>
         </v-card-actions>
@@ -142,36 +76,24 @@
 </template>
 
 <script setup>
-import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo } from 'ckeditor5';
-import { VFileUpload } from 'vuetify/labs/VFileUpload'
-import { computed, nextTick, reactive, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import { DeclareApi } from '@/api/declare';
-import { IconsAdapter } from '@/utils/icons-adapter';
-import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
-import { SimulationUri } from '@/utils/simulation-uri';
-import { useObjectUrl } from '@vueuse/core';
 import { FileApi } from '@/api/file';
-import { useConsoleStore } from '@/stores/console';
 
-const editor = ref(ClassicEditor)
-const editorConfig = reactive({
-  plugins: [Bold, Essentials, Italic, Mention, Paragraph, Undo],
-  toolbar: ['undo', 'redo', '|', 'bold', 'italic'],
-})
 const options = ref({
   page: 1,
   itemsPerPage: 5
 })
 const headers = ref([
-  { title: '仿真封面', align: 'start', sortable: false, key: 'cover', },
-  { title: '实验名称', align: 'start', sortable: false, key: 'name', },
-  { title: '作者', key: 'author' },
-  { title: '组织', key: 'org' },
-  { title: '专业类型', key: 'category', },
-  { title: '实验类型', key: 'type', },
-  { title: '审核状态', key: 'check_status', },
-  { title: '发布时间', key: 'createTime', },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
+  { title: '仿真封面', align: 'start', sortable: false, key: 'cover', nowrap: true },
+  { title: '实验名称', align: 'start', sortable: false, key: 'name', nowrap: true },
+  { title: '作者', key: 'author', nowrap: true },
+  { title: '组织', key: 'org', nowrap: true },
+  { title: '专业类型', key: 'category', nowrap: true },
+  { title: '实验类型', key: 'type', nowrap: true },
+  { title: '审核状态', key: 'checkStatus', nowrap: true },
+  { title: '发布时间', key: 'createTime', nowrap: true },
+  { title: 'Actions', key: 'actions', sortable: false, align: 'end', nowrap: true },
 ])
 const search = ref({
   name: '',
@@ -179,6 +101,7 @@ const search = ref({
 })
 const serverItems = ref([])
 const loading = ref(true)
+const saving = ref(false)
 const totalItems = ref(0)
 const dialogDelete = ref(false)
 const dialog = ref(false)
@@ -231,16 +154,6 @@ const guideVideoFile = ref(null)
 
 const formTitle = computed(() => editedIndex.value === -1 ? '新增申报项目' : '修改申报项目')
 
-const handleSelectionSimulationConfirm = async (seleted) => {
-  if (seleted.at(0)) {
-    const res = await ResourceSimulationApi.info(seleted.at(0))
-    editedItem.value.uri = SimulationUri(res.url)
-  }
-}
-const handleCoverFileUpdate = (file) => {
-  editedItem.value.cover = useObjectUrl(file).value
-}
-
 const addItem = () => {
   editedItem.value = Object.assign({}, defaultItem.value)
   editedItemDetails.value = Object.assign({}, defaultItemDetails.value)
@@ -260,14 +173,14 @@ const editItem = async (item) => {
   guideVideoFile.value = null
 
   const itemDetails = {
-    "id": null,
+    "id": '9e8e1a7e7bd536ec60ae215fec7fe7c1',
     "introVideo": "simteaching/declare/guide-video/78056027-a6e0-44f0-977a-f4ac9e6fbc50.mp4",
-    "guideVideo": "simteaching/declare/guide-video/78056027-a6e0-44f0-977a-f4ac9e6fbc50.mp4",
-    "team": 'simteaching/declare/team/df60657d-dadf-4df3-936e-2d90413788c7.txt',
-    "deviceCondition": "simteaching/declare/device-condition/2c5cfac1-59eb-4956-8b69-e2b093383ed9.txt",
-    "target": "simteaching/declare/target/cd34505c-2989-423e-b17c-0573ba1579ce.txt",
-    "principle": "simteaching/declare/principle/7a67fbd7-5f33-4516-8157-3483a4f6fb73.txt",
-    "steps": "simteaching/declare/steps/4ee46cca-ab48-476e-92b6-a21efb3128f7.txt"
+    "guideVideo": "simteaching/declare/guide-video/1b626cd5-487b-483c-a2e0-ab17997d21dd.mp4",
+    "team": 'simteaching/declare/team/eb30f84f-8eb9-4a91-bb70-964f6f34e868.txt',
+    "deviceCondition": "simteaching/declare/device-condition/06524222-d5b3-49a1-8d43-de90f1d8f345.txt",
+    "target": "simteaching/declare/target/bf4406fe-6251-48bc-8f66-087664d0734c.txt",
+    "principle": "simteaching/declare/principle/8c359314-514b-4085-9d77-ca4a8783be5b.txt",
+    "steps": "simteaching/declare/steps/7e5077df-50a9-4c88-b7e0-734cdab4c576.txt"
   }
 
   editedItemDetails.value.id = itemDetails.id
@@ -315,9 +228,10 @@ const deleteItemConfirm = async () => {
 }
 
 const save = async () => {
-  console.log(editedItem.value)
+  saving.value = true
+
   if (coverFile.value) {
-    const coverConfig = await FileApi.upload(coverFile.value, 'simteaching/declare/cover')
+    const coverConfig = await FileApi.upload(coverFile.value, 'simteaching/declare/cover', true)
     editedItem.value.cover = coverConfig.url
   }
   const did = await DeclareApi.save({
@@ -333,36 +247,37 @@ const save = async () => {
   })
 
   if (introVideoFile.value) {
-    const introVideoConfig = await FileApi.upload(introVideoFile.value, 'simteaching/declare/intro-video')
+    const introVideoConfig = await FileApi.upload(introVideoFile.value, 'simteaching/declare/intro-video', true)
     editedItemDetails.value.introVideo = introVideoConfig.url
   }
 
-  if (introVideoFile.value) {
-    const guideVideoConfig = await FileApi.upload(introVideoFile.value, 'simteaching/declare/guide-video')
+  if (guideVideoFile.value) {
+    const guideVideoConfig = await FileApi.upload(guideVideoFile.value, 'simteaching/declare/guide-video', true)
     editedItemDetails.value.introVideo = guideVideoConfig.url
   }
 
   const teamBlob = new Blob([JSON.stringify(editedItemDetails.value.team)])
   const teamFile = new File([teamBlob], 'team.txt', { type: 'text/plain' })
-  const teamConfig = await FileApi.upload(teamFile, 'simteaching/declare/team')
+  const teamConfig = await FileApi.upload(teamFile, 'simteaching/declare/team', true)
 
   const deviceConditionBlob = new Blob([editedItemDetails.value.deviceCondition])
   const deviceConditionFile = new File([deviceConditionBlob], 'device-condition.txt', { type: 'text/plain' })
-  const deviceConditionConfig = await FileApi.upload(deviceConditionFile, 'simteaching/declare/device-condition')
+  const deviceConditionConfig = await FileApi.upload(deviceConditionFile, 'simteaching/declare/device-condition', true)
 
   const targetBlob = new Blob([editedItemDetails.value.target])
   const targetFile = new File([targetBlob], 'target.txt', { type: 'text/plain' })
-  const targetConfig = await FileApi.upload(targetFile, 'simteaching/declare/target')
+  const targetConfig = await FileApi.upload(targetFile, 'simteaching/declare/target', true)
 
   const principleBlob = new Blob([editedItemDetails.value.principle])
   const principleFile = new File([principleBlob], 'principle.txt', { type: 'text/plain' })
-  const principleConfig = await FileApi.upload(principleFile, 'simteaching/declare/principle')
+  const principleConfig = await FileApi.upload(principleFile, 'simteaching/declare/principle', true)
 
   const stepsBlob = new Blob([editedItemDetails.value.steps])
   const stepsFile = new File([stepsBlob], 'steps.txt', { type: 'text/plain' })
-  const stepsConfig = await FileApi.upload(stepsFile, 'simteaching/declare/steps')
+  const stepsConfig = await FileApi.upload(stepsFile, 'simteaching/declare/steps', true)
 
   await DeclareApi.detailsSave({
+    id: editedItemDetails.value.id,
     did,
     introVideo: editedItemDetails.value.introVideo,
     guideVideo: editedItemDetails.value.introVideo,
@@ -372,6 +287,8 @@ const save = async () => {
     steps: stepsConfig.url,
     team: teamConfig.url,
   })
+
+  saving.value = false
   close()
   loadItems(options.value)
 }

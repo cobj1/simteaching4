@@ -28,7 +28,7 @@
                   <v-btn :href="FileApi.filePath + item.resource.url" target="_blank">查看资源</v-btn>
                 </div>
                 <div v-if="item.resource.resourceType == 'simulation'">
-                  <v-btn :href="SimulationUri(item.resource.url)" target="_blank">打开实验</v-btn>
+                  <v-btn :href="useFileUri(item.resource.url)" target="_blank">打开实验</v-btn>
                 </div>
                 <div v-if="item.resource.resourceType == 'questions'">
                   <QuestionsOptions disabled :type="item.resource.type"
@@ -72,7 +72,7 @@
 <script setup>
 import { CourseResourceApi } from '@/api/course/course-resource';
 import { FileApi } from '@/api/file'
-import { SimulationUri } from '@/utils/simulation-uri';
+import { useFileUri } from '@/utils/simulation-uri';
 import { useDateFormat } from '@vueuse/core';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';

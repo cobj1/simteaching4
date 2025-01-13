@@ -61,13 +61,13 @@
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.checked="{ item }">
         <v-badge v-if="item.checked == 0" dot inline color="grey">
-          <span v-if="item.checked == 0" class="mr-2"> 审核中 </span>
+          <span class="mr-2"> 审核中 </span>
         </v-badge>
         <v-badge v-if="item.checked == 1" dot inline color="green">
-          <span v-if="item.checked == 1" class="mr-2"> 审核通过 </span>
+          <span class="mr-2"> 审核通过 </span>
         </v-badge>
         <v-badge v-if="item.checked == 2" dot inline color="red">
-          <span v-if="item.checked == 2" class="mr-2"> 审核未通过 </span>
+          <span class="mr-2"> 审核未通过 </span>
         </v-badge>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->

@@ -39,14 +39,16 @@
 
                 <v-btn prepend-icon="mdi-check-decagram-outline" variant="text" text="负责人" size="x-large"
                   :color="item.raw.organizer ? 'info' : ''"
-                  class="position-absolute right-0 bottom-0 rounded-0 rounded-ts-xl"
+                  class="position-absolute right-0 bottom-0 rounded-0 rounded-ts-xl" :disabled="disabled"
                   @click="onChangeOrganizer((page - 1) * 3 + index)"></v-btn>
 
                 <v-btn density="comfortable" icon="mdi-close" variant="text" size="x-large"
-                  class="position-absolute right-0 top-0 mr-2 mt-2" @click="deleteItem"></v-btn>
+                  class="position-absolute right-0 top-0 mr-2 mt-2" :disabled="disabled"
+                  @click="deleteItem(item.raw)"></v-btn>
 
                 <v-btn density="comfortable" icon="mdi-account-edit-outline" variant="text" size="x-large"
-                  class="position-absolute right-0 top-0 mr-14 mt-2" @click="editItem(item.raw)"></v-btn>
+                  class="position-absolute right-0 top-0 mr-14 mt-2" :disabled="disabled"
+                  @click="editItem(item.raw)"></v-btn>
               </v-card>
             </v-col>
           </v-row>
@@ -105,9 +107,9 @@
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn text="取消" variant="plain" @click="close"></v-btn>
+          <v-btn text="取消" variant="plain" :disabled="disabled" @click="close"></v-btn>
 
-          <v-btn color="primary" text="提交" variant="tonal" @click="save"></v-btn>
+          <v-btn color="primary" text="提交" variant="tonal" :disabled="disabled" @click="save"></v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -130,7 +132,13 @@
 import { useBase64 } from '@vueuse/core'
 import { VFileUpload } from 'vuetify/labs/VFileUpload'
 import { nextTick, ref } from 'vue';
-import { useObjectUrl } from '@vueuse/core';
+
+defineProps({
+  disabled: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const team = defineModel()
 const search = ref('')
@@ -214,10 +222,10 @@ const save = async () => {
   close()
 }
 
-
 const deleteItemConfirm = async () => {
-  await DeclareApi.del(editedItem.value.id)
-  loadItems(options.value)
+  if (editedIndex.value > -1) {
+    team.value.splice(editedIndex.value, 1)
+  }
   closeDelete()
 }
 

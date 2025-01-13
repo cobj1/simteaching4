@@ -11,8 +11,11 @@
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template v-slot:item.cover="{ item }">
+        <v-img :src="FileApi.filePath + item.cover"></v-img>
+      </template>
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.actions="{ item }">
-        审核
       </template>
     </v-data-table-server>
     <v-dialog v-model="dialog" max-width="800px" :fullscreen="$vuetify.display.smAndDown" scrollable>
@@ -85,15 +88,14 @@ const options = ref({
   itemsPerPage: 5
 })
 const headers = ref([
-  { title: '仿真封面', align: 'start', sortable: false, key: 'cover', },
-  { title: '实验名称', align: 'start', sortable: false, key: 'title', },
-  { title: '作者', key: 'author' },
-  { title: '组织', key: 'org' },
-  { title: '专业类型', key: 'category', },
-  { title: '实验类型', key: 'type', },
-  { title: '审核状态', key: 'check_status', },
-  { title: '发布时间', key: 'createTime', },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
+  { title: '仿真封面', align: 'start', sortable: false, key: 'cover', nowrap: true },
+  { title: '实验名称', align: 'start', sortable: false, key: 'title', nowrap: true },
+  { title: '作者', key: 'author', nowrap: true },
+  { title: '组织', key: 'org', nowrap: true },
+  { title: '专业类型', key: 'category', nowrap: true },
+  { title: '实验类型', key: 'type', nowrap: true },
+  { title: '发布时间', key: 'createTime', nowrap: true },
+  { title: 'Actions', key: 'actions', sortable: false, align: 'end', nowrap: true },
 ])
 const search = ref({
   name: ''
