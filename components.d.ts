@@ -21,6 +21,8 @@ declare module 'vue' {
     CourseTabResultView: typeof import('./src/components/course/CourseTabResultView.vue')['default']
     CourseTabUser: typeof import('./src/components/course/CourseTabUser.vue')['default']
     DeclareEdit: typeof import('./src/components/declare/DeclareEdit.vue')['default']
+    DeclareTeam: typeof import('./src/components/declare/DeclareTeam.vue')['default']
+    DeclareVideo: typeof import('./src/components/declare/DeclareVideo.vue')['default']
     FileIcon: typeof import('./src/components/FileIcon.vue')['default']
     FileList: typeof import('./src/components/FileList.vue')['default']
     ProductLogo: typeof import('./src/components/ProductLogo.vue')['default']

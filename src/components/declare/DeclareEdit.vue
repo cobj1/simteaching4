@@ -41,12 +41,12 @@
         <v-text-field v-model="editedItem.intro" label="简介" :disabled="saving"></v-text-field>
       </v-col>
       <v-col cols="12">
-        <VVideo v-model:intro-video="editedItemDetails.introVideo" v-model:guide-video="editedItemDetails.guideVideo"
+        <DeclareVideo v-model:intro-video="editedItemDetails.introVideo" v-model:guide-video="editedItemDetails.guideVideo"
           v-model:intro-video-file="introVideoFile" v-model:guide-video-file="guideVideoFile" :disabled="saving">
-        </VVideo>
+        </DeclareVideo>
       </v-col>
       <v-col cols="12">
-        <VTeam v-model="editedItemDetails.team" :disabled="saving"></VTeam>
+        <DeclareTeam v-model="editedItemDetails.team" :disabled="saving"></DeclareTeam>
       </v-col>
       <v-col cols="12">
         <v-responsive class="text-center mx-auto my-10" max-width="700">
