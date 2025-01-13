@@ -1,9 +1,6 @@
 <template>
   <VCard :elevation="enableSelection ? 0 : 1">
     <VToolbar title="报告模板管理" v-if="!enableSelection">
-      <ResourceCategory>
-        <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
-      </ResourceCategory>
       <v-btn color="primary" dark @click="editItem()">
         新增项目
       </v-btn>
@@ -11,8 +8,6 @@
     <v-data-iterator :items="items" :items-per-page="12" :search="search.name">
       <template v-slot:header>
         <div class="d-flex">
-          <v-select v-model="search.category" hide-details class="pa-2" label="筛选类型..." :items="resourceStore.categorys"
-            item-title="name" item-value="id" clearable></v-select>
           <v-text-field v-model="search.name" hide-details class="pa-2" label="检索..." append-inner-icon="mdi-magnify"
             clearable></v-text-field>
         </div>
@@ -26,7 +21,7 @@
                 <v-btn icon="mdi-delete" class="position-absolute	" style="top: 10px; right: 10px; z-index: 1;"
                   @click="deleteItem(item.raw)"></v-btn>
 
-                <v-img :aspect-ratio="1 / 1" :src="item.raw.img"></v-img>
+                <v-img :aspect-ratio="1 / 1" :src="FileApi.filePath + item.raw.cover"></v-img>
 
                 <v-list-item :subtitle="item.raw.subtitle" class="mb-2">
                   <template v-slot:title>
@@ -38,7 +33,7 @@
                   <div class="d-flex align-center text-caption text-medium-emphasis me-1">
                     <v-icon icon="mdi-clock" start></v-icon>
 
-                    <div class="text-truncate">{{ item.raw.duration }}</div>
+                    <div class="text-truncate">{{ item.raw.createTime }}</div>
                   </div>
 
                   <v-btn class="text-none" size="small" text="查看" border flat @click="editItem(item.raw)">
@@ -64,38 +59,34 @@
         </div>
       </template>
     </v-data-iterator>
-    <v-dialog v-model="dialog" max-width="1200px" :persistent="loadingEdit" :fullscreen="$vuetify.display.smAndDown"
+    <v-dialog v-model="dialog" max-width="1200px" :persistent="saving" :fullscreen="$vuetify.display.smAndDown"
       scrollable>
-      <v-card :loading="loadingEdit">
+      <v-card :loading="saving">
         <v-card-title>
           <span class="text-h5">{{ formTitle }}</span>
         </v-card-title>
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="6">
-                <v-text-field v-model="editedItem.title" label="标题" :disabled="loadingEdit"></v-text-field>
-              </v-col>
-              <v-col cols="6">
-                <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name"
-                  item-value="id" :disabled="loadingEdit"></v-select>
+              <v-col cols="12">
+                <v-text-field v-model="editedItem.title" label="标题" :disabled="saving"></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-text-field v-model="editedItem.describe" label="描述" :disabled="loadingEdit"></v-text-field>
+                <v-text-field v-model="editedItem.describe" label="描述" :disabled="saving"></v-text-field>
               </v-col>
               <v-col cols="12" class="report-template">
-                <ckeditor v-model="editedItem.content" :editor="editor" :config="editorConfig" />
+                <ckeditor v-model="editedItem.content" :editor="editor" :config="editorConfig" :disabled="saving" />
               </v-col>
             </v-row>
           </v-container>
-          <small class="text-caption text-medium-emphasis" v-show="loadingEdit">* 等待中请勿关闭窗口或刷新页面</small>
+          <small class="text-caption text-medium-emphasis" v-show="saving">* 等待中请勿关闭窗口或刷新页面</small>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue-darken-1" variant="text" :disabled="loadingEdit" @click="close">
+          <v-btn color="blue-darken-1" variant="text" :disabled="saving" @click="close">
             取消
           </v-btn>
-          <v-btn color="blue-darken-1" variant="text" :loading="loadingEdit" @click="save">
+          <v-btn color="blue-darken-1" variant="text" :loading="saving" @click="save">
             保存
           </v-btn>
         </v-card-actions>
@@ -117,12 +108,15 @@
 
 <script setup>
 import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo } from 'ckeditor5';
-import { computed, nextTick, reactive, ref } from 'vue';
-import { ResourceApi } from '@/api/resource/resource';
-import { useResourceStore } from '@/stores/resource';
+import { computed, nextTick, onMounted, reactive, ref } from 'vue';
 import html2canvas from 'html2canvas';
 import { useSettingsStore } from '@/stores/settings';
 import { FileApi } from '@/api/file';
+import { ResourceReportTemplateApi } from '@/api/resource/resource-report-template';
+
+defineProps({
+  enableSelection: { type: Boolean, default: false }
+})
 
 const settingsStore = useSettingsStore()
 const editor = ref(ClassicEditor)
@@ -130,10 +124,7 @@ const editorConfig = reactive({
   plugins: [Bold, Essentials, Italic, Mention, Paragraph, Undo],
   toolbar: ['undo', 'redo', '|', 'bold', 'italic'],
 })
-const resourceStore = useResourceStore()
-defineProps({
-  enableSelection: { type: Boolean, default: false }
-})
+
 const options = ref({
   page: 1,
   itemsPerPage: 5
@@ -141,12 +132,11 @@ const options = ref({
 
 const search = ref({
   name: '',
-  category: null
 })
-import data from '@/assets/data/report-template-data.json'
-const items = ref(data)
+
+const items = ref([])
 const loading = ref(true)
-const loadingEdit = ref(false)
+const saving = ref(false)
 const dialogDelete = ref(false)
 const dialog = ref(false)
 const editedIndex = ref(-1)
@@ -154,7 +144,6 @@ const editedItem = ref({
   id: null,
   title: '',
   describe: '',
-  category: null,
   content: '',
   cover: ''
 })
@@ -162,7 +151,6 @@ const defaultItem = ref({
   id: null,
   title: '',
   describe: '',
-  category: null,
   content: '',
   cover: ''
 })
@@ -172,7 +160,8 @@ const editItem = async (item) => {
   if (item) {
     editedIndex.value = items.value.indexOf(item)
     editedItem.value = Object.assign({}, item)
-    editedItem.value.urlOld = editedItem.value.url
+    const context = await FileApi.downloadTxt(item.content)
+    editedItem.value.content = context
   } else {
     editedItem.value = Object.assign({}, defaultItem.value)
     editedIndex.value = -1;
@@ -203,41 +192,52 @@ const closeDelete = () => {
 }
 
 const deleteItemConfirm = async () => {
-  await ResourceApi.del(editedItem.value.id)
+  await ResourceReportTemplateApi.del(editedItem.value.id)
   loadItems(options.value)
   closeDelete()
 }
 
 const save = async () => {
-  loadingEdit.value = true
+  saving.value = true
+
   try {
     const elCkContent = document.querySelector('.ck-content')
-    console.log([elCkContent])
     const canvas = await html2canvas(elCkContent,
       {
         backgroundColor: settingsStore.isDark ? '#000000' : '#ffffff',
         width: elCkContent.clientWidth,
-        height: elCkContent.clientWidth
+        height: elCkContent.clientWidth,
       }
     )
-    console.log(canvas.toDataURL('image/png', 1.0))
-    console.log(editedItem.value.content)
-    const blob = new Blob([editedItem.value.content])
-    const file = new File([blob], editedItem.value.title + '.txt', { type: 'text/plain' })
-    const res = await FileApi.upload(file, 'simteaching/report-template/content')
-    console.log(res)
-    // close()
-    // loadItems(options.value)
-  } catch (e) { /* empty */ }
-  loadingEdit.value = false
+    canvas.toBlob(async (blob) => {
+
+      const coverFile = new File([blob], editedItem.value.title + '.png', { type: 'image/png' })
+      const coverConfig = await FileApi.upload(coverFile, 'simteaching/report-template/cover', true)
+      editedItem.value.cover = coverConfig.url
+
+      const contentBlob = new Blob([editedItem.value.content])
+      const contentFile = new File([contentBlob], editedItem.value.title + '.txt', { type: 'text/plain' })
+      const contentConfig = await FileApi.upload(contentFile, 'simteaching/report-template/content', true)
+      editedItem.value.content = contentConfig.url
+
+      await ResourceReportTemplateApi.save(editedItem.value)
+
+      loadItems(options.value)
+      close()
+      saving.value = false
+    }, 'image/png', 1.0)
+  } catch (e) {
+    saving.value = false
+  }
 }
 
 const loadItems = async () => {
   loading.value = true
-  await resourceStore.loadCategorys()
-
+  items.value = await ResourceReportTemplateApi.list()
   loading.value = false
 }
+
+onMounted(() => loadItems())
 </script>
 
 <style scoped>
