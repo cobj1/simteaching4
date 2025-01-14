@@ -6,7 +6,10 @@
       </template>
       <template v-slot:text>
         <div v-if="item.type == 'questions'">
-          <QuestionsOptions disabled :type="questions.qtype" :options="questions.options.map(item => item.name)"
+          <div v-if="questions.qtype == '仿真题'">
+            <VSimulationResultView :simulation="questions.answer"></VSimulationResultView>
+          </div>
+          <QuestionsOptions v-else disabled :type="questions.qtype" :options="questions.options.map(item => item.name)"
             :answer="questions.answer">
           </QuestionsOptions>
         </div>
@@ -52,6 +55,7 @@ const questions = ref({
   qtype: null,
   options: [],
   answer: null,
+  simulation: null
 })
 const testpaper = ref({
   questions: []
@@ -79,6 +83,7 @@ const open = async (value) => {
     try {
       const res = await CourseResourceApi.logDataInfo(value.crlid)
       questions.value.answer = useAnswerFormat(res, questions.value.qtype)
+      console.log(questions.value.answer)
     } catch (e) { /* empty */ }
   }
   if (value.type == "testpaper") {

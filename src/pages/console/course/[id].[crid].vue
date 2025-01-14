@@ -40,7 +40,8 @@
       <v-empty-state v-else headline="资源丢失" title="如果资源丢失，及时联系老师说明情况。" class="w-100 ma-8"></v-empty-state>
     </v-skeleton-loader>
     <VDivider class="my-4"></VDivider>
-    <div v-if="item.type == 'questions' || item.type == 'testpaper' || item.type == 'report_template'">
+    <div
+      v-if="(item.type == 'questions' && resourceItem?.type != '仿真题') || item.type == 'testpaper' || item.type == 'report_template'">
       <v-btn prepend-icon="mdi-check" color="indigo" class="d-flex" style="justify-self: end;" :disabled="completed"
         @click="finish">
         <span v-if="!completed">提交</span>
