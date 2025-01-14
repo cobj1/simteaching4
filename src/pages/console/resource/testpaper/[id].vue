@@ -34,7 +34,8 @@
                       style="left: 50%; transform: translateX(-50%); height: 26px;"></v-icon>
                   </template>
                   <div class="pa-1">
-                    <QuestionsOptions :type="item.type" :answer="item.answer" :options="item.options" disabled>
+                    <QuestionsOptions :type="item.type" :answer="item.answer" :options="item.options"
+                      v-model:simulation="item.simulation" disabled>
                     </QuestionsOptions>
                     <VDivider class="my-2"></VDivider>
                     <div class="text-indigo d-flex justify-space-between">
