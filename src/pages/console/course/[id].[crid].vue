@@ -40,8 +40,7 @@
       <v-empty-state v-else headline="资源丢失" title="如果资源丢失，及时联系老师说明情况。" class="w-100 ma-8"></v-empty-state>
     </v-skeleton-loader>
     <VDivider class="my-4"></VDivider>
-    <div
-      v-if="(item.type == 'questions' && resourceItem?.type != '仿真题') || item.type == 'testpaper' || item.type == 'report_template'">
+    <div v-if="item.type == 'questions' || item.type == 'testpaper' || item.type == 'report_template'">
       <v-btn prepend-icon="mdi-check" color="indigo" class="d-flex" style="justify-self: end;" :disabled="completed"
         @click="finish">
         <span v-if="!completed">提交</span>
@@ -115,9 +114,20 @@ const title = computed(() => {
 const finishDialog = ref(false)
 
 const handleSimulationMessage = (event) => {
-  if (event && event.data && 'object' == typeof event.data) {
+  if (event && event.data && 'object' == typeof event.data && event.data.simapi) {
     item.value.answer = JSON.stringify(event.data)
-    finish()
+
+    // 仿真资源做完直接提交，仿真试题和试卷中的仿真试题不会直接提交
+    if (item.value.type == 'simulation') finish()
+
+    // 针对试卷中仿真题保存答案
+    if (item.value.type == 'testpaper') {
+      resourceItem.value.questions.forEach(question => {
+        if (question.type == '仿真题' && question.simulation && event.data.location.pathname.includes(question.simulation.url)) {
+          question.answer = JSON.stringify(event.data)
+        }
+      })
+    }
   }
 }
 
@@ -130,7 +140,8 @@ const finish = () => {
       if (question.type == '多选题') {
         question.answer = question.answer.sort((a, b) => a - b)
         return { qid: question.id, answer: question.answer.join(',') }
-      } else return { qid: question.id, answer: question.answer }
+      } else
+        return { qid: question.id, answer: question.answer }
     }))
   } else if (item.value.type == 'report_template') {
     answer = resourceItem.value.content

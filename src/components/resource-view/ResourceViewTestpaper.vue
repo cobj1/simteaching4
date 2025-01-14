@@ -4,11 +4,14 @@
       {{ question.name }}
       <span class="text-caption	text-medium-emphasis float-right">{{ question.score }} 分</span>
     </div>
-    <QuestionsOptions :type="question.type" v-model:answer="question.answer" v-model:options="question.options"
+    <ResourceViewSimulation v-if="question.type == '仿真题'" v-model="question.simulation"></ResourceViewSimulation>
+
+    <QuestionsOptions v-else :type="question.type" v-model:answer="question.answer" v-model:options="question.options"
       :disabled="completed">
     </QuestionsOptions>
+
     <section v-if="completed">
-      <h3 class="text-subtitle-1 font-weight-bold mb-2">
+      <h3 class="text-subtitle-1 font-weight-bold my-2">
         试题解析:
       </h3>
 
@@ -26,6 +29,7 @@ const item = defineModel()
 defineProps({
   completed: { type: Boolean, default: false }
 })
+
 </script>
 
 <style lang="scss" scoped></style>

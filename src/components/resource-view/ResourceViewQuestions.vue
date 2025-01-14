@@ -3,16 +3,15 @@
     <div class="mb-2">
       {{ item.name }}
     </div>
-    <v-responsive v-if="item.type == '仿真题'" :aspect-ratio="16 / 9" class="w-100 h-100" min-height="300px">
-      <iframe :src="useFileUri(item.simulation.url)" class="w-100 h-100 border-0	" style="overflow: hidden;">
-      </iframe>
-    </v-responsive>
+
+    <ResourceViewSimulation v-if="item.type == '仿真题'" v-model="item.simulation"></ResourceViewSimulation>
+
     <QuestionsOptions v-else :type="item.type" v-model:answer="item.answer" v-model:options="item.options"
       :disabled="completed">
     </QuestionsOptions>
 
     <section v-if="completed">
-      <h3 class="text-subtitle-1 font-weight-bold mb-2">
+      <h3 class="text-subtitle-1 font-weight-bold my-2">
         试题解析:
       </h3>
 
@@ -24,7 +23,6 @@
 </template>
 
 <script setup>
-import { useFileUri } from '@/utils/simulation-uri';
 
 const item = defineModel()
 

@@ -3,7 +3,7 @@ export function useAnswerFormat(answer: string | null, type: string | null) {
   if (type == "多选题") {
     return `${answer}`.split(",");
   } else if (type == "仿真题") {
-    return answer;
+    return (!!answer && typeof answer == "string") ? JSON.parse(answer) : answer;
   } else {
     return `${answer}`;
   }

@@ -1,6 +1,6 @@
 <template>
-  <v-responsive min-height="500">
-    <v-container class="pa-6 pa-md-12 h-100 flex-column" fluid>
+  <v-responsive min-height="400">
+    <v-container v-if="simulation" class="pa-6 pa-md-12 h-100 flex-column" fluid>
       <h1 class="font-weight-bold mb-4 text-h5 text-sm-h4 text-center">
         仿真实验结果
       </h1>
@@ -40,6 +40,7 @@
         </v-data-table>
       </section>
     </v-container>
+    <v-empty-state v-else headline="没有数据"></v-empty-state>
   </v-responsive>
 </template>
 

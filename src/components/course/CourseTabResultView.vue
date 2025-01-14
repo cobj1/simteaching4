@@ -19,7 +19,10 @@
               {{ question.name }}
               <span class="text-caption	text-medium-emphasis float-right">{{ question.score }} 分</span>
             </div>
-            <QuestionsOptions disabled :type="question.type" v-model:answer="question.answer"
+
+            <VSimulationResultView v-if="question.type == '仿真题'" :simulation="question.answer"></VSimulationResultView>
+
+            <QuestionsOptions v-else disabled :type="question.type" v-model:answer="question.answer"
               v-model:options="question.options">
             </QuestionsOptions>
           </v-card>
@@ -83,7 +86,6 @@ const open = async (value) => {
     try {
       const res = await CourseResourceApi.logDataInfo(value.crlid)
       questions.value.answer = useAnswerFormat(res, questions.value.qtype)
-      console.log(questions.value.answer)
     } catch (e) { /* empty */ }
   }
   if (value.type == "testpaper") {
@@ -97,7 +99,6 @@ const open = async (value) => {
       testpaper.value.questions.forEach(question => {
         const selfAnswer = res.find(item => item.qid == question.id)
         question.answer = useAnswerFormat(selfAnswer.answer, question.type)
-        question.options = question.options.map(item => item.name)
       })
     } catch (e) { /* empty */ }
   }
@@ -116,7 +117,6 @@ const open = async (value) => {
         return {
           ...item,
           correct: item.correct == 1 ? '完成' : '未完成',
-
         }
       })
     } catch (e) { /* empty */ }
