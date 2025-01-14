@@ -4,52 +4,7 @@
       <v-card class="mb-2 mx-2" ariant="text" style="box-shadow:none;" :class="{ 'elevation-4': isHovering }"
         v-bind="props">
         <template #default>
-          <v-expansion-panels v-if="manage">
-            <v-expansion-panel>
-              <v-expansion-panel-title disable-icon-rotate>
-                <v-icon v-if="item.resource.resourceType == 'resource'" icon="mdi-book-outline" size="30"
-                  class="mr-2" />
-                <v-icon v-if="item.resource.resourceType == 'simulation'" icon="mdi-test-tube" size="30" class="mr-2" />
-                <v-icon v-if="item.resource.resourceType == 'questions'" icon="mdi-head-question-outline" size="30"
-                  class="mr-2" />
-                <v-icon v-if="item.resource.resourceType == 'testpaper'" icon="mdi-ab-testing" size="30" class="mr-2" />
-                <v-icon v-if="item.resource.resourceType == 'report_template'" icon="mdi-file-word-box-outline"
-                  size="30" class="mr-2" />
-                {{ item.resource.name }}
-                <template v-slot:actions>
-                  <v-text-field label="分数" v-model="score" type="number" variant="underlined" hide-details
-                    density="compact" :min="1" :max="100"
-                    :disabled="['testpaper', 'simulation'].includes(item.resource.resourceType)"
-                    v-if="['questions', 'testpaper', 'simulation', 'report_template'].includes(item.resource.resourceType)"
-                    @click.stop @change="onChangeScore"></v-text-field>
-                  <CourseResourceItemOptions @deleted="emit('deleted')"></CourseResourceItemOptions>
-                </template>
-              </v-expansion-panel-title>
-              <v-expansion-panel-text>
-                <div v-if="item.resource.resourceType == 'resource'">
-                  <v-btn :href="FileApi.filePath + item.resource.url" target="_blank">查看资源</v-btn>
-                </div>
-                <div v-if="item.resource.resourceType == 'simulation'">
-                  <v-btn :href="useFileUri(item.resource.url)" target="_blank">打开实验</v-btn>
-                </div>
-                <div v-if="item.resource.resourceType == 'questions'">
-                  <QuestionsOptions disabled :type="item.resource.type"
-                    :options="item.resource.options.map(item => item.name)" :answer="item.resource.answer">
-                  </QuestionsOptions>
-                </div>
-                <div v-if="item.resource.resourceType == 'testpaper'">
-                  <v-list>
-                    <v-list-item v-for="question in item.resource.questions" :key="question.id" :title="question.name"
-                      :subtitle="question.type"></v-list-item>
-                  </v-list>
-                </div>
-                <div v-if="item.resource.resourceType == 'report_template'">
-                  {{ item.resource.describe }}
-                </div>
-              </v-expansion-panel-text>
-            </v-expansion-panel>
-          </v-expansion-panels>
-          <v-list-item v-else class="px-6 py-4" :to="`/console/course/${route.params.id}/${item.id}`">
+          <v-list-item class="px-6 py-4" :to="manage ? null : `/console/course/${route.params.id}/${item.id}`">
             <VListItemTitle class="d-flex justify-space-between align-center">
               <div>
                 <v-icon v-if="item.resource.resourceType == 'resource'" icon="mdi-book-outline" size="30"
@@ -62,13 +17,22 @@
                   size="30" class="mr-2" />
                 {{ item.resource.name }}
               </div>
+            </VListItemTitle>
+            <template #append v-if="manage">
+              <v-text-field label="分数" v-model="score" type="number" variant="underlined" hide-details density="compact"
+                :min="1" :max="100" :disabled="['testpaper', 'simulation'].includes(item.resource.resourceType)"
+                v-if="['questions', 'testpaper', 'simulation', 'report_template'].includes(item.resource.resourceType)"
+                @click.stop @change="onChangeScore"></v-text-field>
+              <CourseResourceItemOptions @deleted="emit('deleted')"></CourseResourceItemOptions>
+            </template>
+            <template #append v-else>
               <span class="text-caption text-medium-emphasis">
                 <v-chip prepend-icon="mdi-check-decagram-outline" v-if="item.log && item.log.id" class="mr-2">
                   已提交
                 </v-chip>
                 发布时间: {{ useDateFormat(item.createTime, 'YYYY-MM-DD') }}
               </span>
-            </VListItemTitle>
+            </template>
           </v-list-item>
         </template>
       </v-card>
