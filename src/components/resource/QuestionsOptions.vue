@@ -33,6 +33,15 @@
     <div v-if="type == '简答题'">
       <v-text-field v-model="answer" label="简短回答问题" :disabled="disabled"></v-text-field>
     </div>
+    <div v-if="type == '仿真题'">
+      <v-btn :prepend-icon="IconsAdapter('simulation')" size="x-large" width="100%" :disabled="disabled">
+        <div v-if="simulation" class="text-center pa-4">
+          {{ simulation.name }}
+        </div>
+        <div v-else>选择仿真实验</div>
+        <SelectionSimulation @confirm="handleSelectionSimulationConfirm"></SelectionSimulation>
+      </v-btn>
+    </div>
     <VBtn prepend-icon="mdi-plus" v-if="editor && (type == '单选题' || type == '多选题')" v-show="editor" @click="add">
       添加选项
     </VBtn>
@@ -40,10 +49,14 @@
 </template>
 
 <script setup lang="ts">
+import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
+import { IconsAdapter } from '@/utils/icons-adapter';
 import { onMounted, ref, watch } from 'vue';
 
 const answer = defineModel('answer') as any
 const options = defineModel('options') as any
+const simulation = defineModel('simulation') as any
+
 const props = defineProps({
   type: {
     type: String,
@@ -63,6 +76,12 @@ const defaultOptions = ref(['选项 1'])
 
 watch(() => props.type, () => init())
 
+const handleSelectionSimulationConfirm = async (seleted: any) => {
+  if (seleted.at(0)) {
+    simulation.value = await ResourceSimulationApi.info(seleted.at(0)) as any
+  }
+}
+
 const add = () => {
   options.value.push(`选项 ${options.value.length + 1}`)
 }
@@ -76,14 +95,22 @@ const init = () => {
   if (props.type == '单选题') {
     answer.value = 0
     options.value = [...defaultOptions.value]
+    simulation.value = null
   }
-  if (props.type == '多选题') {
+  else if (props.type == '多选题') {
     answer.value = []
     options.value = [...defaultOptions.value]
+    simulation.value = null
   }
-  if (props.type == '简答题') {
+  else if (props.type == '简答题') {
     answer.value = null
     options.value = []
+    simulation.value = null
+  }
+  else if (props.type == '仿真题') {
+    answer.value = null
+    options.value = []
+    simulation.value = null
   }
 }
 

@@ -16,11 +16,12 @@
         <div class="d-flex">
           <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="resourceStore.categorys"
             item-title="name" item-value="id" clearable></v-select>
-          <v-select hide-details v-model="search.type" class="pa-2" label="筛选题型..." :items="types" clearable></v-select>
+          <v-select hide-details v-model="search.type" class="pa-2" label="筛选题型..." :items="questionsStore.types"
+            clearable></v-select>
           <v-select hide-details v-model="search.difficulty" class="pa-2" label="筛选难易度..."
-            :items="difficultys" clearable></v-select>
-          <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..."
-            append-inner-icon="mdi-magnify" clearable></v-text-field>
+            :items="questionsStore.difficultys" clearable></v-select>
+          <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..." append-inner-icon="mdi-magnify"
+            clearable></v-text-field>
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
@@ -42,10 +43,11 @@
                 <v-text-field v-model="editedItem.name" label="标题" :disabled="loadingEdit"></v-text-field>
               </v-col>
               <v-col cols="12" sm="4">
-                <v-select v-model="editedItem.type" label="题型" :items="types" :disabled="loadingEdit"></v-select>
+                <v-select v-model="editedItem.type" label="题型" :items="questionsStore.types"
+                  :disabled="loadingEdit"></v-select>
               </v-col>
               <v-col cols="12" sm="4">
-                <v-select v-model="editedItem.difficulty" label="难易度" :items="difficultys"
+                <v-select v-model="editedItem.difficulty" label="难易度" :items="questionsStore.difficultys"
                   :disabled="loadingEdit"></v-select>
               </v-col>
               <v-col cols="12" sm="4">
@@ -54,7 +56,7 @@
               </v-col>
               <v-col cols="12">
                 <QuestionsOptions :type="editedItem.type" v-model:answer="editedItem.answer"
-                  v-model:options="editedItem.options" editor></QuestionsOptions>
+                  v-model:options="editedItem.options" v-model:simulation="editedItem.simulation" editor></QuestionsOptions>
               </v-col>
               <v-col cols="12">
                 <v-textarea v-model="editedItem.answerAnalysis" label="答案解析" :disabled="loadingEdit"></v-textarea>
@@ -94,7 +96,9 @@ import { computed, nextTick, ref } from 'vue';
 import { ResourceQuestionsApi } from '@/api/resource/resource-questions';
 import { useAnswerFormat } from '@/utils/answer-format';
 import { useResourceStore } from '@/stores/resource';
+import { useQuestionsStore } from '@/stores/questions';
 
+const questionsStore = useQuestionsStore()
 const resourceStore = useResourceStore()
 const selected = defineModel()
 defineProps({
@@ -107,9 +111,9 @@ const options = ref({
 const headers = ref([
   { title: '标题', key: 'name', sortable: false },
   { title: '类型', key: 'categoryName', sortable: false },
-  { title: '题型', key: 'type'  },
-  { title: '难易度', key: 'difficulty'  },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end'  },
+  { title: '题型', key: 'type' },
+  { title: '难易度', key: 'difficulty' },
+  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
 ])
 const search = ref({
   name: '',
@@ -118,8 +122,6 @@ const search = ref({
   difficulty: null
 })
 const serverItems = ref([])
-const types = ref(['单选题', '多选题', '简答题'])
-const difficultys = ref(['简单', '普通', '困难'])
 const loading = ref(true)
 const loadingEdit = ref(false)
 const totalItems = ref(0)
@@ -135,7 +137,8 @@ const editedItem = ref({
   difficulty: '普通',
   answer: null,
   answerAnalysis: '',
-  options: []
+  options: [],
+  simulation: null
 })
 const defaultItem = ref({
   id: null,
@@ -145,7 +148,8 @@ const defaultItem = ref({
   difficulty: '普通',
   answer: null,
   answerAnalysis: '',
-  options: []
+  options: [],
+  simulation: null
 })
 const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
 
@@ -156,6 +160,7 @@ const editItem = async (item) => {
     editedItem.value.answer = useAnswerFormat(item.answer, item.type)
     const res = await ResourceQuestionsApi.info(item.id)
     editedItem.value.options = res.options.map(item => item.name)
+    editedItem.value.simulation = res.simulation
   } else {
     editedItem.value = Object.assign({}, defaultItem.value)
     editedIndex.value = -1;

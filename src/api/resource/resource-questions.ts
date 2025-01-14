@@ -11,6 +11,8 @@ export interface ResourceQuestions {
   difficulty: string;
   options: any;
   optionsJsonArray: string;
+  sid: string;
+  simulation: any;
 }
 
 export const ResourceQuestionsApi = {
@@ -55,6 +57,8 @@ export const ResourceQuestionsApi = {
           data.answer instanceof Array
             ? data.answer.sort((a, b) => a - b).join(",")
             : data.answer,
+        sid: data.simulation ? data.simulation.id : null,
+        simulation: null,
       },
     });
   },
