@@ -8,6 +8,11 @@ export interface ResourcePaper {
   category: string;
 }
 
+export interface ResourcePaperRandomSettings {
+  type: string;
+  value: number;
+}
+
 export const ResourceTestpaperApi = {
   page(params: {
     current: number;
@@ -24,14 +29,26 @@ export const ResourceTestpaperApi = {
       params,
     });
   },
-  save(data: ResourcePaper) {
+  save(
+    paper: ResourcePaper,
+    randomSettings: ResourcePaperRandomSettings[] | undefined
+  ) {
     return axios({
       url: "/resource-paper/save",
       method: "post",
       headers: {
         "Content-Type": "multipart/form-data",
       },
-      data,
+      data: {
+        ...paper,
+        randomSettingsData: randomSettings
+          ? JSON.stringify(
+              randomSettings.map((item) => {
+                return { type: item.type, value: item.value };
+              })
+            )
+          : null,
+      },
     });
   },
   saveQuestions(data: string) {
@@ -62,7 +79,7 @@ export const ResourceTestpaperApi = {
       method: "get",
     });
   },
-  paperQuestionListByParerId(pid: string) {
+  questionsByPid(pid: string) {
     return axios({
       url: "/resource-paper/paper-question/" + pid,
       method: "get",

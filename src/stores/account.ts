@@ -25,7 +25,6 @@ export const useAccountStore = defineStore(
       password: string,
       guest: boolean = false
     ) => {
-      console.log(guest)
       const res = (
         guest ? await UserApi.guest() : await UserApi.login(account, password)
       ) as any;

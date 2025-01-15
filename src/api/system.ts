@@ -16,42 +16,49 @@ export const SystemApi = {
   activeConnectionStackTrace() {
     return axios({
       url: "/druid/activeConnectionStackTrace",
+      method: "get",
     });
   },
 
   sql() {
     return axios({
       url: "/druid/sql",
+      method: "get",
     });
   },
 
   wall() {
     return axios({
       url: "/druid/wall",
+      method: "get",
     });
   },
 
   webapp() {
     return axios({
       url: "/druid/webapp",
+      method: "get",
     });
   },
 
   weburi() {
     return axios({
       url: "/druid/weburi",
+      method: "get",
     });
   },
 
   websession() {
     return axios({
       url: "/druid/websession",
+      method: "get",
     });
   },
 
   spring() {
     return axios({
       url: "/druid/spring",
+      method: "get",
     });
   },
 

@@ -91,7 +91,7 @@
                     <p class="text-medium-emphasis mt-4">
                       虽然随机组卷有很多优点，但也需要注意以下几点：
                     </p>
-                    <v-list-item v-for="(item, i) in features" :key="i" class="px-0">
+                    <v-list-item v-for="(item, i) in testpaperStore.features" :key="i" class="px-0">
                       <template #title>
                         <p class="text-body-2 font-weight-bold pb-2">
                           <v-icon class="mr-2" color="primary" :icon="item.icon" size="small" />
@@ -105,22 +105,19 @@
                   </div>
 
                   <div class="pa-3">
-                    <v-list-item v-for="item in items2" :key="item.title" base-color="surface-light" class="mt-2"
-                      rounded>
+                    <v-list-item v-for="(item, index) in randomSettings" :key="item.title" base-color="surface-light"
+                      class="mt-2" rounded>
                       <template #prepend>
                         <v-avatar class="text-h6">{{ item.emoji }}</v-avatar>
                       </template>
 
                       <template #title>
-                        <span class="text-subtitle-2 font-weight-bold">{{ item.title }}</span>
-                      </template>
-
-                      <template #subtitle>
-                        <span class="text-caption">{{ item.subtitle }}</span>
+                        <span class="text-subtitle-2 font-weight-bold">{{ item.type }}</span>
                       </template>
 
                       <template #append>
-                        <v-btn class="text-none text-disabled" text="Edit" variant="tonal" />
+                        <v-text-field v-model="randomSettings[index].value" type="number" label="数量" hide-details
+                          width="100px" variant="underlined"></v-text-field>
                       </template>
                     </v-list-item>
                   </div>
@@ -192,53 +189,17 @@ import { computed, nextTick, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAnswerFormat } from '@/utils/answer-format';
 import { useTestpaperStore } from '@/stores/testpaper';
+import { useIconsAdapter } from '@/utils/icons-adapter';
+import { useQuestionsStore } from '@/stores/questions';
 
 const testpaperStore = useTestpaperStore()
+const questionsStore = useQuestionsStore()
 const resourceStore = useResourceStore()
 const route = useRoute()
 const router = useRouter()
 const item = ref({})
 const title = computed(() => route.params.id == 'add' ? '新增' : '修改')
 const items = ref([])
-const items2 = [
-  {
-    emoji: '🎉',
-    title: 'Introduce yourself to the Community',
-    subtitle: '#introductions',
-  },
-  {
-    emoji: '💬',
-    title: 'Ask general questions about Vuetify',
-    subtitle: '#general-discussion',
-  },
-  {
-    emoji: '🆘',
-    title: 'Get help & advice direct from Vuetify pros',
-    subtitle: '#subscriber-help',
-  },
-  {
-    emoji: '3️⃣',
-    title: 'Obtain communty assistance for Vuetify 3',
-    subtitle: '#vuetify-3-help',
-  },
-  {
-    emoji: '2️⃣',
-    title: 'Obtain communty assistance for Vuetify 2',
-    subtitle: '#vuetify-2-help',
-  },
-]
-const features = [
-  {
-    icon: 'mdi-widgets-outline',
-    title: '题库的质量',
-    subtitle: '随机组卷的有效性很大程度上取决于题库的质量。题库中的题目应该经过严格的筛选和审核，确保其科学性、准确性和难度适宜性。',
-  },
-  {
-    icon: 'mdi-cogs',
-    title: '抽题规则的设定',
-    subtitle: '抽题规则的设定应该根据考试的目的和要求进行，确保抽取的题目能够有效地考察考生的知识和能力。',
-  },
-]
 const selected = ref([0])
 const totalScore = computed(() => items.value.reduce((previousValue, currentValue) => (previousValue * 1) + (currentValue.score * 1), 0))
 const dialogDelete = ref(false)
@@ -252,6 +213,11 @@ const defaultItem = ref({
   id: null,
   score: 0,
 })
+const randomSettings = ref(
+  questionsStore.types.map((type, index) => {
+    return { emoji: useIconsAdapter('emoji-' + (index + 1)), type, value: 0 }
+  })
+)
 
 const handelSelectionQuestionsConfirm = async (qids, scores) => {
   const list = await ResourceQuestionsApi.listByIds(qids.join(','))
@@ -305,21 +271,31 @@ const setScoreItemConfirm = async () => {
 }
 
 const save = async () => {
-  await ResourceTestpaperApi.save(item.value)
+  await ResourceTestpaperApi.save(item.value, randomSettings.value)
   await ResourceTestpaperApi.saveQuestions({
     pid: item.value.id,
     score: totalScore.value,
-    questions: items.value
+    questions: items.value,
   })
   router.push('/console/resource/testpaper')
 }
 
 const loadItem = async () => {
-  item.value = await ResourceTestpaperApi.info(route.params.id)
+  const res = await ResourceTestpaperApi.info(route.params.id)
+  try {
+    if (res.model == '随机' && res.randomSettings) {
+      randomSettings.value = JSON.parse(res.randomSettings.settings).map((item, index) => {
+        return { emoji: useIconsAdapter('emoji-' + (index + 1)), type: item.type, value: item.value }
+      })
+    }
+  } catch (e) { /* empty */ }
+
+  item.value = res
+  delete item.value.randomSettings
 }
 
 const loadQuestions = async () => {
-  const paperQuestions = await ResourceTestpaperApi.paperQuestionListByParerId(route.params.id)
+  const paperQuestions = await ResourceTestpaperApi.questionsByPid(route.params.id)
   const qids = paperQuestions.map(item => item.qid)
   const scores = paperQuestions.map(item => item.score)
   handelSelectionQuestionsConfirm(qids, scores)

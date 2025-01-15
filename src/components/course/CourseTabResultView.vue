@@ -91,14 +91,16 @@ const open = async (value) => {
   }
   if (value.type == "testpaper") {
     try {
-      const res = await ResourceTestpaperApi.exam(value.rid)
+      const res = await ResourceTestpaperApi.info(value.rid)
       item.value.name = res.name
 
       const logData = await CourseResourceApi.logDataInfo(value.crlid)
 
       const qids = logData.map(item => item.qid)
 
-      testpaper.value.questions = res.questions.filter(question => qids.includes(question.id))
+      const questions = await ResourceQuestionsApi.listByIds(qids.join(','))
+
+      testpaper.value.questions = qids.map(qid => questions.find(question => question.id == qid))
 
       testpaper.value.questions.forEach(question => {
         const selfAnswer = logData.find(item => item.qid == question.id)
