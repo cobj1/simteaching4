@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" activator="parent" max-width="1000px" :fullscreen="$vuetify.display.smAndDown" scrollable>
     <template #default>
-      <v-card prepend-icon="mdi-head-question-outline" title="选择试题资源">
+      <v-card :prepend-icon="useIconsAdapter('questions')" title="选择试题资源">
         <v-divider></v-divider>
 
         <v-card-text class="pa-0">
@@ -27,6 +27,7 @@
 
 <script setup>
 import Questions from '@/pages/console/resource/questions.vue';
+import { useIconsAdapter } from '@/utils/icons-adapter';
 import { nextTick, ref } from 'vue';
 
 const emit = defineEmits(['confirm'])

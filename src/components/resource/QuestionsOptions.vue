@@ -34,7 +34,7 @@
       <v-text-field v-model="answer" label="简短回答问题" :disabled="disabled"></v-text-field>
     </div>
     <div v-if="type == '仿真题'">
-      <v-btn :prepend-icon="IconsAdapter('simulation')" size="x-large" width="100%" :disabled="disabled">
+      <v-btn :prepend-icon="useIconsAdapter('simulation')" size="x-large" width="100%" :disabled="disabled">
         <div v-if="simulation" class="text-center pa-4">
           {{ simulation.name }}
         </div>
@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
-import { IconsAdapter } from '@/utils/icons-adapter';
+import { useIconsAdapter } from '@/utils/icons-adapter';
 import { onMounted, ref, watch } from 'vue';
 
 const answer = defineModel('answer') as any

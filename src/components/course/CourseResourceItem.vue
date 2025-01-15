@@ -7,14 +7,7 @@
           <v-list-item class="px-6 py-4" :to="manage ? null : `/console/course/${route.params.id}/${item.id}`">
             <VListItemTitle class="d-flex justify-space-between align-center">
               <div>
-                <v-icon v-if="item.resource.resourceType == 'resource'" icon="mdi-book-outline" size="30"
-                  class="mr-2" />
-                <v-icon v-if="item.resource.resourceType == 'simulation'" icon="mdi-test-tube" size="30" class="mr-2" />
-                <v-icon v-if="item.resource.resourceType == 'questions'" icon="mdi-head-question-outline" size="30"
-                  class="mr-2" />
-                <v-icon v-if="item.resource.resourceType == 'testpaper'" icon="mdi-ab-testing" size="30" class="mr-2" />
-                <v-icon v-if="item.resource.resourceType == 'report_template'" icon="mdi-file-word-box-outline"
-                  size="30" class="mr-2" />
+                <v-icon :icon="useIconsAdapter(item.resource.resourceType)" size="30" class="mr-2" />
                 {{ item.resource.name }}
               </div>
             </VListItemTitle>
@@ -42,8 +35,7 @@
 
 <script setup>
 import { CourseResourceApi } from '@/api/course/course-resource';
-import { FileApi } from '@/api/file'
-import { useFileUri } from '@/utils/simulation-uri';
+import { useIconsAdapter } from '@/utils/icons-adapter';
 import { useDateFormat } from '@vueuse/core';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';

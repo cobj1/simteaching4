@@ -5,19 +5,19 @@
         <v-btn prepend-icon="mdi-plus" rounded="xl" size="large" color="#5865f2" v-bind="props">创建</v-btn>
       </template>
       <v-list class="mt-2" width="180">
-        <v-list-item title="资料" prepend-icon="mdi-book-outline" link>
+        <v-list-item title="资料" :prepend-icon="useIconsAdapter('resource')" link>
           <SelectionCourseware @confirm="handleSelectionCoursewareConfirm"></SelectionCourseware>
         </v-list-item>
-        <v-list-item title="仿真" prepend-icon="mdi-test-tube" link>
+        <v-list-item title="仿真" :prepend-icon="useIconsAdapter('simulation')" link>
           <SelectionSimulation @confirm="handleSelectionSimulationConfirm"></SelectionSimulation>
         </v-list-item>
-        <v-list-item title="题目" prepend-icon="mdi-head-question-outline" link>
+        <v-list-item title="题目" :prepend-icon="useIconsAdapter('questions')" link>
           <SelectionQuestions @confirm="handleSelectionQuestionsConfirm"></SelectionQuestions>
         </v-list-item>
-        <v-list-item title="作业测试" prepend-icon="mdi-ab-testing" link>
+        <v-list-item title="测试" :prepend-icon="useIconsAdapter('testpaper')" link>
           <SelectionTestpaper @confirm="handleSelectionTestpaperConfirm"></SelectionTestpaper>
         </v-list-item>
-        <v-list-item title="报告" prepend-icon="mdi-file-word-box-outline" link>
+        <v-list-item title="报告" :prepend-icon="useIconsAdapter('report_template')" link>
           <SelectionReportTemplate @confirm="handleSelectionReportTemplateConfirm"></SelectionReportTemplate>
         </v-list-item>
         <v-divider></v-divider>
@@ -88,6 +88,7 @@ import { CourseSubjectApi } from '@/api/course/course-subject';
 import { useRoute } from 'vue-router';
 import { ResourceTestpaperApi } from '@/api/resource/resource-paper';
 import { useAnswerFormat } from '@/utils/answer-format';
+import { useIconsAdapter } from '@/utils/icons-adapter';
 
 defineProps({
   manage: Boolean

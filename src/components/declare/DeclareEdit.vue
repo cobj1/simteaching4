@@ -32,7 +32,7 @@
         <v-text-field v-model="editedItem.uri" label="实验链接(uri)" :disabled="disabled"></v-text-field>
       </v-col>
       <v-col cols="12" sm="4">
-        <v-btn :prepend-icon="IconsAdapter('simulation')" size="x-large" width="100%" :disabled="disabled">
+        <v-btn :prepend-icon="useIconsAdapter('simulation')" size="x-large" width="100%" :disabled="disabled">
           选择仿真实验
           <SelectionSimulation @confirm="handleSelectionSimulationConfirm"></SelectionSimulation>
         </v-btn>
@@ -41,8 +41,9 @@
         <v-text-field v-model="editedItem.intro" label="简介" :disabled="disabled"></v-text-field>
       </v-col>
       <v-col cols="12">
-        <DeclareVideo v-model:intro-video="editedItemDetails.introVideo" v-model:guide-video="editedItemDetails.guideVideo"
-          v-model:intro-video-file="introVideoFile" v-model:guide-video-file="guideVideoFile" :disabled="disabled">
+        <DeclareVideo v-model:intro-video="editedItemDetails.introVideo"
+          v-model:guide-video="editedItemDetails.guideVideo" v-model:intro-video-file="introVideoFile"
+          v-model:guide-video-file="guideVideoFile" :disabled="disabled">
         </DeclareVideo>
       </v-col>
       <v-col cols="12">
@@ -92,7 +93,7 @@
 <script setup>
 import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo } from 'ckeditor5';
 import { VFileUpload } from 'vuetify/labs/VFileUpload'
-import { IconsAdapter } from '@/utils/icons-adapter';
+import { useIconsAdapter } from '@/utils/icons-adapter';
 import { reactive, ref } from 'vue';
 import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
 import { useFileUri } from '@/utils/simulation-uri';

@@ -45,6 +45,7 @@
 import { CourseResourceApi } from '@/api/course/course-resource';
 import { ResourceApi } from '@/api/resource/resource';
 import { ResourceTestpaperApi } from '@/api/resource/resource-paper';
+import { ResourceQuestionsApi } from '@/api/resource/resource-questions';
 import { useAnswerFormat } from '@/utils/answer-format';
 import { ref } from 'vue';
 
@@ -92,15 +93,20 @@ const open = async (value) => {
     try {
       const res = await ResourceTestpaperApi.exam(value.rid)
       item.value.name = res.name
-      testpaper.value.questions = res.questions.map(question => { return { ...question, options: question.options.map(option => option.name) } })
-    } catch (e) { /* empty */ }
-    try {
-      const res = await CourseResourceApi.logDataInfo(value.crlid)
+
+      const logData = await CourseResourceApi.logDataInfo(value.crlid)
+
+      const qids = logData.map(item => item.qid)
+
+      testpaper.value.questions = res.questions.filter(question => qids.includes(question.id))
+
       testpaper.value.questions.forEach(question => {
-        const selfAnswer = res.find(item => item.qid == question.id)
+        const selfAnswer = logData.find(item => item.qid == question.id)
         question.answer = useAnswerFormat(selfAnswer.answer, question.type)
+        question.options = question.options.map(options => options.name)
       })
     } catch (e) { /* empty */ }
+
   }
   if (value.type == 'simulation') {
     try {

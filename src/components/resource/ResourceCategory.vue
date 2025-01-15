@@ -4,7 +4,7 @@
   </div>
   <v-dialog v-model="dialog" scrollable max-width="500px">
     <template v-slot:default="{ isActive }">
-      <v-card prepend-icon="mdi-format-list-bulleted-type">
+      <v-card :prepend-icon="useIconsAdapter('category')">
         <template #title>
           <div class="d-flex align-center justify-space-between">
             类型管理
@@ -63,6 +63,7 @@
 <script setup>
 import { ResourceApi } from '@/api/resource/resource';
 import { useResourceStore } from '@/stores/resource';
+import { useIconsAdapter } from '@/utils/icons-adapter';
 import { nextTick, onMounted, ref } from 'vue';
 
 const resourceStore = useResourceStore()

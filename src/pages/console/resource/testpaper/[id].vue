@@ -68,6 +68,66 @@
                 item-title="name" item-value="id"></v-select>
             </v-col>
             <v-col cols="12">
+              难易度
+            </v-col>
+            <v-col cols="12">
+              <v-select v-model="item.difficulty" label="难易度" hide-details
+                :items="testpaperStore.difficultys"></v-select>
+            </v-col>
+            <v-col cols="12">
+              模式
+            </v-col>
+            <v-col cols="12">
+              <v-select v-model="item.model" label="模式" hide-details :items="testpaperStore.models"></v-select>
+            </v-col>
+            <v-col cols="12" v-if="item.model == '随机'">
+              <v-sheet class="overflow-hidden mx-auto" rounded="lg">
+                <v-list lines="two" variant="flat">
+                  <v-list-subheader>随机设置</v-list-subheader>
+
+                  <div class="text-caption ps-4">
+                    考试采用随机试题是现代考试发展的重要趋势，它通过技术手段有效地提高了考试的公平性、有效性和效率，有助于更好地选拔人才，促进教育教学质量的提高。尤其是在线考试系统的普及，使得随机组卷的实现更加便捷和高效。
+
+                    <p class="text-medium-emphasis mt-4">
+                      虽然随机组卷有很多优点，但也需要注意以下几点：
+                    </p>
+                    <v-list-item v-for="(item, i) in features" :key="i" class="px-0">
+                      <template #title>
+                        <p class="text-body-2 font-weight-bold pb-2">
+                          <v-icon class="mr-2" color="primary" :icon="item.icon" size="small" />
+                          {{ item.title }}
+                        </p>
+                      </template>
+                      <template #subtitle>
+                        <p class="ps-7" style="line-height: 20px;">{{ item.subtitle }}</p>
+                      </template>
+                    </v-list-item>
+                  </div>
+
+                  <div class="pa-3">
+                    <v-list-item v-for="item in items2" :key="item.title" base-color="surface-light" class="mt-2"
+                      rounded>
+                      <template #prepend>
+                        <v-avatar class="text-h6">{{ item.emoji }}</v-avatar>
+                      </template>
+
+                      <template #title>
+                        <span class="text-subtitle-2 font-weight-bold">{{ item.title }}</span>
+                      </template>
+
+                      <template #subtitle>
+                        <span class="text-caption">{{ item.subtitle }}</span>
+                      </template>
+
+                      <template #append>
+                        <v-btn class="text-none text-disabled" text="Edit" variant="tonal" />
+                      </template>
+                    </v-list-item>
+                  </div>
+                </v-list>
+              </v-sheet>
+            </v-col>
+            <v-col cols="12">
               总分
             </v-col>
             <v-col cols="12">
@@ -131,13 +191,54 @@ import { useResourceStore } from '@/stores/resource';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAnswerFormat } from '@/utils/answer-format';
+import { useTestpaperStore } from '@/stores/testpaper';
 
+const testpaperStore = useTestpaperStore()
 const resourceStore = useResourceStore()
 const route = useRoute()
 const router = useRouter()
 const item = ref({})
 const title = computed(() => route.params.id == 'add' ? '新增' : '修改')
 const items = ref([])
+const items2 = [
+  {
+    emoji: '🎉',
+    title: 'Introduce yourself to the Community',
+    subtitle: '#introductions',
+  },
+  {
+    emoji: '💬',
+    title: 'Ask general questions about Vuetify',
+    subtitle: '#general-discussion',
+  },
+  {
+    emoji: '🆘',
+    title: 'Get help & advice direct from Vuetify pros',
+    subtitle: '#subscriber-help',
+  },
+  {
+    emoji: '3️⃣',
+    title: 'Obtain communty assistance for Vuetify 3',
+    subtitle: '#vuetify-3-help',
+  },
+  {
+    emoji: '2️⃣',
+    title: 'Obtain communty assistance for Vuetify 2',
+    subtitle: '#vuetify-2-help',
+  },
+]
+const features = [
+  {
+    icon: 'mdi-widgets-outline',
+    title: '题库的质量',
+    subtitle: '随机组卷的有效性很大程度上取决于题库的质量。题库中的题目应该经过严格的筛选和审核，确保其科学性、准确性和难度适宜性。',
+  },
+  {
+    icon: 'mdi-cogs',
+    title: '抽题规则的设定',
+    subtitle: '抽题规则的设定应该根据考试的目的和要求进行，确保抽取的题目能够有效地考察考生的知识和能力。',
+  },
+]
 const selected = ref([0])
 const totalScore = computed(() => items.value.reduce((previousValue, currentValue) => (previousValue * 1) + (currentValue.score * 1), 0))
 const dialogDelete = ref(false)

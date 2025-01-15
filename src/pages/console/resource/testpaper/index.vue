@@ -10,13 +10,18 @@
     </VToolbar>
     <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
       :headers="headers" :items="serverItems" :items-length="totalItems" :loading="loading"
-      :search="`${search.category},${search.name}`" :mobile="$vuetify.display.smAndDown" @update:options="loadItems">
+      :search="`${search.category},${search.difficulty},${search.model},${search.name}`"
+      :mobile="$vuetify.display.smAndDown" @update:options="loadItems">
       <template v-slot:top>
         <div class="d-flex">
-          <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型..." :items="resourceStore.categorys"
+          <v-select hide-details v-model="search.category" class="pa-2" label="筛选类型" :items="resourceStore.categorys"
             item-title="name" item-value="id" clearable></v-select>
-          <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..."
-            append-inner-icon="mdi-magnify" clearable></v-text-field>
+          <v-select hide-details v-model="search.difficulty" class="pa-2" label="筛选难易度"
+            :items="testpaperStore.difficultys" clearable></v-select>
+          <v-select hide-details v-model="search.model" class="pa-2" label="筛选模式" :items="testpaperStore.models"
+            clearable></v-select>
+          <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..." append-inner-icon="mdi-magnify"
+            clearable></v-text-field>
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
@@ -38,7 +43,7 @@
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12">
+              <v-col cols="12" md="6">
                 <v-text-field v-model="editedItem.name" label="标题" :disabled="loadingEdit"></v-text-field>
               </v-col>
               <v-col cols="12" md="6">
@@ -48,6 +53,10 @@
               <v-col cols="12" md="6">
                 <v-select v-model="editedItem.category" label="类型" :items="resourceStore.categorys" item-title="name"
                   item-value="id" :disabled="loadingEdit"></v-select>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-select v-model="editedItem.difficulty" label="难易度" :items="testpaperStore.difficultys"
+                  :disabled="loadingEdit"></v-select>
               </v-col>
             </v-row>
           </v-container>
@@ -84,12 +93,17 @@ import { VNumberInput } from 'vuetify/labs/VNumberInput'
 import { computed, nextTick, ref } from 'vue';
 import { ResourceTestpaperApi } from '@/api/resource/resource-paper';
 import { useResourceStore } from '@/stores/resource';
+import { useTestpaperStore } from '@/stores/testpaper';
 
 const resourceStore = useResourceStore()
 const selected = defineModel()
+
 defineProps({
   enableSelection: { type: Boolean, default: false }
 })
+
+const testpaperStore = useTestpaperStore()
+
 const options = ref({
   page: 1,
   itemsPerPage: 10
@@ -97,12 +111,16 @@ const options = ref({
 const headers = ref([
   { title: '标题', key: 'name', sortable: false },
   { title: '类型', key: 'categoryName', sortable: false },
+  { title: '难易度', key: 'difficulty', sortable: false },
   { title: '分数', key: 'score' },
+  { title: '模式', key: 'model' },
   { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
 ])
 const search = ref({
   name: '',
   category: null,
+  difficulty: null,
+  model: null
 })
 const serverItems = ref([])
 const loading = ref(true)
@@ -115,12 +133,16 @@ const editedItem = ref({
   id: null,
   name: '',
   category: null,
+  difficulty: '普通',
+  model: '固定',
   score: 100,
 })
 const defaultItem = ref({
   id: null,
   name: '',
   category: null,
+  difficulty: '普通',
+  model: '固定',
   score: 100,
 })
 const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
@@ -184,6 +206,8 @@ const loadItems = async ({ page, itemsPerPage, sortBy }) => {
     sortOrder: sortBy[0] ? sortBy[0].order : null,
     category: search.value.category,
     name: search.value.name,
+    difficulty: search.value.difficulty,
+    model: search.value.model
   })
   serverItems.value = res.records.map(item => {
     return {

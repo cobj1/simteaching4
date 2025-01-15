@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" activator="parent" max-width="1000px" :fullscreen="$vuetify.display.smAndDown" scrollable>
     <template #default>
-      <v-card prepend-icon="mdi-test-tube" title="选择仿真资源">
+      <v-card :prepend-icon="useIconsAdapter('simulation')" title="选择仿真资源">
         <v-divider></v-divider>
 
         <v-card-text class="pa-0">
@@ -27,6 +27,7 @@
 
 <script setup>
 import Simulation from '@/pages/console/resource/simulation.vue';
+import { useIconsAdapter } from '@/utils/icons-adapter';
 import { nextTick, ref } from 'vue';
 
 const emit = defineEmits(['confirm'])
