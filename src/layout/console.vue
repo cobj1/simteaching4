@@ -58,6 +58,7 @@
           <CourseRegister></CourseRegister>
         </v-btn>
         <ThemeSwitch></ThemeSwitch>
+        <SignInBtn></SignInBtn>
         <UserPanel></UserPanel>
       </template>
     </v-app-bar>

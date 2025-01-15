@@ -12,12 +12,12 @@
               <v-label class="text-subtitle-2">账号</v-label>
 
               <v-text-field color="primary" density="compact" rounded="lg" variant="outlined" v-model="account"
-                autofocus @keyup.enter="login" />
+                autofocus @keyup.enter="login()" />
 
               <v-label class="text-subtitle-2">密码</v-label>
 
               <v-text-field color="primary" density="compact" rounded="lg" variant="outlined" v-model="password"
-                type="password" @keyup.enter="login" />
+                type="password" @keyup.enter="login()" />
 
               <div class="mb-4">
                 <div class="d-flex justify-space-between align-center">
@@ -32,7 +32,8 @@
                   </a>
                 </div>
               </div>
-              <v-btn block class="text-none" color="primary" flat rounded="lg" text="登录" @click="login" />
+              <v-btn block class="text-none" color="primary" flat rounded="lg" text="登录" @click="login()" />
+              <v-btn block class="text-none mt-4" flat rounded="lg" text="游客登录" @click="login(true)" />
             </v-card>
             <div class="text-center text-body-2">
               没有账户? <a class="text-decoration-none text-primary font-weight-medium cursor-pointer"
@@ -61,9 +62,10 @@ const password = ref('')
 const remember = ref(false)
 const redirect = ref(route.query.redirect)
 
-const login = async () => {
+const login = async (guest = false) => {
   if (account.value && password.value) {
-    const res = await accountStore.login(account.value, password.value)
+    const res = await accountStore.login(account.value, password.value, guest)
+
     if (res) {
       if (remember.value) {
         localStorage.setItem('a', AES.encrypt(account.value, 'simteaching').toString())

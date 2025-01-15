@@ -1,6 +1,6 @@
 <template>
   <VCard>
-    <VToolbar title="考勤管理">
+    <VToolbar title="签到管理">
     </VToolbar>
     <v-data-table-server v-model:options="options" :items-per-page="options.itemsPerPage" :headers="headers"
       :items="serverItems" :items-length="totalItems" :loading="loading"
@@ -18,8 +18,7 @@
           </v-btn>
           <v-text-field hide-details v-model="search.name" class="pa-2" label="检索..." min-width="150px"
             append-inner-icon="mdi-magnify" clearable></v-text-field>
-          <v-date-input hide-details v-model="search.date" label="选择范围" multiple="range"
-            class="ma-2 flex-1-1"></v-date-input>
+          <v-date-input v-model="search.date" label="签到时间" hide-details class="ma-2 flex-1-1"></v-date-input>
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
@@ -69,6 +68,7 @@ import { AttendanceApi } from '@/api/user/attendance';
 import { OrgApi } from '@/api/user/org';
 import { useDateFormat } from '@vueuse/core';
 import { computed, nextTick, ref } from 'vue';
+import { SignInApi } from '@/api/user/sign-in';
 
 const drawerLog = ref(false)
 const options = ref({
@@ -77,15 +77,14 @@ const options = ref({
 })
 const headers = ref([
   { title: '姓名', key: 'uname', sortable: false, },
-  { title: '班级', key: 'orgName', sortable: false, },
-  { title: '岗位', key: 'post', sortable: false, },
-  { title: '登录时间', key: 'loginTime' },
+  { title: '组织', key: 'orgName', sortable: false, },
+  { title: '签到时间', key: 'createTime' },
 ])
 const search = ref({
   name: '',
   org: null,
   orgItem: null,
-  date: []
+  date: null
 })
 const serverItems = ref([])
 const loading = ref(true)
@@ -132,22 +131,16 @@ const closeLog = () => {
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
-  const res = await AttendanceApi.page({
+  const res = await SignInApi.logs({
     current: page,
     size: itemsPerPage,
     sortKey: sortBy[0] ? sortBy[0].key : null,
     sortOrder: sortBy[0] ? sortBy[0].order : null,
     name: search.value.name,
     org: search.value.org,
-    starDste: search.value.date.length > 0 ? useDateFormat(search.value.date[0], 'YYYY-MM-DD').value : null,
-    endDate: search.value.date.length > 0 ? useDateFormat(search.value.date.at(-1), 'YYYY-MM-DD').value : null,
+    date: search.value.date > 0 ? useDateFormat(search.value.date, 'YYYY-MM-DD').value : null,
   })
-  serverItems.value = res.records.map(item => {
-    return {
-      ...item,
-      loginTime: useDateFormat(item.login_time, 'YYYY-MM-DD HH:mm')
-    }
-  })
+  serverItems.value = res.records
   totalItems.value = res.total
   loading.value = false
 }

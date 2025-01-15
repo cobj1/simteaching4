@@ -99,10 +99,17 @@ export const useConsoleStore = defineStore("console", () => {
       },
       {
         show: accountStore.auth("attendance"),
-        title: "考勤管理",
-        prependIcon: "mdi-calendar-check-outline",
+        title: "考勤登录",
+        prependIcon: "mdi-login-variant",
         link: true,
         path: "/console/attendance",
+      },
+      {
+        show: accountStore.auth("sign-in"),
+        title: "签到管理",
+        prependIcon: "mdi-clipboard-account-outline",
+        link: true,
+        path: "/console/sign-in",
       },
       {
         show: accountStore.auth("notice"),

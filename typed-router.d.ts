@@ -41,6 +41,7 @@ declare module 'vue-router/auto-routes' {
     '/console/resource/simulation': RouteRecordInfo<'/console/resource/simulation', '/console/resource/simulation', Record<never, never>, Record<never, never>>,
     '/console/resource/testpaper/': RouteRecordInfo<'/console/resource/testpaper/', '/console/resource/testpaper', Record<never, never>, Record<never, never>>,
     '/console/resource/testpaper/[id]': RouteRecordInfo<'/console/resource/testpaper/[id]', '/console/resource/testpaper/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/console/sign-in': RouteRecordInfo<'/console/sign-in', '/console/sign-in', Record<never, never>, Record<never, never>>,
     '/console/site': RouteRecordInfo<'/console/site', '/console/site', Record<never, never>, Record<never, never>>,
     '/console/stats/course-browse': RouteRecordInfo<'/console/stats/course-browse', '/console/stats/course-browse', Record<never, never>, Record<never, never>>,
     '/console/stats/course-resource-browse': RouteRecordInfo<'/console/stats/course-resource-browse', '/console/stats/course-resource-browse', Record<never, never>, Record<never, never>>,

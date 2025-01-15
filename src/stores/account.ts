@@ -1,3 +1,4 @@
+import { CreditsApi } from "@/api/credits";
 import { UserApi } from "@/api/user/user";
 import { defineStore } from "pinia";
 import { ref, reactive } from "vue";
@@ -17,13 +18,24 @@ export const useAccountStore = defineStore(
       post: null,
     });
     const authoritys = ref<string[]>([]);
+    const credits = ref(0);
 
-    const login = async (account: string, password: string) => {
-      const res = (await UserApi.login(account, password)) as any;
+    const login = async (
+      account: string,
+      password: string,
+      guest: boolean = false
+    ) => {
+      console.log(guest)
+      const res = (
+        guest ? await UserApi.guest() : await UserApi.login(account, password)
+      ) as any;
+
       if (res) {
         token.value = res;
+
         const permissions = (await UserApi.permission()) as any;
         authoritys.value = permissions.map((item: { key: string }) => item.key);
+
         const user = (await UserApi.info()) as any;
         info.account = user.account;
         info.name = user.name;
@@ -48,14 +60,19 @@ export const useAccountStore = defineStore(
 
     const validateValid = async () => UserApi.valid();
 
+    const loadCredits = async () =>
+      (credits.value = (await CreditsApi.credits()) as any);
+
     return {
       token,
       info,
       authoritys,
+      credits,
       login,
       logout,
       auth,
       validateValid,
+      loadCredits,
     };
   },
   {

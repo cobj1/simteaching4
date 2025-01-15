@@ -5,11 +5,17 @@ export const UserApi = {
   login(account: string, password: string) {
     return axios({
       url: "/user/login",
-      method: "get",
+      method: "post",
       params: {
         account,
         password,
       },
+    });
+  },
+  guest() {
+    return axios({
+      url: "/user/login/guest",
+      method: "post",
     });
   },
   publicInfo(id: string | null) {
