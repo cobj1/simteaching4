@@ -9,7 +9,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     BatchQuestions: typeof import('./src/components/resource/BatchQuestions.vue')['default']
     BatchUsers: typeof import('./src/components/user/BatchUsers.vue')['default']
-    copy: typeof import('./src/components/course/resource-view/ResourceViewQuestions copy.vue')['default']
     CourseCodeOptions: typeof import('./src/components/course/CourseCodeOptions.vue')['default']
     CourseRegister: typeof import('./src/components/course/CourseRegister.vue')['default']
     CourseResourceItem: typeof import('./src/components/course/CourseResourceItem.vue')['default']
@@ -30,7 +29,6 @@ declare module 'vue' {
     FileIcon: typeof import('./src/components/FileIcon.vue')['default']
     FileList: typeof import('./src/components/FileList.vue')['default']
     ProductLogo: typeof import('./src/components/ProductLogo.vue')['default']
-    Questions: typeof import('./src/components/course/resource-view/Questions.vue')['default']
     QuestionsOptions: typeof import('./src/components/resource/QuestionsOptions.vue')['default']
     ResourceCategory: typeof import('./src/components/resource/ResourceCategory.vue')['default']
     ResourceViewQuestions: typeof import('./src/components/resource-view/ResourceViewQuestions.vue')['default']
@@ -57,14 +55,10 @@ declare module 'vue' {
     UserPanel: typeof import('./src/components/user/UserPanel.vue')['default']
     UserSettings: typeof import('./src/components/user/UserSettings.vue')['default']
     VAvatarPro: typeof import('./src/components/VAvatarPro.vue')['default']
-    VBatchUsers: typeof import('./src/components/user/VBatchUsers.vue')['default']
     VLoading: typeof import('./src/components/VLoading.vue')['default']
     VNotice: typeof import('./src/components/VNotice.vue')['default']
     VNotifications: typeof import('./src/components/VNotifications.vue')['default']
     VResourceIcon: typeof import('./src/components/VResourceIcon.vue')['default']
-    VSelectXlsx: typeof import('./src/components/VSelectXlsx.vue')['default']
     VSimulationResultView: typeof import('./src/components/VSimulationResultView.vue')['default']
-    VTeam: typeof import('./src/components/declare/VTeam.vue')['default']
-    VVideo: typeof import('./src/components/declare/VVideo.vue')['default']
   }
 }

@@ -1,6 +1,5 @@
 import { PagingProcessor } from "@/utils/paging-processor";
 import axios from "@/axios";
-import { Batch } from "ckeditor5";
 
 export interface ResourceQuestions {
   id: string;

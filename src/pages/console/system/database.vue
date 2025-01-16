@@ -11,7 +11,6 @@
   const basic = ref()
   const datasource = ref()
   const websession = ref()
-  const tab = ref()
 
   const load = async () => {
     const basicRes = await SystemApi.basic() as any
