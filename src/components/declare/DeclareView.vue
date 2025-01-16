@@ -157,6 +157,7 @@ const editedItemDetails = defineModel('editedItemDetails')
 
 const playVideo = (file, uri) => {
   GLightbox({
+    plyr: { css: '/glightbox/plyr.css', js: '/glightbox/plyr.js', },
     elements: [{ 'href': uri || useObjectUrl(file).value, 'type': 'video' }],
     autoplayVideos: true,
   }).open();

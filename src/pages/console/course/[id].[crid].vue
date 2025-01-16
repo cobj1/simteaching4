@@ -79,7 +79,6 @@ import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
 import { useDateFormat } from '@vueuse/core';
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import GLightbox from 'glightbox';
 import { BrowseRecordApi } from '@/api/browse-record';
 import { useIncrementTimeTrigger } from '@/utils/increment-time-trigger';
 import { useAccountStore } from '@/stores/account';
@@ -223,7 +222,6 @@ const loadCourseResourceItem = async () => {
   }
   loading.value = false
   await nextTick()
-  GLightbox()
   new Plyr('#player');
 }
 const loadCourseResourceLogItem = async () => {

@@ -285,6 +285,7 @@ const playSimulation = () => {
 
 const playVideo = () => {
   const myGallery = GLightbox({
+    plyr: { css: '/glightbox/plyr.css', js: '/glightbox/plyr.js', },
     elements: [{ 'href': 'https://yigee-file.oss-cn-beijing.aliyuncs.com/video/297ebe0e-7a754b44-017a-7ab20924-0221.mp4', 'type': 'video', }],
   });
   myGallery.open();

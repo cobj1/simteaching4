@@ -45,6 +45,7 @@ declare module 'vue-router/auto-routes' {
     '/console/site': RouteRecordInfo<'/console/site', '/console/site', Record<never, never>, Record<never, never>>,
     '/console/stats/course-browse': RouteRecordInfo<'/console/stats/course-browse', '/console/stats/course-browse', Record<never, never>, Record<never, never>>,
     '/console/stats/course-resource-browse': RouteRecordInfo<'/console/stats/course-resource-browse', '/console/stats/course-resource-browse', Record<never, never>, Record<never, never>>,
+    '/console/stats/statistics': RouteRecordInfo<'/console/stats/statistics', '/console/stats/statistics', Record<never, never>, Record<never, never>>,
     '/console/stats/user-browse': RouteRecordInfo<'/console/stats/user-browse', '/console/stats/user-browse', Record<never, never>, Record<never, never>>,
     '/console/system/database': RouteRecordInfo<'/console/system/database', '/console/system/database', Record<never, never>, Record<never, never>>,
     '/console/system/log': RouteRecordInfo<'/console/system/log', '/console/system/log', Record<never, never>, Record<never, never>>,
