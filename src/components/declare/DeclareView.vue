@@ -142,6 +142,7 @@
 
 <script setup>
 import { useFileUri } from '@/utils/simulation-uri';
+import { useObjectUrl } from '@vueuse/core';
 import GLightbox from 'glightbox'
 
 defineProps({

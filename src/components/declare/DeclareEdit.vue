@@ -97,6 +97,7 @@ import { useIconsAdapter } from '@/utils/icons-adapter';
 import { reactive, ref } from 'vue';
 import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
 import { useFileUri } from '@/utils/simulation-uri';
+import { useObjectUrl } from '@vueuse/core';
 
 defineProps({
   disabled: {
