@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    BatchUsers: typeof import('./src/components/user/BatchUsers.vue')['default']
     copy: typeof import('./src/components/course/resource-view/ResourceViewQuestions copy.vue')['default']
     CourseCodeOptions: typeof import('./src/components/course/CourseCodeOptions.vue')['default']
     CourseRegister: typeof import('./src/components/course/CourseRegister.vue')['default']
@@ -40,6 +41,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SelectionCourseware: typeof import('./src/components/resource/SelectionCourseware.vue')['default']
     SelectionOrg: typeof import('./src/components/user/SelectionOrg.vue')['default']
+    SelectionOrgBtn: typeof import('./src/components/user/SelectionOrgBtn.vue')['default']
     SelectionQuestions: typeof import('./src/components/resource/SelectionQuestions.vue')['default']
     SelectionReportTemplate: typeof import('./src/components/resource/SelectionReportTemplate.vue')['default']
     SelectionSimulation: typeof import('./src/components/resource/SelectionSimulation.vue')['default']
@@ -54,10 +56,12 @@ declare module 'vue' {
     UserPanel: typeof import('./src/components/user/UserPanel.vue')['default']
     UserSettings: typeof import('./src/components/user/UserSettings.vue')['default']
     VAvatarPro: typeof import('./src/components/VAvatarPro.vue')['default']
+    VBatchUsers: typeof import('./src/components/user/VBatchUsers.vue')['default']
     VLoading: typeof import('./src/components/VLoading.vue')['default']
     VNotice: typeof import('./src/components/VNotice.vue')['default']
     VNotifications: typeof import('./src/components/VNotifications.vue')['default']
     VResourceIcon: typeof import('./src/components/VResourceIcon.vue')['default']
+    VSelectXlsx: typeof import('./src/components/VSelectXlsx.vue')['default']
     VSimulationResultView: typeof import('./src/components/VSimulationResultView.vue')['default']
     VTeam: typeof import('./src/components/declare/VTeam.vue')['default']
     VVideo: typeof import('./src/components/declare/VVideo.vue')['default']

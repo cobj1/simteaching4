@@ -137,4 +137,14 @@ export const UserApi = {
       },
     });
   },
+  batch(data: any) {
+    return axios({
+      url: "/user/batch",
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data,
+    });
+  },
 };

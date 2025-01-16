@@ -6,6 +6,7 @@
       </v-btn>
       <v-btn color="primary" prepend-icon="mdi-database-import" dark>
         批量导入
+        <batch-users></batch-users>
       </v-btn>
     </v-toolbar>
     <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
