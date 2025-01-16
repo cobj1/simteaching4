@@ -70,7 +70,6 @@ const load = async () => {
     data.value.content = res
   } catch (e) { /* empty */ }
   loading.value = false
-  console.log(window.scrollTo)
   window.scrollTo(0, 0)
 }
 onMounted(() => load())

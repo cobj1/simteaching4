@@ -34,6 +34,7 @@
         <v-divider></v-divider>
 
         <v-card-actions>
+
           <v-spacer></v-spacer>
 
           <v-btn text="取消" @click="close()"></v-btn>
@@ -52,6 +53,11 @@ import { read, utils } from "xlsx";
 import FileSaver from 'file-saver';
 import { nextTick, ref } from 'vue';
 import { UserApi } from '@/api/user/user';
+import { useRoute } from 'vue-router';
+
+const emit = defineEmits(['change'])
+
+const route = useRoute()
 
 const dialog = ref(false)
 const file = ref()
@@ -116,6 +122,7 @@ const save = async () => {
   saving.value = true
   const results = await UserApi.batch({
     org: org.value.join(','),
+    role: route.params.rids,
     users: selected.value.map(index => items.value[index])
   })
   if (results) {
@@ -125,6 +132,7 @@ const save = async () => {
     })
   }
   setTimeout(() => saving.value = false, 200)
+  emit('change')
 }
 </script>
 

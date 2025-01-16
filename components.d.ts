@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    BatchQuestions: typeof import('./src/components/resource/BatchQuestions.vue')['default']
     BatchUsers: typeof import('./src/components/user/BatchUsers.vue')['default']
     copy: typeof import('./src/components/course/resource-view/ResourceViewQuestions copy.vue')['default']
     CourseCodeOptions: typeof import('./src/components/course/CourseCodeOptions.vue')['default']

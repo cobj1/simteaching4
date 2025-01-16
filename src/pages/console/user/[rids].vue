@@ -6,7 +6,7 @@
       </v-btn>
       <v-btn color="primary" prepend-icon="mdi-database-import" dark>
         批量导入
-        <batch-users></batch-users>
+        <batch-users @change="handleBatchUsersChange"></batch-users>
       </v-btn>
     </v-toolbar>
     <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
@@ -25,8 +25,8 @@
           </v-btn>
           <v-select v-if="roleItems.length > 1" hide-details v-model="search.role" class="pa-2" label="筛选角色..."
             :items="roleItems" item-title="name" item-value="id" clearable></v-select>
-          <v-text-field hide-details v-model="search.name" class="pa-2" label="检索用户名..."
-            append-inner-icon="mdi-magnify" clearable></v-text-field>
+          <v-text-field hide-details v-model="search.name" class="pa-2" label="检索用户名..." append-inner-icon="mdi-magnify"
+            clearable></v-text-field>
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
@@ -210,6 +210,10 @@ watch(() => [props.rids, route.params.rids], () => {
   options.value.page = 1
   loadRoles()
 })
+
+const handleBatchUsersChange = () => {
+  loadItems(options.value)
+}
 
 const handleSelectionOrgConfirm = async (value) => {
   editedItem.value.org = value.join(',')

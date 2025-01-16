@@ -7,6 +7,10 @@
       <v-btn color="primary" dark @click="editItem()">
         新增项目
       </v-btn>
+      <v-btn color="primary" prepend-icon="mdi-database-import" dark>
+        批量导入
+        <batch-questions @change="handleBatchQuestionsChange"></batch-questions>
+      </v-btn>
     </VToolbar>
     <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
       :headers="headers" :items="serverItems" :items-length="totalItems" :loading="loading"
@@ -56,7 +60,8 @@
               </v-col>
               <v-col cols="12">
                 <QuestionsOptions :type="editedItem.type" v-model:answer="editedItem.answer"
-                  v-model:options="editedItem.options" v-model:simulation="editedItem.simulation" editor></QuestionsOptions>
+                  v-model:options="editedItem.options" v-model:simulation="editedItem.simulation" editor>
+                </QuestionsOptions>
               </v-col>
               <v-col cols="12">
                 <v-textarea v-model="editedItem.answerAnalysis" label="答案解析" :disabled="loadingEdit"></v-textarea>
@@ -152,6 +157,10 @@ const defaultItem = ref({
   simulation: null
 })
 const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
+
+const handleBatchQuestionsChange = () => {
+  loadItems(options.value)
+}
 
 const editItem = async (item) => {
   if (item) {

@@ -1,5 +1,6 @@
 import { PagingProcessor } from "@/utils/paging-processor";
 import axios from "@/axios";
+import { Batch } from "ckeditor5";
 
 export interface ResourceQuestions {
   id: string;
@@ -72,6 +73,16 @@ export const ResourceQuestionsApi = {
     return axios({
       url: "/testQuestions/info/" + id,
       method: "get",
+    });
+  },
+  batch(data: any) {
+    return axios({
+      url: "/testQuestions/batch",
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data,
     });
   },
 };
