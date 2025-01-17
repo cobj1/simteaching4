@@ -23,10 +23,11 @@
         <v-text-field v-model="editedItem.org" label="组织" :disabled="disabled"></v-text-field>
       </v-col>
       <v-col cols="12" sm="6">
-        <v-text-field v-model="editedItem.category" label="专业类型" :disabled="disabled"></v-text-field>
+        <v-select v-model="editedItem.category" label="专业类型" :disabled="disabled"
+          :items="declareStore.categorys"></v-select>
       </v-col>
       <v-col cols="12" sm="6">
-        <v-text-field v-model="editedItem.type" label="实验类型" :disabled="disabled"></v-text-field>
+        <v-select v-model="editedItem.type" label="实验类型" :disabled="disabled" :items="declareStore.types"></v-select>
       </v-col>
       <v-col cols="12" sm="8">
         <v-text-field v-model="editedItem.uri" label="实验链接(uri)" :disabled="disabled"></v-text-field>
@@ -98,6 +99,7 @@ import { reactive, ref } from 'vue';
 import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
 import { useFileUri } from '@/utils/simulation-uri';
 import { useObjectUrl } from '@vueuse/core';
+import { useDeclareStore } from '@/stores/declare';
 
 defineProps({
   disabled: {
@@ -105,6 +107,8 @@ defineProps({
     default: false
   }
 })
+
+const declareStore = useDeclareStore()
 
 const editor = ref(ClassicEditor)
 const editorConfig = reactive({

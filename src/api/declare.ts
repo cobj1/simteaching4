@@ -11,7 +11,7 @@ export const DeclareApi = {
   }) {
     params = PagingProcessor(params);
     return axios({
-      url: "/declare/check/page",
+      url: "/declare/page",
       method: "get",
       params,
     });
@@ -60,6 +60,20 @@ export const DeclareApi = {
         "Content-Type": "multipart/form-data",
       },
       data,
+    });
+  },
+  checkPage(params: {
+    current: number;
+    size: number;
+    sortKey: string;
+    sortOrder: string;
+    name: string;
+  }) {
+    params = PagingProcessor(params);
+    return axios({
+      url: "/declare/check/page",
+      method: "get",
+      params,
     });
   },
   check(did: string, status: number, msg: string) {

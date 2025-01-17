@@ -163,7 +163,7 @@ const confirmCheck = async () => {
 }
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
-  const res = await DeclareApi.page({
+  const res = await DeclareApi.checkPage({
     current: page,
     size: itemsPerPage,
     sortKey: sortBy[0] ? sortBy[0].key : null,
