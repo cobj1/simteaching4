@@ -18,9 +18,9 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "skipLibCheck": true, 
+    "skipLibCheck": true
   },
   "include": ["src/**/*", "src/**/*.vue", "public/glightbox"],
-  "exclude": ["dist", "node_modules", "cypress"],
+  "exclude": ["dist", "node_modules", "cypress", "public"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

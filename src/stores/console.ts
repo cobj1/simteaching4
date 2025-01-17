@@ -174,8 +174,16 @@ export const useConsoleStore = defineStore("console", () => {
             path: "/console/stats/user-browse",
           },
           {
-            title: "统计",
+            title: "平台信息统计",
             path: "/console/stats/statistics",
+          },
+          {
+            title: "角色信息统计",
+            path: "/console/stats/role-statistics",
+          },
+          {
+            title: "平台访问统计",
+            path: "/console/stats/visit-statistics",
           },
         ],
       },
