@@ -11,7 +11,7 @@ export const DeclareApi = {
   }) {
     params = PagingProcessor(params);
     return axios({
-      url: "/declare/page",
+      url: "/declare/public/page",
       method: "get",
       params,
     });
@@ -46,9 +46,15 @@ export const DeclareApi = {
       data,
     });
   },
+  info(id: string) {
+    return axios({
+      url: "/declare/public/" + id,
+      method: "get",
+    });
+  },
   detailsInfo(did: string) {
     return axios({
-      url: "/declare/details/" + did,
+      url: "/declare/public/details/" + did,
       method: "get",
     });
   },

@@ -42,6 +42,9 @@
         <v-text-field v-model="editedItem.intro" label="简介" :disabled="disabled"></v-text-field>
       </v-col>
       <v-col cols="12">
+        <v-text-field v-model="editedItem.details" label="详细信息" :disabled="disabled"></v-text-field>
+      </v-col>
+      <v-col cols="12">
         <DeclareVideo v-model:intro-video="editedItemDetails.introVideo"
           v-model:guide-video="editedItemDetails.guideVideo" v-model:intro-video-file="introVideoFile"
           v-model:guide-video-file="guideVideoFile" :disabled="disabled">

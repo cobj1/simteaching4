@@ -123,7 +123,8 @@ const editedItem = ref({
   org: '',
   category: '',
   type: '',
-  intro: ''
+  intro: '',
+  details: ''
 })
 const editedItemDetails = ref({
   id: '',
@@ -144,7 +145,8 @@ const defaultItem = ref({
   org: '',
   category: '',
   type: '',
-  intro: ''
+  intro: '',
+  details: ''
 })
 const defaultItemDetails = ref({
   id: '',
@@ -242,6 +244,7 @@ const save = async () => {
     category: editedItem.value.category,
     type: editedItem.value.type,
     intro: editedItem.value.intro,
+    details: editedItem.value.details,
   })
 
   if (introVideoFile.value) {

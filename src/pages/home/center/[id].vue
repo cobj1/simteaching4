@@ -1,15 +1,14 @@
 <template>
   <v-container class="pa-md-6" fluid max-width="1600px" min-height="800px">
-    <v-row>
+    <v-row v-if="item.checkStatus == 1">
       <v-col cols="12" md="7" order="2" order-md="1">
-        <v-img color="surface-light" :aspect-ratio="16 / 9" rounded="lg"
-          src="https://yigee-file.oss-cn-beijing.aliyuncs.com/image/cover/boheyou.jpg" />
+        <v-img color="surface-light" :aspect-ratio="16 / 9" rounded="lg" :src="item.cover" />
 
         <v-responsive class="mt-6">
-          <v-tabs v-model="tab" color="primary">
-            <v-tab class="text-none" text="用户评论" value="customer-reviews" />
+          <v-tabs v-model="tab" color="primary" @update:modelValue="handleTabUpdate">
+            <v-tab class="text-none" text="用户评论" value="reviews" />
             <v-tab class="text-none" text="团队" value="team" />
-            <v-tab class="text-none" text="设备条件" value="device_condition" />
+            <v-tab class="text-none" text="设备条件" value="deviceCondition" />
             <v-tab class="text-none" text="教学目标" value="target" />
             <v-tab class="text-none" text="实验原理" value="principle" />
             <v-tab class="text-none" text="实验步骤" value="steps" />
@@ -18,42 +17,42 @@
           <v-divider />
 
           <v-tabs-window v-model="tab" class="mt-4">
-            <v-tabs-window-item value="customer-reviews">
-              <v-list-item v-for="(item, i) in reviews" :key="i" class="px-0" lines="three" :subtitle="item.user.date"
+            <v-tabs-window-item value="reviews">
+              <v-list-item v-for="(item, i) in reviews" :key="i" class="px-0" lines="three" :subtitle="item.date"
                 :title="item.user.name">
                 <template #prepend>
                   <v-avatar class="hidden-sm-and-down" color="grey-darken-3" :image="item.user.avatar" size="small" />
                 </template>
 
-                <v-rating color="amber-darken-2" density="compact" :model-value="item.user.rate" readonly
-                  size="small" />
+                <v-rating color="amber-darken-2" density="compact" :model-value="item.rate" readonly size="small" />
 
-                <p class="text-body-2 text-medium-emphasis">{{ item.review }}</p>
+                <p class="text-body-2 text-medium-emphasis">{{ item.comment }}</p>
 
                 <v-divider class="mt-6" />
               </v-list-item>
             </v-tabs-window-item>
 
-            <v-tabs-window-item value="faq">
-              <div v-for="(faq, i) in faqs" :key="i" class="my-4 px-4">
-                <p class="text-body-1 mb-1 font-weight-bold">{{ faq.title }}</p>
+            <v-tabs-window-item value="team">
+              <v-row class="mt-sm-8">
+                <v-col v-for="(item, i) in team" :key="i" class="mt-8 text-center" cols="6" lg="2" md="3" sm="4">
+                  <v-avatar color="surface-light" :image="item.avatar" size="80" />
 
-                <p class="text-caption text-medium-emphasis">{{ faq.subtitle }}</p>
-              </div>
+                  <v-list-item class="mt-2" :subtitle="item.task" :title="item.name" />
+                </v-col>
+              </v-row>
             </v-tabs-window-item>
 
-            <v-tabs-window-item value="license">
-              <div v-for="(item, i) in licenses" :key="i" class="my-4 px-4">
-                <p class="text-body-1 font-weight-bold mb-2">{{ item.title }}</p>
-
-                <p class="text-medium-emphasis mb-2">{{ item.description }}</p>
-
-                <ul class="ps-5">
-                  <li v-for="feature in item.list" :key="feature">
-                    <span class="text-body-2">{{ feature }}</span>
-                  </li>
-                </ul>
-              </div>
+            <v-tabs-window-item value="deviceCondition">
+              <div v-html="deviceCondition" class="pa-4"></div>
+            </v-tabs-window-item>
+            <v-tabs-window-item value="target" class="pa-4">
+              <div v-html="target"></div>
+            </v-tabs-window-item>
+            <v-tabs-window-item value="principle" class="pa-4">
+              <div v-html="principle"></div>
+            </v-tabs-window-item>
+            <v-tabs-window-item value="steps" class="pa-4">
+              <div v-html="steps"></div>
             </v-tabs-window-item>
           </v-tabs-window>
         </v-responsive>
@@ -62,12 +61,12 @@
       <v-col class="px-md-4" cols="12" md="5" order="1" order-md="2">
         <v-rating color="amber-darken-2" density="compact" model-value="4" readonly />
 
-        <div class="text-md-h4 font-weight-bold mb-2 text-h5">{{ item.title }} </div>
+        <div class="text-md-h4 font-weight-bold mb-2 text-h5">{{ item.name }} </div>
 
-        <p class="text-caption font-weight-bold mb-4 text-medium-emphasis">武毅君 | 河南大学</p>
+        <p class="text-caption font-weight-bold mb-4 text-medium-emphasis">{{ item.author }} | {{ item.org }}</p>
 
         <div class="text-body-1 mb-4 text-medium-emphasis">
-          薄荷油微囊的制备虚拟仿真实验，遵循“虚为实用，虚实互补”原则，采用3D游戏界面，娱乐中完成学习要求，给学生全新的学习感受。
+          {{ item.intro }}
         </div>
 
         <v-row>
@@ -88,7 +87,7 @@
 
         <ul class="ps-5">
           <li v-for="feature in features" :key="feature" class="pa-0" density prepend-icon="mdi-circle-small">
-            <span class="text-body-2">{{ feature }}</span>
+            <span class="text-body-2">{{ feature.label }} : {{ feature.value }}</span>
           </li>
         </ul>
 
@@ -97,7 +96,7 @@
         <p class="text-body-1 font-weight-bold mt-4 mb-2">详细信息</p>
 
         <p class="text-body-2 mb-4 text-medium-emphasis">
-          挥发油具有挥发性、不稳定性，尽可能多的保留挥发成分是挥发油类制剂首要解决的问题。微囊是将固态或液态药物（挥发油）包裹在高分子材料中形成微小囊状物的新型制剂，多用复凝聚法制备。但其制备工艺复杂，操作时间长，形成过程不易观测，因此教学效果不好。薄荷油具有窜透性和挥发性，临床应用广泛。薄荷油微囊的制备虚拟仿真实验，遵循“虚为实用，虚实互补”原则，采用3D游戏界面，娱乐中完成学习要求，给学生全新的学习感受。
+          {{ item.details }}
         </p>
 
         <v-divider class="my-6" />
@@ -107,6 +106,31 @@
         <v-btn v-for="icon in icons" :key="icon" color="medium-emphasis" :icon="icon" size="small" variant="text" />
       </v-col>
     </v-row>
+    <v-empty-state v-else icon="$error" min-height="500px">
+      <template v-slot:media>
+        <v-icon color="surface-variant"></v-icon>
+      </template>
+
+      <template v-slot:headline>
+        <div class="text-h4 mt-2">
+          当前实验拒绝访问
+        </div>
+      </template>
+
+      <template v-slot:title>
+        <div class="text-h6">
+          <span v-if="item.checkStatus == 0">实验等待审核中</span>
+          <span v-else>实验未通过审核</span>
+        </div>
+      </template>
+
+      <template v-slot:text>
+        <div class="text-medium-emphasis text-caption">
+          审核实验能够确保实验设计、操作流程、数据采集和分析方法的科学性和合理性。通过同行或专家的审核，可以发现潜在的偏差和不足，从而提高研究的质量。
+        </div>
+      </template>
+    </v-empty-state>
+
     <v-dialog v-model="dialog" persistent fullscreen scrollable>
       <v-card>
         <v-toolbar>
@@ -138,8 +162,6 @@
             </v-card-text>
 
             <v-divider class="mt-2" />
-
-
           </v-card>
         </div>
         <v-card-actions>
@@ -171,10 +193,15 @@
 
 <script setup>
 import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo } from 'ckeditor5';
-import { useFullscreen } from '@vueuse/core';
+import { useDateFormat, useFullscreen } from '@vueuse/core';
 import GLightbox from 'glightbox';
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { DeclareApi } from '@/api/declare';
+import { useRoute } from 'vue-router';
+import { CommentApi } from '@/api/comment';
+import { FileApi } from '@/api/file';
 
+const route = useRoute()
 const editor = ref(ClassicEditor)
 const editorConfig = reactive({
   plugins: [Bold, Essentials, Italic, Mention, Paragraph, Undo],
@@ -189,95 +216,41 @@ const overlay = ref(false)
 const { enter } = useFullscreen(simulationRef)
 
 const item = ref({
+  checkStatus: 0,
   name: '薄荷油微囊的制备',
-  uri: 'https://yigee-file.oss-cn-beijing.aliyuncs.com/simulation-unzip/2024/12/25/e61be8bc-d6f8-4499-834a-2001ae49d6d1/index.html',
-  report: '',
+  cover: null,
+  uri: null,
+  author: null,
+  org: null,
+  intro: null,
+  details: null,
+  // details
+  deviceCondition: null,
+  guideVideo: null,
+  introVideo: null,
+  principle: null,
+  steps: null,
+  target: null,
+  team: null,
+  // simulation
+  report: null,
   result: {}
 })
 
-const features = [
-  '专业类型：药学类',
-  '实验类型：专业基础课',
-]
-
+const tab = ref(null)
+const features = ref([])
 const icons = [
   'mdi-facebook',
   'mdi-twitter',
   'mdi-linkedin',
   'mdi-instagram',
 ]
-
-const tab = ref(null)
-
-const reviews = [
-  {
-    review: '这门课程讲解非常清晰，从薄荷油微囊的制备原理到具体的实验操作，都进行了详细的讲解。老师的讲解深入浅出，即使是对微囊技术不太了解的同学也能很快上手。实验环节安排合理，让我们有机会亲手操作，加深了对知识的理解。课程资料也很丰富，课后复习很方便。强烈推荐！',
-    user: {
-      avatar: '',
-      name: '张明',
-      rate: 5,
-      date: '2024年10月26日',
-    },
-  },
-  {
-    review: '课程内容很实用，学习到了多种制备薄荷油微囊的方法，包括乳化法、喷雾干燥法等等。老师在讲解过程中穿插了一些实际应用案例，让我们对微囊技术的应用前景有了更直观的了解。如果能在实验环节增加一些不同制备方法的对比实验就更好了。',
-    user: {
-      avatar: '',
-      name: '李丽',
-      rate: 4,
-      date: '2024年10月25日',
-    },
-  },
-  {
-    review: '课程内容比较基础，适合初学者入门。老师讲课比较认真，但语速稍快。实验环节时间略短，有些操作没有完全掌握。希望以后能增加一些进阶内容，例如如何提高微囊的包封率、如何控制微囊的粒径等等。',
-    user: {
-      avatar: '',
-      name: '王刚',
-      rate: 3,
-      date: '2024年10月24日',
-    },
-  },
-]
-
-const faqs = [
-  {
-    title: 'Lorem ipsum dolor sit amet?',
-    subtitle: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi, ratione debitis quis est labore voluptatibus!',
-  },
-  {
-    title: 'Lorem ipsum dolor sit amet?',
-    subtitle: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi, ratione debitis quis est labore voluptatibus!',
-  },
-  {
-    title: 'Lorem ipsum dolor sit amet?',
-    subtitle: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi, ratione debitis quis est labore voluptatibus!',
-  },
-]
-
-const licenses = [
-  {
-    title: 'Overview',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi, ratione debitis quis est labore voluptatibus!',
-    list: [
-      'Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
-      'Lorem ipsum dolor sit amet elit.',
-    ],
-  },
-  {
-    title: 'Lorem ipsum dolor sit amet',
-    list: [
-      'Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
-      'Lorem ipsum dolor sit amet elit.',
-    ],
-  },
-  {
-    title: 'Lorem ipsum dolor sit amet',
-    list: [
-      'Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
-      'Lorem ipsum dolor sit amet elit.',
-    ],
-  },
-]
+const reviews = ref([])
+const team = ref([])
+const deviceCondition = ref()
+const target = ref()
+const principle = ref()
+const steps = ref()
 
 const playSimulation = () => {
   dialog.value = true
@@ -286,9 +259,42 @@ const playSimulation = () => {
 const playVideo = () => {
   const myGallery = GLightbox({
     plyr: { css: '/glightbox/plyr.css', js: '/glightbox/plyr.js', },
-    elements: [{ 'href': 'https://yigee-file.oss-cn-beijing.aliyuncs.com/video/297ebe0e-7a754b44-017a-7ab20924-0221.mp4', 'type': 'video', }],
+    elements: [{ 'href': FileApi.filePath + item.value.introVideo, 'type': 'video', }],
   });
   myGallery.open();
+}
+
+const handleTabUpdate = async (value) => {
+  if (value == 'team' && team.value.length == 0 && item.value[value]) {
+    try {
+      const res = await FileApi.downloadTxt(item.value[value])
+      team.value = JSON.parse(res)
+    } catch (e) { /* empty */ }
+  }
+  if (value == 'deviceCondition' && !deviceCondition.value && item.value[value]) {
+    try {
+      const res = await FileApi.downloadTxt(item.value[value])
+      deviceCondition.value = res
+    } catch (e) { /* empty */ }
+  }
+  if (value == 'target' && !target.value && item.value[value]) {
+    try {
+      const res = await FileApi.downloadTxt(item.value[value])
+      target.value = res
+    } catch (e) { /* empty */ }
+  }
+  if (value == 'principle' && !principle.value && item.value[value]) {
+    try {
+      const res = await FileApi.downloadTxt(item.value[value])
+      principle.value = res
+    } catch (e) { /* empty */ }
+  }
+  if (value == 'steps' && !steps.value && item.value[value]) {
+    try {
+      const res = await FileApi.downloadTxt(item.value[value])
+      steps.value = res
+    } catch (e) { /* empty */ }
+  }
 }
 
 const handleSimulationMessage = (event) => {
@@ -299,7 +305,47 @@ const handleSimulationMessage = (event) => {
   }
 }
 
+const loadItem = async () => {
+  const declare = await DeclareApi.info(route.params.id)
+  item.value.checkStatus = declare.checkStatus
+  item.value.cover = FileApi.filePath + declare.cover
+  item.value.name = declare.name
+  item.value.uri = declare.uri
+  item.value.author = declare.author
+  item.value.org = declare.org
+  item.value.intro = declare.intro
+  item.value.details = declare.details
+  features.value.push(
+    { label: '专业类型', value: declare.category },
+    { label: '实验类型', value: declare.type }
+  )
+
+  const comments = await CommentApi.list(route.params.id)
+  comments.forEach(comment => {
+    reviews.value.push({
+      comment: comment.comment,
+      rate: comment.rate,
+      date: useDateFormat(new Date(comment.date), 'YYYY年MM月DD日').value,
+      user: {
+        avatar: comment.ucover,
+        name: comment.uname,
+      },
+    })
+  })
+
+  const details = await DeclareApi.detailsInfo(route.params.id)
+  item.value.deviceCondition = details.deviceCondition
+  item.value.guideVideo = details.guideVideo
+  item.value.introVideo = details.introVideo
+  item.value.principle = details.principle
+  item.value.steps = details.steps
+  item.value.target = details.target
+  item.value.team = details.team
+}
+
 onMounted(() => {
+  loadItem()
+
   window.addEventListener('message', handleSimulationMessage)
 })
 

@@ -20,7 +20,7 @@
         </v-tabs-window-item>
       </v-tabs-window>
     </v-sheet>
-    <v-empty-state v-else icon="$error" class="my-8">
+    <v-empty-state v-else icon="$error" min-height="500px">
       <template v-slot:media>
         <v-icon color="surface-variant"></v-icon>
       </template>
