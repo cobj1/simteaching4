@@ -63,7 +63,7 @@ const remember = ref(false)
 const redirect = ref(route.query.redirect)
 
 const login = async (guest = false) => {
-  if (account.value && password.value) {
+  if (guest || account.value && password.value) {
     const res = await accountStore.login(account.value, password.value, guest)
 
     if (res) {

@@ -30,6 +30,25 @@
 
                 <v-divider class="mt-6" />
               </v-list-item>
+              <v-container class="pa-2 pl-12" fluid v-if="accountStore.token">
+                <p class="mt-2 text-h5 font-weight-bold">
+                  添加实验评论
+                </p>
+
+                <p class="mt-4 mb-6 text-body-1 text-medium-emphasis">
+                  实验评论是学术交流的重要方式，可以分享研究成果，接受同行评议，促进合作研究。
+                </p>
+                
+                <v-rating hover :length="5" :size="32" v-model="rate" color="warning" active-color="warning" />
+
+                <v-textarea v-model="message" class="mt-4" color="primary" density="compact" label="评论内容"
+                  variant="outlined" />
+
+                <v-btn class="text-none" color="primary" height="50" text="发表评论" variant="flat" width="100%"
+                  :disabled="message.length == 0" @click="onSendMessage" />
+
+                <p class="mt-4 text-medium-emphasis">避免违规言论的传播，净化网络环境。</p>
+              </v-container>
             </v-tabs-window-item>
 
             <v-tabs-window-item value="team">
@@ -200,7 +219,10 @@ import { DeclareApi } from '@/api/declare';
 import { useRoute } from 'vue-router';
 import { CommentApi } from '@/api/comment';
 import { FileApi } from '@/api/file';
+import { useAccountStore } from '@/stores/account';
+import { notify } from '@kyvg/vue3-notification';
 
+const accountStore = useAccountStore()
 const route = useRoute()
 const editor = ref(ClassicEditor)
 const editorConfig = reactive({
@@ -251,6 +273,8 @@ const deviceCondition = ref()
 const target = ref()
 const principle = ref()
 const steps = ref()
+const rate = ref(5)
+const message = ref('')
 
 const playSimulation = () => {
   dialog.value = true
@@ -305,6 +329,26 @@ const handleSimulationMessage = (event) => {
   }
 }
 
+const onSendMessage = async () => {
+  const res = await CommentApi.save({
+    cid: route.params.id, comment: message.value, rate: rate.value
+  })
+  if (res) {
+    loadItem()
+    notify({
+      title: "评论发表成功",
+      type: "info",
+    });
+    message.value = ''
+    rate.value = 5
+  } else {
+    notify({
+      title: "评论发表失败",
+      type: "info",
+    });
+  }
+}
+
 const loadItem = async () => {
   const declare = await DeclareApi.info(route.params.id)
   item.value.checkStatus = declare.checkStatus
@@ -315,11 +359,11 @@ const loadItem = async () => {
   item.value.org = declare.org
   item.value.intro = declare.intro
   item.value.details = declare.details
-  features.value.push(
+  features.value = [
     { label: '专业类型', value: declare.category },
     { label: '实验类型', value: declare.type }
-  )
-
+  ]
+  reviews.value = []
   const comments = await CommentApi.list(route.params.id)
   comments.forEach(comment => {
     reviews.value.push({
