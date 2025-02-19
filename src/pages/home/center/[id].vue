@@ -38,7 +38,7 @@
                 <p class="mt-4 mb-6 text-body-1 text-medium-emphasis">
                   实验评论是学术交流的重要方式，可以分享研究成果，接受同行评议，促进合作研究。
                 </p>
-                
+
                 <v-rating hover :length="5" :size="32" v-model="rate" color="warning" active-color="warning" />
 
                 <v-textarea v-model="message" class="mt-4" color="primary" density="compact" label="评论内容"

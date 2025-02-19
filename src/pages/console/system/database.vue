@@ -133,7 +133,7 @@
               <v-row no-gutters class="border-md border-b-0">
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     CheckCount
                   </v-sheet>
                 </v-col>
@@ -144,7 +144,7 @@
                 </v-col>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     HardCheckCount
                   </v-sheet>
                 </v-col>
@@ -155,7 +155,7 @@
                 </v-col>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     ViolationCount
                   </v-sheet>
                 </v-col>
@@ -166,7 +166,7 @@
                 </v-col>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     SyntaxErrorCount
                   </v-sheet>
                 </v-col>
@@ -178,7 +178,7 @@
                 <v-responsive width="100%"></v-responsive>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     BlackListHitCount
                   </v-sheet>
                 </v-col>
@@ -189,7 +189,7 @@
                 </v-col>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     BlackListSize
                   </v-sheet>
                 </v-col>
@@ -200,7 +200,7 @@
                 </v-col>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     WhiteListHitCount
                   </v-sheet>
                 </v-col>
@@ -211,7 +211,7 @@
                 </v-col>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     WhiteListSize
                   </v-sheet>
                 </v-col>
@@ -225,7 +225,7 @@
             <span class="text-h6">Table Stat</span>
             <v-table class="pt-4">
               <thead>
-                <tr :style="{ backgroundColor: '#E5E5E5' }">
+                <tr :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                   <th class="text-left text-caption font-weight-black">
                     Number
                   </th>
@@ -311,7 +311,7 @@
             <div class="text-h6 pt-4">Function Stat</div>
             <v-table class="pt-4">
               <thead>
-                <tr :style="{ backgroundColor: '#E5E5E5' }">
+                <tr :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                   <th class="text-left">
                     Function Name
                   </th>
@@ -330,7 +330,7 @@
             <div class="text-h6 pt-4">SQL Stat - White List</div>
             <v-table class="pt-4">
               <thead>
-                <tr :style="{ backgroundColor: '#E5E5E5' }">
+                <tr :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                   <th class="text-left text-caption font-weight-black">
                     Number
                   </th>
@@ -369,7 +369,7 @@
             <div class="text-h6 pt-4">SQL Stat - Black List</div>
             <v-table class="pt-4">
               <thead>
-                <tr :style="{ backgroundColor: '#E5E5E5' }">
+                <tr :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                   <th class="text-left">
                     Number
                   </th>
@@ -413,7 +413,7 @@
               <v-row no-gutters class="border-md border-b-0">
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     ContextPath
                   </v-sheet>
                 </v-col>
@@ -424,7 +424,7 @@
                 </v-col>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     RunningCount
                   </v-sheet>
                 </v-col>
@@ -435,7 +435,7 @@
                 </v-col>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     ConcurrentMax
                   </v-sheet>
                 </v-col>
@@ -446,7 +446,7 @@
                 </v-col>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     RequestCount
                   </v-sheet>
                 </v-col>
@@ -458,7 +458,7 @@
                 <v-responsive width="100%"></v-responsive>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     SessionCount
                   </v-sheet>
                 </v-col>
@@ -469,7 +469,7 @@
                 </v-col>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     CommitCount
                   </v-sheet>
                 </v-col>
@@ -480,7 +480,7 @@
                 </v-col>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     RollbackCount
                   </v-sheet>
                 </v-col>
@@ -491,7 +491,7 @@
                 </v-col>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     JdbcExecuteCount
                   </v-sheet>
                 </v-col>
@@ -503,7 +503,7 @@
                 <v-responsive width="100%"></v-responsive>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     JdbcExecTimeMillis
                   </v-sheet>
                 </v-col>
@@ -514,7 +514,7 @@
                 </v-col>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     FetchRowCount
                   </v-sheet>
                 </v-col>
@@ -525,7 +525,7 @@
                 </v-col>
                 <v-col class="border-b-md">
                   <v-sheet class="pa-2" :class="['d-flex justify-center align-center']"
-                    :style="{ backgroundColor: '#E5E5E5' }">
+                    :style="{ backgroundColor: 'rgb(var(--v-theme-surface-light))' }">
                     UpdateCount
                   </v-sheet>
                 </v-col>
@@ -682,6 +682,18 @@
     const webappRes = await SystemApi.webapp() as any
     if (webappRes) {
       webapp.value = webappRes[0]
+      /* webapp.value = Object.keys(webappRes).map(key => {
+        return {
+          checkCount: webappRes[key].checkCount,
+          hardCheckCount: webappRes[key].hardCheckCount,
+          violationCount: webappRes[key].violationCount,
+          syntaxErrorCount: webappRes[key].syntaxErrorCount,
+          blackListHitCount: webappRes[key].blackListHitCount,
+          blackListSize: webappRes[key].blackListSize,
+          whiteListHitCount: webappRes[key].whiteListHitCount,
+          whiteListSize: webappRes[key].whiteListSize
+        }
+      }) */
     }
 
     const weburiRes = await SystemApi.weburi() as any
