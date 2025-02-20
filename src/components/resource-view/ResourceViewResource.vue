@@ -8,7 +8,7 @@
     <vue-office-docx v-else-if="item.ext == 'docx'" :src="item.url" style="height: calc(100vh - 300px)" />
     <vue-office-excel v-else-if="item.ext == 'xlsx'" :src="item.url" style="height: calc(100vh - 300px)" />
     <vue-office-pdf v-else-if="item.ext == 'pdf'" :src="item.url" style="height: calc(100vh - 300px)" />
-    <section v-else-if="['xml', 'txt', 'sql'].includes(item.ext)">
+    <section v-else-if="['xml', 'txt'].includes(item.ext)">
       <p v-text="item.text"> </p>
     </section>
     <v-btn v-else prepend-icon="mdi-download" :href="item.url" target="_blank">下载</v-btn>

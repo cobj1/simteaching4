@@ -91,7 +91,7 @@ const accountStore = useAccountStore()
 const route = useRoute()
 const router = useRouter()
 const loading = ref(true)
-const SupportExts = ['jpg', 'png', 'xml', 'txt', 'sql', 'mp4', 'mp3', 'docx', 'xlsx', 'pdf']
+const SupportExts = ['jpg', 'png', 'xml', 'txt', 'mp4', 'mp3', 'docx', 'xlsx', 'pdf']
 const item = ref({
   type: null,
   name: '',
@@ -165,17 +165,23 @@ const loadCourseResourceItem = async () => {
       if (SupportExts.includes(resource.url.substring(resource.url.lastIndexOf('.') + 1))) {
         const fileRes = await fetch(resource.url)
         const blob = await fileRes.blob()
-        const fileType = await fileTypeFromBlob(blob)
-        resource.ext = fileType.ext
+        if (blob.type == 'text/plain') {
+          resource.ext = 'txt'
+        } else {
+          const fileType = await fileTypeFromBlob(blob)
+          resource.ext = fileType.ext
+        }
         resource.url = URL.createObjectURL(blob)
-        if (['xml', 'txt', 'sql'].includes(fileType.ext)) {
+        if (['xml', 'txt'].includes(resource.ext)) {
           const reader = new FileReader()
           reader.readAsText(blob)
-          reader.onload = () => resource.text = reader.result
-        }
-      }
-      resourceItem.value = resource
-    }
+          reader.onload = () => {
+            resource.text = reader.result
+            resourceItem.value = resource
+          }
+        } else resourceItem.value = resource
+      } else resourceItem.value = resource
+    } else resourceItem.value = resource
   } else if (res.type == 'simulation') {
     let usercode;
     try {
