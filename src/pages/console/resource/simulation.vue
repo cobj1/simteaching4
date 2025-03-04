@@ -32,6 +32,10 @@
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template v-slot:item.cost>
+        <span> Free </span>
+      </template>
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.actions="{ item }" v-if="!enableSelection">
         <VBtn icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)"></VBtn>
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
@@ -139,6 +143,7 @@ const headers = ref([
   { title: '种类', key: 'type', },
   { title: '大小', key: 'size' },
   { title: 'Appid', key: 'appid' },
+  { title: '收费金额', key: 'cost' },
   { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
 ])
 const search = ref({
