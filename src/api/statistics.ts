@@ -7,10 +7,14 @@ export const StatisticsApi = {
       method: "get",
     });
   },
-  dailyLoginStat() {
+  dailyLoginStat(startDate: string, endDate: string) {
     return axios({
       url: "/statistics/dailyLoginStat",
       method: "get",
+      params: {
+        startDate,
+        endDate,
+      },
     });
   },
 };

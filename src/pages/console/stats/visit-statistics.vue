@@ -111,50 +111,69 @@
     ref
   } from 'vue';
   import {
-    Chart
-  } from 'chart.js/auto';
-  import {
     StatisticsApi
   } from '@/api/statistics';
   import {
     VDateInput
   } from 'vuetify/labs/VDateInput'
+  import {
+    Chart
+  } from 'chart.js/auto';
+  import 'chartjs-adapter-date-fns';
 
   const dateRange = ref(null);
   const pastat = ref({});
-  const days = 30;
-  const labels = Array.from({
-    length: days
-  }, (_, i) => i + 1);
-  const data = Array.from({
-    length: days
-  }, () => Math.floor(Math.random() * 1000));
+  const dates = ref([]);
+  const point = ref([]);
 
-  const config = {
-    type: 'line',
-    data: {
-      labels,
+  const createChart = async () => {
+    const labels = getLastMonthDates();
+    const data = {
+      labels: labels,
       datasets: [{
         label: '登录人次',
-        data,
-        backgroundColor: 'rgba(0, 0, 255, 0.5)',
-        borderColor: 'rgba(0, 0, 255, 1)',
-        borderWidth: 1,
-        fill: false,
+        data: await getData(),
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        tension: 0.1, // 曲线的张力（平滑度）
       }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
+    };
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            type: 'time'
+          },
+          y: {
+            beginAtZero: true // Y轴从0开始
+          }
         }
       }
-    }
-  };
+    };
+    const ctx = document.getElementById('line').getContext('2d');
+    new Chart(ctx, config);
+  }
 
-  const handleChange = () => {
-    console.log(dateRange.value[0])
-    console.log(dateRange.value[1])
+  const getLastMonthDates = () => {
+    const today = new Date();
+    const lastMonth = new Date(today);
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+    while (lastMonth <= today) {
+      dates.value.push(lastMonth.toISOString().split('T')[0]); // YYYY-MM-DD格式
+      lastMonth.setDate(lastMonth.getDate() + 1);
+    }
+    return Object.values(dates.value);
+  }
+
+  const getData = async () => {
+    const res = await StatisticsApi.dailyLoginStat(dates.value[dates.value.length - 1], dates.value[0])
+    res.forEach(item => {
+      point.value.push(item.loginCount);
+    });
+    return Object.values(point.value);
   };
 
   const handleClick = () => {
@@ -174,8 +193,6 @@
   };
 
   const load = async () => {
-    const res1 = await StatisticsApi.dailyLoginStat()
-
     const res = await StatisticsApi.visitStat()
     if (res) {
       pastat.value = res
@@ -183,8 +200,7 @@
   }
 
   onMounted(() => {
-    const ctx = document.getElementById('line').getContext('2d');
-    new Chart(ctx, config);
+    createChart();
     load()
   })
 </script>
