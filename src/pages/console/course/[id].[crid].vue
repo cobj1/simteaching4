@@ -1,16 +1,8 @@
 <template>
   <v-container fluid max-width="1000px" min-height="800px">
     <div class="d-flex" :style="{ 'margin-left': $vuetify.display.smAndDown ? '0' : '-50px' }">
-      <v-icon v-if="item.type == 'resource' && !$vuetify.display.smAndDown" icon="mdi-book-outline" size="40"
-        class="mr-2" />
-      <v-icon v-if="item.type == 'simulation' && !$vuetify.display.smAndDown" icon="mdi-test-tube" size="40"
-        class="mr-2" />
-      <v-icon v-if="item.type == 'questions' && !$vuetify.display.smAndDown" icon="mdi-head-question-outline" size="40"
-        class="mr-2" />
-      <v-icon v-if="item.type == 'testpaper' && !$vuetify.display.smAndDown" icon="mdi-ab-testing" size="40"
-        class="mr-2" />
-      <v-icon v-if="item.type == 'report_template' && !$vuetify.display.smAndDown" icon="mdi-file-word-box-outline"
-        size="40" class="mr-2" />
+      <v-icon v-if="!$vuetify.display.smAndDown" :icon="useIconsAdapter(item.type)" size="40" class="mr-2" />
+
       <span class="text-h4"> {{ title || '资源丢失' }} </span>
     </div>
     <div class="my-2 text-body-2 text-medium-emphasis">
@@ -86,6 +78,7 @@ import Base64 from 'crypto-js/enc-base64';
 import Utf8 from 'crypto-js/enc-utf8';
 import { useFileUri } from '@/utils/simulation-uri';
 import { ResourceReportTemplateApi } from '@/api/resource/resource-report-template';
+import { useIconsAdapter } from '@/utils/icons-adapter';
 
 const accountStore = useAccountStore()
 const route = useRoute()

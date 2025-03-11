@@ -45,6 +45,14 @@
             <v-row>
               <v-col cols="12">
                 <v-text-field v-model="editedItem.name" label="标题" :disabled="loadingEdit"></v-text-field>
+                <v-file-input v-model="editedItem.attachmentFile" label="标题附件: 图片/视频" :disabled="loadingEdit"
+                  accept=".mp4,.jpg,.png">
+                  <template #details v-if="editedItem.attachment">
+                    <small class="text-caption text-medium-emphasis" style="word-break:break-all;">
+                      {{ useFileUri(editedItem.attachment) }}
+                    </small>
+                  </template>>
+                </v-file-input>
               </v-col>
               <v-col cols="12" sm="4">
                 <v-select v-model="editedItem.type" label="题型" :items="questionsStore.types"
@@ -102,6 +110,8 @@ import { ResourceQuestionsApi } from '@/api/resource/resource-questions';
 import { useAnswerFormat } from '@/utils/answer-format';
 import { useResourceStore } from '@/stores/resource';
 import { useQuestionsStore } from '@/stores/questions';
+import { useFileUri } from '@/utils/simulation-uri';
+import { FileApi } from '@/api/file';
 
 const questionsStore = useQuestionsStore()
 const resourceStore = useResourceStore()
@@ -143,7 +153,10 @@ const editedItem = ref({
   answer: null,
   answerAnalysis: '',
   options: [],
-  simulation: null
+  simulation: null,
+  attachmentFile: null,
+  attachment: null,
+  attachmentOld: null
 })
 const defaultItem = ref({
   id: null,
@@ -154,7 +167,10 @@ const defaultItem = ref({
   answer: null,
   answerAnalysis: '',
   options: [],
-  simulation: null
+  simulation: null,
+  attachmentFile: null,
+  attachment: null,
+  attachmentOld: null
 })
 const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
 
@@ -170,6 +186,7 @@ const editItem = async (item) => {
     const res = await ResourceQuestionsApi.info(item.id)
     editedItem.value.options = res.options.map(item => item.name)
     editedItem.value.simulation = res.simulation
+    editedItem.value.attachmentOld = editedItem.value.attachment
   } else {
     editedItem.value = Object.assign({}, defaultItem.value)
     editedIndex.value = -1;
@@ -208,6 +225,11 @@ const deleteItemConfirm = async () => {
 const save = async () => {
   loadingEdit.value = true
   try {
+    if (editedItem.value.attachmentFile) {
+      const res = await FileApi.upload(editedItem.value.attachmentFile, 'simteaching/resource/questions')
+      editedItem.value.attachment = res.url
+      if (editedItem.value.attachmentOld) FileApi.delete(editedItem.value.attachmentOld)
+    }
     await ResourceQuestionsApi.save(editedItem.value)
     close()
     loadItems(options.value)

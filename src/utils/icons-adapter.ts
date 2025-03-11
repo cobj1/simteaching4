@@ -7,7 +7,7 @@ export const useIconsAdapter = (type: string) => {
     case "questions":
       return "mdi-head-question-outline";
     case "testpaper":
-      return "mdi-test-tube";
+      return "mdi-ab-testing";
     case "report_template":
       return "mdi-file-word-box-outline";
     case "category":

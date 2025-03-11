@@ -4,6 +4,9 @@
       {{ question.name }}
       <span class="text-caption	text-medium-emphasis float-right">{{ question.score }} 分</span>
     </div>
+
+    <ResourceViewQuestionAttachment :attachment="question.attachment"></ResourceViewQuestionAttachment>
+
     <ResourceViewSimulation v-if="question.type == '仿真题'" v-model="question.simulation"></ResourceViewSimulation>
 
     <QuestionsOptions v-else :type="question.type" v-model:answer="question.answer" v-model:options="question.options"
@@ -23,6 +26,7 @@
 </template>
 
 <script setup>
+import ResourceViewQuestionAttachment from './ResourceViewQuestionAttachment.vue';
 
 const item = defineModel()
 

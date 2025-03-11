@@ -31,6 +31,7 @@ declare module 'vue' {
     ProductLogo: typeof import('./src/components/ProductLogo.vue')['default']
     QuestionsOptions: typeof import('./src/components/resource/QuestionsOptions.vue')['default']
     ResourceCategory: typeof import('./src/components/resource/ResourceCategory.vue')['default']
+    ResourceViewQuestionAttachment: typeof import('./src/components/resource-view/ResourceViewQuestionAttachment.vue')['default']
     ResourceViewQuestions: typeof import('./src/components/resource-view/ResourceViewQuestions.vue')['default']
     ResourceViewReportTemplate: typeof import('./src/components/resource-view/ResourceViewReportTemplate.vue')['default']
     ResourceViewResource: typeof import('./src/components/resource-view/ResourceViewResource.vue')['default']

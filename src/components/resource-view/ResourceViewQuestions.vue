@@ -4,6 +4,8 @@
       {{ item.name }}
     </div>
 
+    <ResourceViewQuestionAttachment :attachment="item.attachment"></ResourceViewQuestionAttachment>
+
     <ResourceViewSimulation v-if="item.type == '仿真题'" v-model="item.simulation"></ResourceViewSimulation>
 
     <QuestionsOptions v-else :type="item.type" v-model:answer="item.answer" v-model:options="item.options"
@@ -23,7 +25,6 @@
 </template>
 
 <script setup>
-
 const item = defineModel()
 
 defineProps({
