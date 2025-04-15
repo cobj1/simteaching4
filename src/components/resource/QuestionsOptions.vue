@@ -30,6 +30,10 @@
         </template>
       </v-checkbox>
     </div>
+    <v-radio-group v-model="answer" v-if="type == '判断题'" hide-details>
+      <v-radio label="对" value="correct"></v-radio>
+      <v-radio label="错" value="wrong"></v-radio>
+    </v-radio-group>
     <div v-if="type == '简答题'">
       <v-text-field v-model="answer" label="简短回答问题" :disabled="disabled"></v-text-field>
     </div>
@@ -49,86 +53,91 @@
 </template>
 
 <script setup lang="ts">
-import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
-import { useIconsAdapter } from '@/utils/icons-adapter';
-import { onMounted, ref, watch } from 'vue';
+  import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
+  import { useIconsAdapter } from '@/utils/icons-adapter';
+  import { onMounted, ref, watch } from 'vue';
 
-const answer = defineModel('answer') as any
-const options = defineModel('options') as any
-const simulation = defineModel('simulation') as any
+  const answer = defineModel('answer') as any
+  const options = defineModel('options') as any
+  const simulation = defineModel('simulation') as any
 
-const props = defineProps({
-  type: {
-    type: String,
-    default: '单选题'
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  editor: {
-    type: Boolean,
-    default: false
+  const props = defineProps({
+    type: {
+      type: String,
+      default: '单选题'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    editor: {
+      type: Boolean,
+      default: false
+    }
+  })
+
+  const defaultOptions = ref(['选项 1'])
+
+  watch(() => props.type, () => init())
+
+  const handleSelectionSimulationConfirm = async (seleted : any) => {
+    if (seleted.at(0)) {
+      simulation.value = await ResourceSimulationApi.info(seleted.at(0)) as any
+    }
   }
-})
 
-const defaultOptions = ref(['选项 1'])
-
-watch(() => props.type, () => init())
-
-const handleSelectionSimulationConfirm = async (seleted: any) => {
-  if (seleted.at(0)) {
-    simulation.value = await ResourceSimulationApi.info(seleted.at(0)) as any
+  const add = () => {
+    options.value.push(`选项 ${options.value.length + 1}`)
   }
-}
 
-const add = () => {
-  options.value.push(`选项 ${options.value.length + 1}`)
-}
-
-const del = (index: number) => {
-  options.value.splice(index, 1)
-}
-
-const init = () => {
-  answer.value = null
-  if (props.type == '单选题') {
-    answer.value = 0
-    options.value = [...defaultOptions.value]
-    simulation.value = null
+  const del = (index : number) => {
+    options.value.splice(index, 1)
   }
-  else if (props.type == '多选题') {
-    answer.value = []
-    options.value = [...defaultOptions.value]
-    simulation.value = null
-  }
-  else if (props.type == '简答题') {
+
+  const init = () => {
     answer.value = null
-    options.value = []
-    simulation.value = null
+    console.log(defaultOptions.value)
+    if (props.type == '单选题') {
+      answer.value = 0
+      options.value = [...defaultOptions.value]
+      simulation.value = null
+    }
+    else if (props.type == '多选题') {
+      answer.value = []
+      options.value = [...defaultOptions.value]
+      simulation.value = null
+    }
+    else if (props.type == '判断题') {
+      answer.value = 'correct'
+      simulation.value = null
+    }
+    else if (props.type == '简答题') {
+      answer.value = null
+      options.value = []
+      simulation.value = null
+    }
+    else if (props.type == '仿真题') {
+      answer.value = null
+      options.value = []
+      simulation.value = null
+    }
   }
-  else if (props.type == '仿真题') {
-    answer.value = null
-    options.value = []
-    simulation.value = null
-  }
-}
 
-onMounted(() => {
-  if (props.type == '单选题' || props.type == '多选题') {
-    if (options.value.length == 0) init()
-  }
-})
+  onMounted(() => {
+    if (props.type == '单选题' || props.type == '多选题') {
+      if (options.value.length == 0) init()
+    }
+  })
 </script>
 
 <style scoped>
-.v-radio:deep(.v-label),
-.v-checkbox:deep(.v-label) {
-  width: 100%;
-}
+  .v-radio:deep(.v-label),
+  .v-checkbox:deep(.v-label) {
+    width: 100%;
+  }
 </style>
 <style>
-input:disabled {
-  border-color: black !important;
-}
+  input:disabled {
+    border-color: black !important;
+  }
 </style>

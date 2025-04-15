@@ -19,13 +19,12 @@
             clearable></v-text-field>
         </div>
       </template>
-      <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.actions="{ item }" v-if="!enableSelection">
         <VBtn icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)"></VBtn>
         <VBtn icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)"></VBtn>
       </template>
     </v-data-table-server>
-    <v-dialog v-model="dialog" max-width="500px" :persistent="loadingEdit" :fullscreen="$vuetify.display.smAndDown"
+    <v-dialog v-model="dialog" max-width="1000px" :persistent="loadingEdit" :fullscreen="$vuetify.display.smAndDown"
       scrollable>
       <v-card :loading="loadingEdit">
         <v-card-title>
@@ -46,8 +45,12 @@
                   <template #details v-if="editedItem.url">
                     <small class="text-caption text-medium-emphasis" style="word-break:break-all;">
                       {{ FileApi.filePath + editedItem.url }}</small>
-                  </template>>
+                  </template>
                 </v-file-input>
+              </v-col>
+              <v-col v-if="editedItem.url" cols="12">
+                <ResourceViewResource v-model="resourceItem" :completed="completed">
+                </ResourceViewResource>
               </v-col>
             </v-row>
           </v-container>
@@ -79,144 +82,217 @@
 </template>
 
 <script setup>
-import { computed, nextTick, ref } from 'vue';
-import { ResourceApi } from '@/api/resource/resource';
-import { FileApi } from '@/api/file';
-import { useResourceStore } from '@/stores/resource';
+  import {
+    computed,
+    nextTick,
+    ref
+  } from 'vue';
+  import Plyr from 'plyr';
+  import {
+    ResourceApi
+  } from '@/api/resource/resource';
+  import {
+    FileApi
+  } from '@/api/file';
+  import {
+    useResourceStore
+  } from '@/stores/resource';
+  import { fileTypeFromBlob } from 'file-type';
 
-const resourceStore = useResourceStore()
-const selected = defineModel()
-defineProps({
-  enableSelection: { type: Boolean, default: false }
-})
-const options = ref({
-  page: 1,
-  itemsPerPage: 5
-})
-const headers = ref([
-  { title: '标题', align: 'start', sortable: false, key: 'name', },
-  { title: '类型', key: 'categoryName', sortable: false },
-  { title: '大小', key: 'size', },
-  { title: '时长', key: 'duration', },
-  { title: '扩展名', key: 'extensions', },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
-])
-const search = ref({
-  name: '',
-  category: null
-})
-const serverItems = ref([])
-const loading = ref(true)
-const loadingEdit = ref(false)
-const totalItems = ref(0)
-const dialogDelete = ref(false)
-const dialog = ref(false)
-const editedIndex = ref(-1)
-const editedItem = ref({
-  id: null,
-  name: '',
-  author: '',
-  category: null,
-  url: null,
-  urlOld: null,
-  extensions: null,
-  duration: null,
-  size: null,
-  file: null
-})
-const defaultItem = ref({
-  id: null,
-  name: '',
-  author: '',
-  category: null,
-  url: null,
-  urlOld: null,
-  extensions: null,
-  duration: null,
-  size: null,
-  file: null
-})
-const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
+  const resourceStore = useResourceStore()
+  const selected = defineModel()
+  defineProps({
+    enableSelection: {
+      type: Boolean,
+      default: false
+    }
+  })
+  const options = ref({
+    page: 1,
+    itemsPerPage: 5
+  })
+  const headers = ref([{
+      title: '标题',
+      align: 'start',
+      sortable: false,
+      key: 'name',
+    },
+    {
+      title: '类型',
+      key: 'categoryName',
+      sortable: false
+    },
+    {
+      title: '大小',
+      key: 'size',
+    },
+    {
+      title: '时长',
+      key: 'duration',
+    },
+    {
+      title: '扩展名',
+      key: 'extensions',
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      sortable: false,
+      align: 'end'
+    },
+  ])
+  const search = ref({
+    name: '',
+    category: null
+  })
+  const resourceItem = ref(null)
+  const serverItems = ref([])
+  const loading = ref(true)
+  const loadingEdit = ref(false)
+  const totalItems = ref(0)
+  const dialogDelete = ref(false)
+  const dialog = ref(false)
+  const editedIndex = ref(-1)
+  const editedItem = ref({
+    id: null,
+    name: '',
+    author: '',
+    category: null,
+    url: null,
+    urlOld: null,
+    extensions: null,
+    duration: null,
+    size: null,
+    file: null
+  })
+  const defaultItem = ref({
+    id: null,
+    name: '',
+    author: '',
+    category: null,
+    url: null,
+    urlOld: null,
+    extensions: null,
+    duration: null,
+    size: null,
+    file: null
+  })
+  const completed = computed(() => editedItem.value.id != null)
+  const SupportExts = ['jpg', 'png', 'xml', 'txt', 'mp4', 'mp3', 'docx', 'xlsx', 'pdf']
+  const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
 
-const editItem = async (item) => {
-  if (item) {
-    editedIndex.value = serverItems.value.indexOf(item)
-    editedItem.value = Object.assign({}, item)
-    editedItem.value.urlOld = editedItem.value.url
-  } else {
-    editedItem.value = Object.assign({}, defaultItem.value)
-    editedIndex.value = -1;
+  const editItem = async (item) => {
+    if (item) {
+      editedIndex.value = serverItems.value.indexOf(item)
+      editedItem.value = Object.assign({}, item)
+      editedItem.value.urlOld = editedItem.value.url
+      const resource = await ResourceApi.info(item.id)
+      if (resource) {
+         item.name = resource.name
+         resource.url = FileApi.filePath + resource.url
+         //支持在线预览的资源
+         if (SupportExts.includes(resource.url.substring(resource.url.lastIndexOf('.') + 1))) {
+           const fileRes = await fetch(resource.url)
+           const blob = await fileRes.blob()
+           if (blob.type == 'text/plain') {
+             resource.ext = 'txt'
+           } else {
+             const fileType = await fileTypeFromBlob(blob)
+             resource.ext = fileType.ext
+           }
+           resource.url = URL.createObjectURL(blob)
+           if (['xml', 'txt'].includes(resource.ext)) {
+             const reader = new FileReader()
+             reader.readAsText(blob)
+             reader.onload = () => {
+               resource.text = reader.result
+               resourceItem.value = resource
+             }
+           } else resourceItem.value = resource
+         } else resourceItem.value = resource
+       } else resourceItem.value = resource
+    } else {
+      editedItem.value = Object.assign({}, defaultItem.value)
+      editedIndex.value = -1;
+    }
+    dialog.value = true
   }
-  dialog.value = true
-}
 
-const deleteItem = (item) => {
-  editedIndex.value = serverItems.value.indexOf(item);
-  editedItem.value = Object.assign({}, item)
-  dialogDelete.value = true;
-}
+  const deleteItem = (item) => {
+    editedIndex.value = serverItems.value.indexOf(item);
+    editedItem.value = Object.assign({}, item)
+    dialogDelete.value = true;
+  }
 
-const close = () => {
-  dialog.value = false
-  nextTick(() => {
-    editedItem.value = Object.assign({}, defaultItem.value)
-    editedIndex.value = -1
-  })
-}
+  const close = () => {
+    dialog.value = false
+    nextTick(() => {
+      editedItem.value = Object.assign({}, defaultItem.value)
+      editedIndex.value = -1
+    })
+  }
 
-const closeDelete = () => {
-  dialogDelete.value = false;
-  nextTick(() => {
-    editedItem.value = Object.assign({}, defaultItem.value)
-    editedIndex.value = -1;
-  })
-}
+  const closeDelete = () => {
+    dialogDelete.value = false;
+    nextTick(() => {
+      editedItem.value = Object.assign({}, defaultItem.value)
+      editedIndex.value = -1;
+    })
+  }
 
-const deleteItemConfirm = async () => {
-  await ResourceApi.del(editedItem.value.id)
-  loadItems(options.value)
-  closeDelete()
-}
-
-const save = async () => {
-  loadingEdit.value = true
-  try {
-    if (editedItem.value.file) {
-      const res = await FileApi.upload(editedItem.value.file, 'simteaching/resource/courseware')
-      editedItem.value.url = res.url
-      editedItem.value.size = res.size
-      editedItem.value.duration = res.duration
-      editedItem.value.extensions = res.suffix
-      if (editedItem.value.urlOld) FileApi.delete(editedItem.value.urlOld)
-    }
-    await ResourceApi.save(editedItem.value)
-    close()
+  const deleteItemConfirm = async () => {
+    await ResourceApi.del(editedItem.value.id)
     loadItems(options.value)
-  } catch (e) { /* empty */ }
-  loadingEdit.value = false
-}
+    closeDelete()
+  }
 
-const loadItems = async ({ page, itemsPerPage, sortBy }) => {
-  loading.value = true
-  await resourceStore.loadCategorys()
-  const res = await ResourceApi.page({
-    current: page,
-    size: itemsPerPage,
-    sortKey: sortBy[0] ? sortBy[0].key : null,
-    sortOrder: sortBy[0] ? sortBy[0].order : null,
-    category: search.value.category,
-    name: search.value.name
-  })
-  serverItems.value = res.records.map(item => {
-    return {
-      ...item,
-      categoryName: item.category ? resourceStore.categorys.find(category => category.id == item.category)?.name
-        : "<未分类>"
+  const save = async () => {
+    loadingEdit.value = true
+    try {
+      if (editedItem.value.file) {
+        const res = await FileApi.upload(editedItem.value.file, 'simteaching/resource/courseware')
+        editedItem.value.url = res.url
+        editedItem.value.size = res.size
+        editedItem.value.duration = res.duration
+        editedItem.value.extensions = res.suffix
+        if (editedItem.value.urlOld) FileApi.delete(editedItem.value.urlOld)
+      }
+      await ResourceApi.save(editedItem.value)
+      close()
+      loadItems(options.value)
+    } catch (e) {
+      /* empty */
     }
-  })
-  totalItems.value = res.total
-  loading.value = false
-}
+    loadingEdit.value = false
+    dialog.value = false
+  }
+
+  const loadItems = async ({
+    page,
+    itemsPerPage,
+    sortBy
+  }) => {
+    loading.value = true
+    await resourceStore.loadCategorys()
+    const res = await ResourceApi.page({
+      current: page,
+      size: itemsPerPage,
+      sortKey: sortBy[0] ? sortBy[0].key : null,
+      sortOrder: sortBy[0] ? sortBy[0].order : null,
+      category: search.value.category,
+      name: search.value.name
+    })
+    serverItems.value = res.records.map(item => {
+      return {
+        ...item,
+        categoryName: item.category ? resourceStore.categorys.find(category => category.id == item.category)
+          ?.name : "<未分类>"
+      }
+    })
+    totalItems.value = res.total
+
+    loading.value = false
+  }
 </script>
 
 <style scoped></style>

@@ -63,8 +63,20 @@
               <v-col cols="12" sm="6">
                 <v-select v-model="editedItem.type" label="种类" :items="['WebGL']" :disabled="loadingEdit"></v-select>
               </v-col>
-              <v-col cols="12">
+              <!-- <v-col cols="12">
                 <v-text-field v-model="editedItem.cover" label="封面(url)" :disabled="loadingEdit"></v-text-field>
+              </v-col> -->
+              <v-col cols="12">
+                <v-hover v-if="editedItem.cover" v-slot="{ isHovering, props }">
+                  <v-card v-bind="props" color="surface-light" height="300px">
+                    <v-img :src="useFileUri(editedItem.cover)" height="300px"></v-img>
+                    <v-btn icon="mdi-close" class="opacity-0 position-absolute" :class="{ 'opacity-100': isHovering }"
+                      style="left: 50%; top: 50%; transform: translate(-50%,-50%);" :disabled="loadingEdit"
+                      @click="editedItem.cover = null; coverFile = null"></v-btn>
+                  </v-card>
+                </v-hover>
+                <v-file-upload v-else v-model="coverFile" :disabled="loadingEdit" density="comfortable" title="封面" height="300px"
+                  accept=".png,.jpg" @update:model-value="handleCoverFileUpdate"></v-file-upload>
               </v-col>
               <v-col cols="12">
                 <v-radio-group v-model="editedItem.inputType" inline>
@@ -121,11 +133,14 @@
 <script setup>
 import { computed, nextTick, ref } from 'vue';
 import { FileApi } from '@/api/file';
+import { VFileUpload } from 'vuetify/labs/VFileUpload'
 import { ResourceSimulationApi } from '@/api/resource/resource-simulation';
 import { VImg } from 'vuetify/components';
 import { useDateFormat, useNow } from '@vueuse/core';
 import { useResourceStore } from '@/stores/resource';
 import { useFileUri } from '@/utils/simulation-uri';
+import { useObjectUrl } from '@vueuse/core';
+
 
 const resourceStore = useResourceStore()
 const selected = defineModel()
@@ -157,6 +172,7 @@ const totalItems = ref(0)
 const dialogDelete = ref(false)
 const dialog = ref(false)
 const editedIndex = ref(-1)
+const coverFile = defineModel('coverFile')
 
 const editedItem = ref({
   id: null,
@@ -271,6 +287,9 @@ const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   })
   totalItems.value = res.total
   loading.value = false
+}
+const handleCoverFileUpdate = (file) => {
+  editedItem.value.cover = useObjectUrl(file).value
 }
 </script>
 

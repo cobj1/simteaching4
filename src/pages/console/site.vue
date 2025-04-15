@@ -5,10 +5,10 @@
         <v-btn prepend-icon="mdi-panorama-variant-outline">轮播图管理</v-btn>
       </SiteCarousel>
       <SiteType>
-        <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
+        <v-btn prepend-icon="mdi-format-list-bulleted-type">文章类型管理</v-btn>
       </SiteType>
       <v-btn color="primary" @click="addItem()">
-        新增项目
+        添加文章
       </v-btn>
     </VToolbar>
     <v-data-table-server v-model:options="options" :headers="headers" :items="serverItems" :items-length="totalItems"
@@ -35,6 +35,18 @@
         <v-card-text>
           <v-container>
             <v-row>
+              <v-col cols="12">
+                <v-hover v-if="editedItem.cover" v-slot="{ isHovering, props }">
+                  <v-card v-bind="props" color="surface-light" height="300px">
+                    <v-img :src="useFileUri(editedItem.cover)" height="300px"></v-img>
+                    <v-btn icon="mdi-close" class="opacity-0 position-absolute" :class="{ 'opacity-100': isHovering }"
+                      style="left: 50%; top: 50%; transform: translate(-50%,-50%);" :disabled="disabled"
+                      @click="editedItem.cover = null; coverFile = null"></v-btn>
+                  </v-card>
+                </v-hover>
+                <v-file-upload v-else v-model="coverFile" :disabled="disabled" density="comfortable" title="文章封面" height="300px"
+                  accept=".png,.jpg" @update:model-value="handleCoverFileUpdate"></v-file-upload>
+              </v-col>
               <v-col cols="12" sm="6">
                 <v-text-field v-model="editedItem.title" label="标题"></v-text-field>
               </v-col>
@@ -45,9 +57,11 @@
                 <v-select v-model="editedItem.typeId" label="类型" :items="types" item-title="type"
                   item-value="id"></v-select>
               </v-col>
-              <v-col cols="12">
+
+              
+              <!-- <v-col cols="12">
                 <v-text-field v-model="editedItem.cover" label="封面(url)"></v-text-field>
-              </v-col>
+              </v-col> -->
               <v-col cols="12">
                 <v-card title="内容">
                   <ckeditor v-model="editedItem.content" :editor="editor" :config="editorConfig" />
@@ -87,11 +101,19 @@ import SiteType from '@/components/SiteType.vue';
 import { SiteApi } from '@/api/site';
 import { computed, nextTick, ref, reactive } from 'vue';
 import { FileApi } from '@/api/file';
+import { VFileUpload } from 'vuetify/labs/VFileUpload'
+const coverFile = ref(null)
 
 const editor = ref(ClassicEditor)
 const editorConfig = reactive({
   plugins: [Bold, Essentials, Italic, Mention, Paragraph, Undo],
   toolbar: ['undo', 'redo', '|', 'bold', 'italic'],
+})
+defineProps({
+  disabled: {
+    type: Boolean,
+    default: false
+  }
 })
 const options = ref({
   page: 1,
@@ -217,6 +239,9 @@ const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   })
   totalItems.value = res.total
   loading.value = false
+}
+const handleCoverFileUpdate = (file) => {
+  editedItem.value.cover = useObjectUrl(file).value
 }
 </script>
 

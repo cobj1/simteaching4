@@ -83,8 +83,7 @@
                   :disabled="saving || enableSelection"></v-text-field>
               </v-col>
               <v-col cols="12" class="report-template">
-                <ckeditor v-model="editedItem.content" :editor="editor" :config="editorConfig"
-                  :disabled="saving || enableSelection" />
+                <CkEditor v-model="editedItem.content"/>
               </v-col>
             </v-row>
           </v-container>
@@ -116,143 +115,162 @@
 </template>
 
 <script setup>
-import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo } from 'ckeditor5';
-import { computed, nextTick, onMounted, reactive, ref } from 'vue';
-import html2canvas from 'html2canvas';
-import { useSettingsStore } from '@/stores/settings';
-import { FileApi } from '@/api/file';
-import { ResourceReportTemplateApi } from '@/api/resource/resource-report-template';
+  import {
+    computed,
+    nextTick,
+    onMounted,
+    onUnmounted,
+    reactive,
+    ref
+  } from 'vue';
+  import html2canvas from 'html2canvas';
+  import {
+    useSettingsStore
+  } from '@/stores/settings';
+  import {
+    FileApi
+  } from '@/api/file';
+  import {
+    ResourceReportTemplateApi
+  } from '@/api/resource/resource-report-template';
 
-const selected = defineModel()
-defineProps({
-  enableSelection: { type: Boolean, default: false }
-})
+  const selected = defineModel()
+  defineProps({
+    enableSelection: {
+      type: Boolean,
+      default: false
+    }
+  })
 
-const settingsStore = useSettingsStore()
-const editor = ref(ClassicEditor)
-const editorConfig = reactive({
-  plugins: [Bold, Essentials, Italic, Mention, Paragraph, Undo],
-  toolbar: ['undo', 'redo', '|', 'bold', 'italic'],
-})
+  const settingsStore = useSettingsStore()
 
-const options = ref({
-  page: 1,
-  itemsPerPage: 5
-})
+  const options = ref({
+    page: 1,
+    itemsPerPage: 5
+  })
 
-const search = ref({
-  name: '',
-})
+  const search = ref({
+    name: '',
+  })
 
-const items = ref([])
-const loading = ref(true)
-const saving = ref(false)
-const dialogDelete = ref(false)
-const dialog = ref(false)
-const editedIndex = ref(-1)
-const editedItem = ref({
-  id: null,
-  title: '',
-  describe: '',
-  content: '',
-  cover: ''
-})
-const defaultItem = ref({
-  id: null,
-  title: '',
-  describe: '',
-  content: '',
-  cover: ''
-})
-const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '查看项目')
+  const items = ref([])
+  const loading = ref(true)
+  const saving = ref(false)
+  const dialogDelete = ref(false)
+  const dialog = ref(false)
+  const editedIndex = ref(-1)
+  const editedItem = ref({
+    id: null,
+    title: '',
+    describe: '',
+    content: '',
+    cover: ''
+  })
+  const defaultItem = ref({
+    id: null,
+    title: '',
+    describe: '',
+    content: '',
+    cover: ''
+  })
+  const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '查看项目')
 
-const editItem = async (item) => {
-  if (item) {
-    editedIndex.value = items.value.indexOf(item)
-    editedItem.value = Object.assign({}, item)
-    const context = await FileApi.downloadTxt(item.content)
-    editedItem.value.content = context
-  } else {
-    editedItem.value = Object.assign({}, defaultItem.value)
-    editedIndex.value = -1;
+  const editItem = async (item) => {
+    if (item) {
+      editedIndex.value = items.value.indexOf(item)
+      editedItem.value = Object.assign({}, item)
+      const context = await FileApi.downloadTxt(item.content)
+      editedItem.value.content = context
+    } else {
+      editedItem.value = Object.assign({}, defaultItem.value)
+      editedIndex.value = -1;
+    }
+    dialog.value = true
   }
-  dialog.value = true
-}
 
-const deleteItem = (item) => {
-  editedIndex.value = items.value.indexOf(item);
-  editedItem.value = Object.assign({}, item)
-  dialogDelete.value = true;
-}
+  const deleteItem = (item) => {
+    editedIndex.value = items.value.indexOf(item);
+    editedItem.value = Object.assign({}, item)
+    dialogDelete.value = true;
+  }
 
-const close = () => {
-  dialog.value = false
-  nextTick(() => {
-    editedItem.value = Object.assign({}, defaultItem.value)
-    editedIndex.value = -1
-  })
-}
+  const close = () => {
+    dialog.value = false
+    nextTick(() => {
+      editedItem.value = Object.assign({}, defaultItem.value)
+      editedIndex.value = -1
+    })
+  }
 
-const closeDelete = () => {
-  dialogDelete.value = false;
-  nextTick(() => {
-    editedItem.value = Object.assign({}, defaultItem.value)
-    editedIndex.value = -1;
-  })
-}
+  const closeDelete = () => {
+    dialogDelete.value = false;
+    nextTick(() => {
+      editedItem.value = Object.assign({}, defaultItem.value)
+      editedIndex.value = -1;
+    })
+  }
 
-const deleteItemConfirm = async () => {
-  await ResourceReportTemplateApi.del(editedItem.value.id)
-  loadItems(options.value)
-  closeDelete()
-}
+  const deleteItemConfirm = async () => {
+    await ResourceReportTemplateApi.del(editedItem.value.id)
+    loadItems(options.value)
+    closeDelete()
+  }
 
-const save = async () => {
-  saving.value = true
+  const save = async () => {
+    saving.value = true
 
-  try {
-    const elCkContent = document.querySelector('.ck-content')
-    const canvas = await html2canvas(elCkContent,
-      {
+    try {
+      const elCkContent = document.querySelector('.ck-content')
+      const canvas = await html2canvas(elCkContent, {
         backgroundColor: settingsStore.isDark ? '#000000' : '#ffffff',
         width: elCkContent.clientWidth,
         height: elCkContent.clientWidth,
-      }
-    )
-    canvas.toBlob(async (blob) => {
+      })
+      canvas.toBlob(async (blob) => {
 
-      const coverFile = new File([blob], editedItem.value.title + '.png', { type: 'image/png' })
-      const coverConfig = await FileApi.upload(coverFile, 'simteaching/report-template/cover', true)
-      editedItem.value.cover = coverConfig.url
+        const coverFile = new File([blob], editedItem.value.title + '.png', {
+          type: 'image/png'
+        })
+        const coverConfig = await FileApi.upload(coverFile, 'simteaching/report-template/cover', true)
+        editedItem.value.cover = coverConfig.url
 
-      const contentBlob = new Blob([editedItem.value.content])
-      const contentFile = new File([contentBlob], editedItem.value.title + '.txt', { type: 'text/plain' })
-      const contentConfig = await FileApi.upload(contentFile, 'simteaching/report-template/content', true)
-      editedItem.value.content = contentConfig.url
+        const contentBlob = new Blob([editedItem.value.content])
+        const contentFile = new File([contentBlob], editedItem.value.title + '.txt', {
+          type: 'text/plain'
+        })
+        const contentConfig = await FileApi.upload(contentFile, 'simteaching/report-template/content', true)
+        editedItem.value.content = contentConfig.url
 
-      await ResourceReportTemplateApi.save(editedItem.value)
+        await ResourceReportTemplateApi.save(editedItem.value)
 
-      loadItems(options.value)
-      close()
+        loadItems(options.value)
+        close()
+        saving.value = false
+      }, 'image/png', 1.0)
+    } catch (e) {
       saving.value = false
-    }, 'image/png', 1.0)
-  } catch (e) {
-    saving.value = false
+    }
   }
-}
 
-const loadItems = async () => {
-  loading.value = true
-  items.value = await ResourceReportTemplateApi.list()
-  loading.value = false
-}
+  const loadItems = async () => {
+    loading.value = true
+    items.value = await ResourceReportTemplateApi.list()
+    loading.value = false
+  }
 
-onMounted(() => loadItems())
+  onMounted(() => {
+    loadItems();
+    window.addEventListener('resize', loadItems);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener('resize', loadItems);
+  });
 </script>
 
 <style scoped>
-.report-template:deep(.ck-editor__editable_inline) {
-  min-height: 300px;
-  overflow-y: auto;
-}
+  .report-template:deep(.ck-editor__editable_inline) {
+    min-height: 300px;
+    overflow-y: auto;
+  }
 </style>

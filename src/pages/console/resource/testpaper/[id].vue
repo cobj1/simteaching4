@@ -125,6 +125,12 @@
               </v-sheet>
             </v-col>
             <v-col cols="12">
+              考核时间
+            </v-col>
+            <v-col cols="12">
+              <v-text-field label="考核时间" v-model="item.examTime" suffix="分钟" hide-details></v-text-field>
+            </v-col>
+            <v-col cols="12">
               总分
             </v-col>
             <v-col cols="12">
@@ -181,133 +187,184 @@
 </template>
 
 <script setup>
-import { VueDraggable } from 'vue-draggable-plus'
-import { ResourceTestpaperApi } from '@/api/resource/resource-paper';
-import { ResourceQuestionsApi } from '@/api/resource/resource-questions';
-import { useResourceStore } from '@/stores/resource';
-import { computed, nextTick, onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useAnswerFormat } from '@/utils/answer-format';
-import { useTestpaperStore } from '@/stores/testpaper';
-import { useIconsAdapter } from '@/utils/icons-adapter';
-import { useQuestionsStore } from '@/stores/questions';
+  import {
+    VueDraggable
+  } from 'vue-draggable-plus'
+  import {
+    ResourceTestpaperApi
+  } from '@/api/resource/resource-paper';
+  import {
+    ResourceQuestionsApi
+  } from '@/api/resource/resource-questions';
+  import {
+    useResourceStore
+  } from '@/stores/resource';
+  import {
+    computed,
+    nextTick,
+    onMounted,
+    ref
+  } from 'vue';
+  import {
+    useRoute,
+    useRouter
+  } from 'vue-router';
+  import {
+    useAnswerFormat
+  } from '@/utils/answer-format';
+  import {
+    useTestpaperStore
+  } from '@/stores/testpaper';
+  import {
+    useIconsAdapter
+  } from '@/utils/icons-adapter';
+  import {
+    useQuestionsStore
+  } from '@/stores/questions';
 
-const testpaperStore = useTestpaperStore()
-const questionsStore = useQuestionsStore()
-const resourceStore = useResourceStore()
-const route = useRoute()
-const router = useRouter()
-const item = ref({})
-const title = computed(() => route.params.id == 'add' ? '新增' : '修改')
-const items = ref([])
-const selected = ref([0])
-const totalScore = computed(() => items.value.reduce((previousValue, currentValue) => (previousValue * 1) + (currentValue.score * 1), 0))
-const dialogDelete = ref(false)
-const dialogSetScore = ref(false)
-const editedIndex = ref(-1)
-const editedItem = ref({
-  id: null,
-  score: 0,
-})
-const defaultItem = ref({
-  id: null,
-  score: 0,
-})
-const randomSettings = ref(
-  questionsStore.types.map((type, index) => {
-    return { emoji: useIconsAdapter('emoji-' + (index + 1)), type, value: 0 }
+  const testpaperStore = useTestpaperStore()
+  const questionsStore = useQuestionsStore()
+  const resourceStore = useResourceStore()
+  const route = useRoute()
+  const router = useRouter()
+  const item = ref({})
+  const title = computed(() => route.params.id == 'add' ? '新增' : '修改')
+  const items = ref([])
+  const selected = ref([0])
+  const totalScore = computed(() => items.value.reduce((previousValue, currentValue) => (previousValue * 1) + (
+    currentValue.score * 1), 0))
+  const dialogDelete = ref(false)
+  const dialogSetScore = ref(false)
+  const editedIndex = ref(-1)
+  const editedItem = ref({
+    id: null,
+    score: 0,
   })
-)
-
-const handelSelectionQuestionsConfirm = async (qids, scores) => {
-  const list = await ResourceQuestionsApi.listByIds(qids.join(','))
-  qids.forEach((qid, index) => {
-    const question = list.find(item => item.id == qid)
-    items.value.push({
-      ...question,
-      options: question.options.map(option => option.name),
-      answer: useAnswerFormat(question.answer, question.type),
-      score: scores ? scores[index] : 0,
+  const defaultItem = ref({
+    id: null,
+    score: 0,
+  })
+  const randomSettings = ref(
+    questionsStore.types.map((type, index) => {
+      return {
+        emoji: useIconsAdapter('emoji-' + (index + 1)),
+        type,
+        value: 0
+      }
     })
-  })
-}
+  )
 
-const deleteItem = (item) => {
-  editedIndex.value = items.value.indexOf(item);
-  editedItem.value = Object.assign({}, item)
-  dialogDelete.value = true;
-}
-
-const setScoreItem = (item) => {
-  editedIndex.value = items.value.indexOf(item);
-  editedItem.value = Object.assign({}, item)
-  dialogSetScore.value = true;
-}
-
-const closeDelete = () => {
-  dialogDelete.value = false;
-  nextTick(() => {
-    editedItem.value = Object.assign({}, defaultItem.value)
-    editedIndex.value = -1;
-  })
-}
-
-const closeSetScore = () => {
-  dialogSetScore.value = false;
-  nextTick(() => {
-    editedItem.value = Object.assign({}, defaultItem.value)
-    editedIndex.value = -1;
-  })
-}
-
-const deleteItemConfirm = async () => {
-  items.value.splice(editedIndex.value, 1)
-  closeDelete()
-}
-
-const setScoreItemConfirm = async () => {
-  items.value[editedIndex.value].score = editedItem.value.score
-  closeSetScore()
-}
-
-const save = async () => {
-  await ResourceTestpaperApi.save(item.value, randomSettings.value)
-  await ResourceTestpaperApi.saveQuestions({
-    pid: item.value.id,
-    score: totalScore.value,
-    questions: items.value,
-  })
-  router.push('/console/resource/testpaper')
-}
-
-const loadItem = async () => {
-  const res = await ResourceTestpaperApi.info(route.params.id)
-  try {
-    if (res.model == '随机' && res.randomSettings) {
-      randomSettings.value = JSON.parse(res.randomSettings.settings).map((item, index) => {
-        return { emoji: useIconsAdapter('emoji-' + (index + 1)), type: item.type, value: item.value }
+  const handelSelectionQuestionsConfirm = async (qids, scores) => {
+    const list = await ResourceQuestionsApi.listByIds(qids.join(','))
+    qids.forEach((qid, index) => {
+      const question = list.find(item => item.id == qid)
+      items.value.push({
+        ...question,
+        options: question.options.map(option => option.name),
+        answer: useAnswerFormat(question.answer, question.type),
+        score: scores ? scores[index] : 0,
       })
+    })
+  }
+
+  const deleteItem = (item) => {
+    editedIndex.value = items.value.indexOf(item);
+    editedItem.value = Object.assign({}, item)
+    dialogDelete.value = true;
+  }
+
+  const setScoreItem = (item) => {
+    editedIndex.value = items.value.indexOf(item);
+    editedItem.value = Object.assign({}, item)
+    dialogSetScore.value = true;
+  }
+
+  const closeDelete = () => {
+    dialogDelete.value = false;
+    nextTick(() => {
+      editedItem.value = Object.assign({}, defaultItem.value)
+      editedIndex.value = -1;
+    })
+  }
+
+  const closeSetScore = () => {
+    dialogSetScore.value = false;
+    nextTick(() => {
+      editedItem.value = Object.assign({}, defaultItem.value)
+      editedIndex.value = -1;
+    })
+  }
+
+  const deleteItemConfirm = async () => {
+    items.value.splice(editedIndex.value, 1)
+    closeDelete()
+  }
+
+  const setScoreItemConfirm = async () => {
+    items.value[editedIndex.value].score = editedItem.value.score
+    closeSetScore()
+  }
+
+  const save = async () => {
+
+    /* console.log(randomSettings.value)
+     console.log(randomSettings.value)
+     console.log(item.value.model)
+     console.log(items.value)
+      */
+    console.log(items.value.length)
+    if ((item.value.model === '随机' && randomSettings.value.every(item => item.value === 0) || items.value.length ===
+        0)) {
+      alert('试题不能为空！')
+      return
     }
-  } catch (e) { /* empty */ }
+    if (totalScore.value === 0) {
+      alert('请给试题添加分数！')
+      return
+    }
+    await ResourceTestpaperApi.save(item.value, randomSettings.value)
+    await ResourceTestpaperApi.saveQuestions({
+      pid: item.value.id,
+      score: totalScore.value,
+      questions: items.value,
+    })
+    router.push('/console/resource/testpaper')
+  }
 
-  item.value = res
-  delete item.value.randomSettings
-}
+  const loadItem = async () => {
+    const res = await ResourceTestpaperApi.info(route.params.id)
+    try {
+      if (res.model == '随机' && res.randomSettings) {
+        randomSettings.value = JSON.parse(res.randomSettings.settings).map((item, index) => {
+          return {
+            emoji: useIconsAdapter('emoji-' + (index + 1)),
+            type: item.type,
+            value: item.value
+          }
+        })
+      }
+    } catch (e) {
+      /* empty */
+    }
 
-const loadQuestions = async () => {
-  const paperQuestions = await ResourceTestpaperApi.questionsByPid(route.params.id)
-  const qids = paperQuestions.map(item => item.qid)
-  const scores = paperQuestions.map(item => item.score)
-  handelSelectionQuestionsConfirm(qids, scores)
-}
+    item.value = res
+    delete item.value.randomSettings
+  }
+
+  const loadQuestions = async () => {
+    const paperQuestions = await ResourceTestpaperApi.questionsByPid(route.params.id)
+    const qids = paperQuestions.map(item => item.qid)
+    const scores = paperQuestions.map(item => item.score)
+    handelSelectionQuestionsConfirm(qids, scores)
+  }
 
 
-onMounted(async () => {
-  await resourceStore.loadCategorys()
-  await loadItem()
-  await loadQuestions()
+  onMounted(async () => {
+    await resourceStore.loadCategorys()
+    await loadItem()
+    await loadQuestions()
 
-})
+  })
 </script>
 
 <style lang="scss" scoped></style>

@@ -1,5 +1,11 @@
 <template>
   <div>
+    <div class="d-flex align-center gap-2" style="justify-content: end; padding: 6px;">
+      <v-btn variant="tonal" color="primary" @click="exportAllChartsData" class="ma-4"
+        prepend-icon="mdi-microsoft-excel">
+        导出全部统计数据
+      </v-btn>
+    </div>
     <v-row>
       <v-col cols="12" sm="6" md="4" lg="3" xl="2">
         <v-card>
@@ -161,6 +167,10 @@
   import {
     onMounted
   } from 'vue';
+  import {
+    utils,
+    writeFile
+  } from 'xlsx';
 
   const data = {
     labels: [
@@ -913,6 +923,135 @@
     }
   };
 
+  const exportAllChartsData = () => {
+    // 图表数据映射表
+    const chartConfigs = [{
+        title: '角色登录次数',
+        data: data
+      },
+      {
+        title: '管理员点击次数',
+        data: data1
+      },
+      {
+        title: '校级管理员点击次数',
+        data: data2
+      },
+      {
+        title: '院级管理员点击次数',
+        data: data3
+      },
+      {
+        title: '教务处点击次数',
+        data: data4
+      },
+      {
+        title: '教师点击次数',
+        data: data5
+      },
+      {
+        title: '学生点击次数',
+        data: data6
+      },
+      {
+        title: '管理员单次最长停留时间',
+        data: data7
+      },
+      {
+        title: '院级管理员单次最长停留时间',
+        data: data8
+      },
+      {
+        title: '教务处单次最长停留时间',
+        data: data9
+      },
+      {
+        title: '教师单次最长停留时间',
+        data: data10
+      },
+      {
+        title: '学生单次最长停留时间',
+        data: data11
+      },
+      {
+        title: '管理员累积停留时间',
+        data: data12
+      },
+      {
+        title: '校级管理员累积停留时间',
+        data: data13
+      },
+      {
+        title: '院级管理员累积停留时间',
+        data: data14
+      },
+      {
+        title: '教师累积停留时间',
+        data: data15
+      },
+      {
+        title: '学生累积停留时间',
+        data: data16
+      },
+      {
+        title: '登录设备次数',
+        data: data17
+      },
+      {
+        title: '登录浏览器次数',
+        data: data18
+      }
+    ];
+    const workbook = utils.book_new();
+
+    chartConfigs.forEach(config => {
+      const worksheetData = config.data.labels.map((label, index) => ({
+        '项目名称': label,
+        '统计值': config.data.datasets[0].data[index] || 0
+      }));
+      console.log(worksheetData)
+
+      const worksheet = utils.json_to_sheet(worksheetData, {
+        skipHeader: true
+      });
+      console.log(worksheet)
+      worksheet['!cols'] = [{
+        wch: 30
+      }, {
+        wch: 15
+      }];
+
+      // 添加标题行到工作表首行
+      utils.sheet_add_aoa(worksheet, [
+        ["项目名称", "统计值"]
+      ], {
+        origin: "A1"
+      });
+
+      utils.book_append_sheet(
+        workbook,
+        worksheet,
+        config.title.substring(0, 31) // Excel工作表名最长31字符
+      );
+    });
+
+    // 生成文件名
+    const formatDate = () => {
+      const d = new Date();
+      const pad = n => n.toString().padStart(2, '0');
+      return [
+        d.getFullYear(),
+        pad(d.getMonth() + 1),
+        pad(d.getDate()),
+        pad(d.getHours()),
+        pad(d.getMinutes()),
+        pad(d.getSeconds())
+      ].join('');
+    };
+
+    // 导出文件
+    writeFile(workbook, `统计数据导出_${formatDate()}.xlsx`);
+  };
 
   onMounted(() => {
 

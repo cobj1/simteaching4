@@ -1,5 +1,10 @@
 <template>
   <div>
+    <div class="d-flex align-center gap-2" style="justify-content: end; padding: 6px;">
+      <v-btn variant="tonal" color="primary" @click="exportAllData" class="ma-4" prepend-icon="mdi-microsoft-excel">
+        导出全部统计表
+      </v-btn>
+    </div>
     <v-row>
       <v-col cols="12" sm="6" md="4" lg="3" xl="2">
         <v-card>
@@ -36,14 +41,14 @@
         </v-card>
       </v-col>
 
-     <v-col cols="12" sm="6" md="4" lg="3" xl="2">
+      <v-col cols="12" sm="6" md="4" lg="3" xl="2">
         <v-card>
           <v-toolbar title="班级学生数量"> </v-toolbar>
           <canvas id="myChart6"></canvas>
         </v-card>
       </v-col>
 
-     <v-col cols="12" sm="6" md="4" lg="3" xl="2">
+      <v-col cols="12" sm="6" md="4" lg="3" xl="2">
         <v-card>
           <v-toolbar title="班级教师数量"> </v-toolbar>
           <canvas id="myChart7"></canvas>
@@ -61,6 +66,10 @@
   import {
     onMounted
   } from 'vue';
+  import {
+    utils,
+    writeFile
+  } from 'xlsx';
 
   const data = {
     labels: [
@@ -120,7 +129,7 @@
     }]
   };
 
- const data3 = {
+  const data3 = {
     labels: [
       '专业',
       '开发部',
@@ -140,7 +149,7 @@
     }]
   };
 
- const data4 = {
+  const data4 = {
     labels: [
       '专业',
       '开发部',
@@ -160,7 +169,7 @@
     }]
   };
 
- const data5 = {
+  const data5 = {
     labels: [
       '班级',
       '开发部'
@@ -176,7 +185,7 @@
     }]
   };
 
- const data6 = {
+  const data6 = {
     labels: [
       '班级',
       '开发部'
@@ -225,6 +234,79 @@
   const config6 = {
     type: 'pie',
     data: data6,
+  };
+
+  const exportAllData = () => {
+    // 生成时间戳
+    const formatDate = () => {
+      const d = new Date();
+      return [
+        d.getFullYear(),
+        (d.getMonth() + 1).toString().padStart(2, '0'),
+        d.getDate().toString().padStart(2, '0'),
+        d.getHours().toString().padStart(2, '0'),
+        d.getMinutes().toString().padStart(2, '0'),
+        d.getSeconds().toString().padStart(2, '0')
+      ].join('');
+    };
+
+    // 创建工作簿
+    const workbook = utils.book_new();
+
+    // 转换数据格式的通用方法
+    const processChartData = (config, title) => {
+      return {
+        sheetName: title,
+        data: config.data.labels.map((label, index) => ({
+          类别: label,
+          数量: config.data.datasets[0].data[index] || 0
+        }))
+      };
+    };//config.data.datasets.data
+
+    // 所有图表数据映射
+    const allSheets = [{
+        config: config,
+        title: '学校总体统计'
+      },
+      {
+        config: config1,
+        title: '学院学生数量'
+      },
+      {
+        config: config2,
+        title: '学院教师数量'
+      },
+      {
+        config: config3,
+        title: '专业学生数量'
+      },
+      {
+        config: config4,
+        title: '专业教师数量'
+      },
+      {
+        config: config5,
+        title: '班级学生数量'
+      },
+      {
+        config: config6,
+        title: '班级教师数量'
+      }
+    ];
+
+    // 生成工作表
+    allSheets.forEach(({
+      config,
+      title
+    }) => {
+      const sheetData = processChartData(config, title);
+      const worksheet = utils.json_to_sheet(sheetData.data);
+      utils.book_append_sheet(workbook, worksheet, sheetData.sheetName);
+    });
+
+    // 写入文件
+    writeFile(workbook, `学校信息统计报表_${formatDate()}.xlsx`);
   };
 
   onMounted(() => {

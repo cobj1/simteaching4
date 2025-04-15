@@ -7,8 +7,8 @@
       <ResourceCategory>
         <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
       </ResourceCategory>
-      <v-btn color="primary" dark @click="editItem()">
-        新增项目
+      <v-btn color="primary" dark @click="addItem()">
+        新增课程
       </v-btn>
     </VToolbar>
     <v-data-table-server v-model:options="options" :items-per-page="options.itemsPerPage" :headers="headers"
@@ -25,9 +25,12 @@
             clearable></v-text-field>
         </div>
       </template>
+      <!-- <template v-slot:item.cover="{ item }">
+        <v-img :src="FileApi.filePath + item.cover"></v-img>
+      </template> -->
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.cover="{ item }">
-        <div class="pa-2">
+        <!-- <div class="pa-2">
           <v-img :src="item.cover" :width="80" :height="45" cover>
             <template v-slot:placeholder>
               <v-img src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"></v-img>
@@ -36,7 +39,8 @@
               <v-img src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"></v-img>
             </template>
           </v-img>
-        </div>
+        </div> -->
+        <v-img :src="FileApi.filePath + item.cover"></v-img>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.code="{ item }">
@@ -85,6 +89,18 @@
         <v-card-text>
           <v-container>
             <v-row>
+              <v-col cols="12">
+                <v-hover v-if="editedItem.cover" v-slot="{ isHovering, props }">
+                  <v-card v-bind="props" color="surface-light" height="300px">
+                    <v-img :src="useFileUri(editedItem.cover)" height="300px"></v-img>
+                    <v-btn icon="mdi-close" class="opacity-0 position-absolute" :class="{ 'opacity-100': isHovering }"
+                      style="left: 50%; top: 50%; transform: translate(-50%,-50%);" :disabled="disabled"
+                      @click="editedItem.cover = null; coverFile = null"></v-btn>
+                  </v-card>
+                </v-hover>
+                <v-file-upload v-else v-model="coverFile" :disabled="disabled" density="comfortable" title="仿真封面" height="300px"
+                  accept=".png,.jpg" @update:model-value="handleCoverFileUpdate"></v-file-upload>
+              </v-col>
               <v-col cols="12">
                 <v-text-field v-model="editedItem.name" label="标题" :disabled="loadingEdit"></v-text-field>
               </v-col>
@@ -159,6 +175,16 @@ import { useClipboard, useDateFormat } from '@vueuse/core';
 import { useResourceStore } from '@/stores/resource';
 import { TimeRangeGenerators } from '@/utils/time-range-generators';
 
+import { VFileUpload } from 'vuetify/labs/VFileUpload'
+import { FileApi } from '@/api/file';
+import { useFileUri } from '@/utils/simulation-uri';
+import { useObjectUrl } from '@vueuse/core';
+defineProps({
+  disabled: {
+    type: Boolean,
+    default: false
+  }
+})
 const resourceStore = useResourceStore()
 const { copy } = useClipboard()
 const options = ref({
@@ -166,7 +192,9 @@ const options = ref({
   itemsPerPage: 10
 })
 const headers = ref([
-  { title: '封面', key: 'cover', sortable: false, },
+{ 
+  title: '仿真封面', align: 'start', sortable: false, key: 'cover', nowrap: true },
+  // { title: '封面', key: 'cover', sortable: false, },
   { title: '标题', key: 'name', },
   { title: '主题', key: 'subject', },
   { title: '教室', key: 'classroom', },
@@ -191,6 +219,7 @@ const dialogDelete = ref(false)
 const dialog = ref(false)
 const dialogStopCode = ref(false)
 const editedIndex = ref(-1)
+const coverFile = ref(null)
 
 const editedItem = ref({
   id: null,
@@ -214,8 +243,14 @@ const defaultItem = ref({
   cover: '',
   time: []
 })
-const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
+const formTitle = computed(() => editedIndex.value === -1 ? '新增课程' : '编辑课程')
+const addItem = () => {
 
+  coverFile.value = null
+  editedItem.value = Object.assign({}, defaultItem.value)
+  editedIndex.value = -1;  
+  dialog.value = true
+}
 const editItem = async (item) => {
   if (item) {
     editedIndex.value = serverItems.value.indexOf(item)
@@ -315,6 +350,9 @@ const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   })
   totalItems.value = res.total
   loading.value = false
+}
+const handleCoverFileUpdate = (file) => {
+  editedItem.value.cover = useObjectUrl(file).value
 }
 </script>
 

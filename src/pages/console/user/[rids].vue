@@ -2,7 +2,7 @@
   <VCard :elevation="enableSelection ? 0 : 1">
     <v-toolbar title="用户管理" v-if="!enableSelection">
       <v-btn color="primary" dark @click="addItem()">
-        新增项目
+        添加用户
       </v-btn>
       <v-btn color="primary" prepend-icon="mdi-database-import" dark>
         批量导入
@@ -44,6 +44,22 @@
         <v-card-text>
           <v-container>
             <v-row>
+              <!-- <v-col cols="12">
+                <v-text-field v-model="editedItem.avatar" label="头像(url)"></v-text-field>
+              </v-col> -->
+              <v-col cols="12" style="display: flex; justify-content: center;">
+                <v-hover v-if="editedItem.cover" height="60px" v-slot="{ isHovering, props }">
+                  <v-card v-bind="props" color="surface-light" height="140px">
+                    <v-img :src="useFileUri(editedItem.cover)" height="140px" width="140px"></v-img>
+                    <v-btn icon="mdi-close" class="opacity-0 position-absolute" :class="{ 'opacity-100': isHovering }"
+                      style="left: 50%; top: 50%; transform: translate(-50%,-50%);"
+                      @click="editedItem.cover = null; coverFile = null"></v-btn>
+                  </v-card>
+                </v-hover>
+                <v-file-upload v-else :height="140" :width="140"  v-model="coverFile" density="comfortable" title="头像"
+                  accept=".png,.jpg" @update:model-value="handleCoverFileUpdate">
+                </v-file-upload>
+              </v-col>
               <v-col cols="12">
                 <v-text-field v-model="editedItem.account" label="账号" :disabled="!!editedItem.id"></v-text-field>
               </v-col>
@@ -73,9 +89,7 @@
               <v-col cols="12" sm="6">
                 <v-text-field v-model="editedItem.email" label="邮箱"></v-text-field>
               </v-col>
-              <v-col cols="12">
-                <v-text-field v-model="editedItem.avatar" label="头像(url)"></v-text-field>
-              </v-col>
+              
             </v-row>
           </v-container>
         </v-card-text>
@@ -129,6 +143,11 @@ import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { VSpacer } from 'vuetify/components';
 
+import { FileApi } from '@/api/file';
+import { VFileUpload } from 'vuetify/labs/VFileUpload'
+import { useObjectUrl } from '@vueuse/core';
+import { useFileUri } from '@/utils/simulation-uri';
+
 const route = useRoute()
 const selected = defineModel()
 const props = defineProps({
@@ -163,6 +182,7 @@ const dialogRepwd = ref(false)
 const editedIndex = ref(-1)
 const editedItem = ref({
   id: null,
+  cover: '',
   account: '',
   password: '',
   name: '',
@@ -174,6 +194,7 @@ const editedItem = ref({
   role: null,
   orgItem: null
 })
+const coverFile = ref(null)
 const defaultItem = ref({
   id: null,
   account: '',
@@ -225,12 +246,14 @@ const handleSearchSelectionOrgConfirm = async (value) => {
 }
 
 const addItem = () => {
+  coverFile.value = null
   editedItem.value = Object.assign({}, defaultItem.value)
   editedIndex.value = -1;
   dialog.value = true
 }
 
 const editItem = async (item) => {
+  coverFile.value = null
   editedIndex.value = serverItems.value.indexOf(item)
   editedItem.value = Object.assign({}, item)
   editedItem.value.orgItem = await OrgApi.selectOneAndParentById(item.org)
@@ -252,6 +275,7 @@ const repwdItem = (item) => {
 const close = () => {
   dialog.value = false
   nextTick(() => {
+    coverFile.value = null
     editedItem.value = Object.assign({}, defaultItem.value)
     editedIndex.value = -1
   })
@@ -289,6 +313,10 @@ const repwdConfirm = async () => {
 const save = async () => {
   editedItem.value.role = search.role
   editedItem.value.orgItem = null
+  if (coverFile.value) {
+    const coverConfig = await FileApi.upload(coverFile.value, 'simteaching/user/cover', true)
+    editedItem.value.cover = FileApi.filePath + coverConfig.url
+  }
   await UserApi.save(editedItem.value)
   loadItems(options.value)
   close()
@@ -317,7 +345,9 @@ const loadRoles = async () => {
   if (roleItems.value.length > 0)
     search.role = roleItems.value[0].id
 }
-
+const handleCoverFileUpdate = (file) => {
+  editedItem.value.cover = useObjectUrl(file).value
+}
 onMounted(() => {
   loadRoles()
 })

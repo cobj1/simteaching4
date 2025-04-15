@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     BatchQuestions: typeof import('./src/components/resource/BatchQuestions.vue')['default']
     BatchUsers: typeof import('./src/components/user/BatchUsers.vue')['default']
+    CkEditor: typeof import('./src/components/CkEditor.vue')['default']
     CourseCodeOptions: typeof import('./src/components/course/CourseCodeOptions.vue')['default']
     CourseRegister: typeof import('./src/components/course/CourseRegister.vue')['default']
     CourseResourceItem: typeof import('./src/components/course/CourseResourceItem.vue')['default']

@@ -45,18 +45,37 @@
 </template>
 
 <script setup>
+  defineProps({
+    simulation: Object | String
+  })
 
-defineProps({
-  simulation: Object
-})
-
-const simulationStepsHeaders = [
-  { title: '步骤名', key: 'name', align: 'start', nowrap: true },
-  { title: '是否完成', key: 'correct', nowrap: true },
-  { title: '得分', key: 'score', nowrap: true },
-  { title: '满分', key: 'fullscore', nowrap: true },
-  { title: '赋分模型', key: 'scoringModel', nowrap: true },
-]
+  const simulationStepsHeaders = [{
+      title: '步骤名',
+      key: 'name',
+      align: 'start',
+      nowrap: true
+    },
+    {
+      title: '是否完成',
+      key: 'correct',
+      nowrap: true
+    },
+    {
+      title: '得分',
+      key: 'score',
+      nowrap: true
+    },
+    {
+      title: '满分',
+      key: 'fullscore',
+      nowrap: true
+    },
+    {
+      title: '赋分模型',
+      key: 'scoringModel',
+      nowrap: true
+    },
+  ]
 </script>
 
 <style lang="scss" scoped></style>

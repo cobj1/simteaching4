@@ -8,10 +8,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-vue": "^7.2.0",
+    "@ckeditor/ckeditor5-vue": "^7.3.0",
     "@kyvg/vue3-notification": "^3.4.1",
     "@mdi/font": "7.4.47",
-    "@vue-office/docx": "^1.6.2",
+    "@vue-office/docx": "^1.6.3",
     "@vue-office/excel": "^1.7.11",
     "@vue-office/pdf": "^2.0.9",
     "@vuelidate/core": "^2.0.3",

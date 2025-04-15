@@ -3,7 +3,7 @@
     <a v-if="['png', 'jpg'].includes(item.ext)" :href="item.url" class="glightbox" data-type="image">
       <img :src="item.url" alt="image" class="w-100" />
     </a>
-    <video v-else-if="item.ext == 'mp4'" :src="item.url" id="player"></video>
+    <video v-else-if="item.ext == 'mp4'" :src="item.url" id="player" controls></video>
     <audio v-else-if="item.ext == 'mp3'" :src="item.url" controls preload class="d-flex ma-auto my-8"> </audio>
     <vue-office-docx v-else-if="item.ext == 'docx'" :src="item.url" style="height: calc(100vh - 300px)" />
     <vue-office-excel v-else-if="item.ext == 'xlsx'" :src="item.url" style="height: calc(100vh - 300px)" />
