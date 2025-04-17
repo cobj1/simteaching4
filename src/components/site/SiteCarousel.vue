@@ -49,7 +49,7 @@
             <v-text-field label="标题" required v-model="editedItem.title"></v-text-field>
           </v-col>
           <v-col cols="12" style="display: flex; justify-content: center;">
-            <v-hover v-if="editedItem.url" height="140px" v-slot="{ isHovering, props}">
+            <v-hover v-if="editedItem.url" height="140px" v-slot="{ isHovering, props }">
               <v-card v-bind="props" color="surface-light" height="140px" width="140px">
                 <v-img :src="useFileUri(editedItem.url)" height="140px" width="140px"></v-img>
                 <v-btn icon="mdi-close" class="opacity-0 position-absolute" :class="{ 'opacity-100': isHovering }"
@@ -57,9 +57,9 @@
                   @click="editedItem.url = ''; imageFile = null"></v-btn>
               </v-card>
             </v-hover>
-            <v-file-upload v-else :height="140" :width="140"  v-model="imageFile" density="comfortable" title="轮播图"
-                accept=".png,.jpg" @update:model-value="handleCoverFileUpdate">
-              </v-file-upload>
+            <v-file-upload v-else :height="140" :width="140" v-model="imageFile" density="comfortable" title="轮播图"
+              accept=".png,.jpg" @update:model-value="handleCoverFileUpdate">
+            </v-file-upload>
           </v-col>
         </v-row>
       </v-card-text>
@@ -88,11 +88,10 @@
 import { SiteCarousel, SiteApi } from '@/api/site';
 import { nextTick, onMounted, ref } from 'vue';
 import { useFileUri } from '@/utils/simulation-uri';
-import { FileApi } from '@/api/file';
 import { VFileUpload } from 'vuetify/labs/VFileUpload'
 import { useObjectUrl } from '@vueuse/core';
 
-const props = defineProps({
+defineProps({
   rids: { type: [String, Number, Array] },
   enableSelection: { type: Boolean, default: false }
 
@@ -100,7 +99,7 @@ const props = defineProps({
 const dialog = ref(false)
 const dialogEdit = ref(false)
 const dialogDelete = ref(false)
-const imageFile = ref(null)
+const imageFile = ref()
 const items = ref<SiteCarousel[]>([])
 const editedIndex = ref(-1)
 const editedItem = ref<SiteCarousel>({
@@ -115,16 +114,16 @@ const defaultItem = ref<SiteCarousel>({
 })
 const formTitle = ref('')
 
-const addItem = () => {  
-    editedIndex.value = -1;
-    editedItem.value = Object.assign({}, defaultItem.value)
-    formTitle.value = '新增类型'  
+const addItem = () => {
+  editedIndex.value = -1;
+  editedItem.value = Object.assign({}, defaultItem.value)
+  formTitle.value = '新增类型'
   dialogEdit.value = true;
 }
 const editItem = (item: SiteCarousel | null) => {
   if (item) {
     editedIndex.value = items.value.indexOf(item)
-    editedItem.value.url=useFileUri(item.url)
+    editedItem.value.url = useFileUri(item.url)
     editedItem.value = Object.assign({}, item)
     formTitle.value = '修改类型'
   } else {
@@ -168,8 +167,8 @@ const deleteItemConfirm = async () => {
   loadItems()
   closeDelete()
 }
-const handleCoverFileUpdate = (file) => {
-  editedItem.value.url = useObjectUrl(file).value
+const handleCoverFileUpdate = (file: any) => {
+  editedItem.value.url = useObjectUrl(file).value as string
 }
 const loadItems = async () => {
   items.value = await SiteApi.carouselList() as any

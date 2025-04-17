@@ -1,31 +1,32 @@
 import { FileApi } from "../../api/file";
-import type { FileLoader } from '@ckeditor/ckeditor5-upload';
-import type { Editor } from '@ckeditor/ckeditor5-core';
 
 export class MyUploadAdapter {
-  private loader : FileLoader;
+  private loader: any;
 
-  constructor(loader : FileLoader) {
+  constructor(loader: any) {
     this.loader = loader;
   }
 
-  async upload() : Promise<{ default : string }> {
+  async upload(): Promise<{ default: string }> {
     const file = await this.loader.file;
 
     try {
-      const res = await FileApi.upload(file, 'help-document/ckeditor/images');
+      const res = (await FileApi.upload(
+        file,
+        "help-document/ckeditor/images"
+      )) as any;
       return {
-        default: `${FileApi.filePath}/${res.url}`
+        default: `${FileApi.filePath}/${res.url}`,
       };
     } catch (error) {
-      console.error('Upload failed:', error);
-      throw new Error('文件上传失败');
+      console.error("Upload failed:", error);
+      throw new Error("文件上传失败");
     }
   }
 }
 
-export function MyCustomUploadAdapterPlugin(editor : Editor) : void {
-  editor.plugins.get('FileRepository').createUploadAdapter = (loader : FileLoader) => {
+export function MyCustomUploadAdapterPlugin(editor: any): void {
+  editor.plugins.get("FileRepository").createUploadAdapter = (loader: any) => {
     return new MyUploadAdapter(loader);
   };
 }
