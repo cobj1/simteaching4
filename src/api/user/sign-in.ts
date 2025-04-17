@@ -20,6 +20,8 @@ export const SignInApi = {
     sortKey: string;
     sortOrder: string;
     name: string;
+    org: string;
+    date: string;
   }) {
     params = PagingProcessor(params);
     return axios({

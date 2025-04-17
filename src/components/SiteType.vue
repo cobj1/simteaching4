@@ -7,7 +7,7 @@
       <v-card prepend-icon="mdi-format-list-bulleted-type">
         <template #title>
           <div class="d-flex align-center justify-space-between">
-            类型管理
+            门户-文章类型管理
             <v-btn prepend-icon="mdi-plus" variant="text" @click="editItem(null)">新增类型</v-btn>
           </div>
         </template>
@@ -15,7 +15,7 @@
         <v-card-text class="px-4" style="height: 400px;">
           <v-list>
             <v-list-item v-for="item in items" :key="item.id" :title="item.type"
-              :subtitle="`路径: ${item.path},首页显示数量: ${item.displays}`">
+              :subtitle="`类型别名: ${item.path},首页显示数量: ${item.displays}`">
               <template #append>
                 <v-btn prepend-icon="mdi-pencil" size="small" @click="editItem(item)">修改</v-btn>
                 <v-btn prepend-icon="mdi-delete" size="small" class="ml-2" @click="deleteItem(item)">删除</v-btn>
@@ -39,7 +39,7 @@
             <v-text-field label="类型名称" required v-model="editedItem.type"></v-text-field>
           </v-col>
           <v-col cols="12">
-            <v-text-field label="路径" required v-model="editedItem.path"></v-text-field>
+            <v-text-field label="类型别名(英文)" required v-model="editedItem.path"></v-text-field>
           </v-col>
           <v-col cols="12">
             <v-text-field label="首页显示数量" required v-model="editedItem.displays"></v-text-field>

@@ -32,6 +32,8 @@ declare module 'vue-router/auto-routes' {
     '/console/declare/check': RouteRecordInfo<'/console/declare/check', '/console/declare/check', Record<never, never>, Record<never, never>>,
     '/console/declare/manage': RouteRecordInfo<'/console/declare/manage', '/console/declare/manage', Record<never, never>, Record<never, never>>,
     '/console/home': RouteRecordInfo<'/console/home', '/console/home', Record<never, never>, Record<never, never>>,
+    '/console/homework/': RouteRecordInfo<'/console/homework/', '/console/homework', Record<never, never>, Record<never, never>>,
+    '/console/homework/examine': RouteRecordInfo<'/console/homework/examine', '/console/homework/examine', Record<never, never>, Record<never, never>>,
     '/console/notice': RouteRecordInfo<'/console/notice', '/console/notice', Record<never, never>, Record<never, never>>,
     '/console/org': RouteRecordInfo<'/console/org', '/console/org', Record<never, never>, Record<never, never>>,
     '/console/resource/courseware': RouteRecordInfo<'/console/resource/courseware', '/console/resource/courseware', Record<never, never>, Record<never, never>>,

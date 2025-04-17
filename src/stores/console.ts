@@ -8,26 +8,26 @@ export const useConsoleStore = defineStore("console", () => {
   const accountStore = useAccountStore();
   const roleStore = useRoleStore();
 
-  const userManage = ref<{ title: string; path: string }[]>([]);
+  const userManage = ref<{ title : string; path : string }[]>([]);
   const courseManage = ref<
     {
-      prependIcon?: string;
-      type?: string;
-      title: string;
-      link?: boolean;
-      path?: string;
-      show?: boolean;
+      prependIcon ?: string;
+      type ?: string;
+      title : string;
+      link ?: boolean;
+      path ?: string;
+      show ?: boolean;
     }[]
   >([]);
   const courseRegister = ref<
     {
-      prependIcon?: string;
-      type?: string;
-      avatar?: string;
-      subtitle?: string;
-      path?: string;
-      title: string;
-      show?: boolean;
+      prependIcon ?: string;
+      type ?: string;
+      avatar ?: string;
+      subtitle ?: string;
+      path ?: string;
+      title : string;
+      show ?: boolean;
     }[]
   >([]);
   const defaultManage = ref<any[]>([]);
@@ -62,6 +62,22 @@ export const useConsoleStore = defineStore("console", () => {
         link: true,
         path: "/console/course/check",
       },
+      /* {
+        show: accountStore.auth("homework"),
+        title: "作业管理",
+        prependIcon: "mdi-book-open-variant-outline",
+        link: true,
+        children: [
+          {
+            title: "作业列表",
+            path: "/console/homework/index",
+          },
+          {
+            title: "作业审批",
+            path: "/console/homework/examine",
+          },
+        ],
+      }, */
       {
         show: accountStore.auth("resource"),
         title: "资源库",
@@ -81,7 +97,7 @@ export const useConsoleStore = defineStore("console", () => {
             path: "/console/resource/questions",
           },
           {
-            title: "测试",
+            title: "试卷",
             path: "/console/resource/testpaper",
           },
           {
@@ -233,7 +249,7 @@ export const useConsoleStore = defineStore("console", () => {
       }
     );
     userManage.value.push(
-      ...roles.map((item: { name: any; id: string }) => {
+      ...roles.map((item : { name : any; id : string }) => {
         return {
           title: item.name,
           path: "/console/user/" + item.id,
@@ -253,7 +269,7 @@ export const useConsoleStore = defineStore("console", () => {
           title: "教授的课程",
         });
         courseManage.value.push(
-          ...courses.map((item: { name: string; explain: any; id: any }) => {
+          ...courses.map((item : { name : string; explain : any; id : any }) => {
             return {
               avatar: item.name.charAt(0),
               title: item.name,
@@ -274,7 +290,7 @@ export const useConsoleStore = defineStore("console", () => {
       });
       courseRegister.value.push(
         ...registerCourses.map(
-          (item: { name: string; explain: any; id: any }) => {
+          (item : { name : string; explain : any; id : any }) => {
             return {
               avatar: item.name.charAt(0),
               title: item.name,

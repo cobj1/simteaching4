@@ -14,7 +14,7 @@
         <v-list-item title="题目" :prepend-icon="useIconsAdapter('questions')" link>
           <SelectionQuestions @confirm="handleSelectionQuestionsConfirm"></SelectionQuestions>
         </v-list-item>
-        <v-list-item title="测试" :prepend-icon="useIconsAdapter('testpaper')" link>
+        <v-list-item title="试卷" :prepend-icon="useIconsAdapter('testpaper')" link>
           <SelectionTestpaper @confirm="handleSelectionTestpaperConfirm"></SelectionTestpaper>
         </v-list-item>
         <v-list-item title="报告" :prepend-icon="useIconsAdapter('report_template')" link>

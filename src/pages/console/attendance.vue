@@ -132,6 +132,8 @@ const closeLog = () => {
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
+  console.log(sortBy[0])
+  console.log(sortBy[0].key)
   const res = await AttendanceApi.page({
     current: page,
     size: itemsPerPage,

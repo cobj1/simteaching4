@@ -171,9 +171,12 @@
           </div>
           <v-card max-width="500px" width="100%" class="elevation-0 border-s-lg flex-shrink-0 d-flex flex-column">
             <v-card-title> 实验报告 </v-card-title>
-
             <v-divider class="mb-2" />
-
+            <div class="d-flex justify-end px-4">
+              <v-file-input v-model="uploadFile" accept=".doc,.docx,.pdf" label="上传文件Word/Pdf"
+                @change="handleUploadFile">
+              </v-file-input>
+            </div>
             <v-card-text>
               <v-sheet height="100%" class="lab-report">
                 <ckeditor v-model="item.report" :editor="editor" :config="editorConfig" />
@@ -211,196 +214,263 @@
 </template>
 
 <script setup>
-import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo } from 'ckeditor5';
-import { useDateFormat, useFullscreen } from '@vueuse/core';
-import GLightbox from 'glightbox';
-import { onMounted, onUnmounted, reactive, ref } from 'vue'
-import { DeclareApi } from '@/api/declare';
-import { useRoute } from 'vue-router';
-import { CommentApi } from '@/api/comment';
-import { FileApi } from '@/api/file';
-import { useAccountStore } from '@/stores/account';
-import { notify } from '@kyvg/vue3-notification';
+  import {
+    ClassicEditor,
+    Bold,
+    Essentials,
+    Italic,
+    Mention,
+    Paragraph,
+    Undo
+  } from 'ckeditor5';
+  import {
+    useDateFormat,
+    useFullscreen
+  } from '@vueuse/core';
+  import GLightbox from 'glightbox';
+  import {
+    onMounted,
+    onUnmounted,
+    reactive,
+    ref
+  } from 'vue'
+  import {
+    DeclareApi
+  } from '@/api/declare';
+  import {
+    useRoute
+  } from 'vue-router';
+  import {
+    CommentApi
+  } from '@/api/comment';
+  import {
+    FileApi
+  } from '@/api/file';
+  import {
+    useAccountStore
+  } from '@/stores/account';
+  import {
+    notify
+  } from '@kyvg/vue3-notification';
 
-const accountStore = useAccountStore()
-const route = useRoute()
-const editor = ref(ClassicEditor)
-const editorConfig = reactive({
-  plugins: [Bold, Essentials, Italic, Mention, Paragraph, Undo],
-  toolbar: ['undo', 'redo', '|', 'bold', 'italic'],
-  heigth: '500px'
-})
-const simulationRef = ref(null)
-const dialog = ref(false)
-const dialogResult = ref(false)
-const fullscreen = ref(false)
-const overlay = ref(false)
-const { enter } = useFullscreen(simulationRef)
-
-const item = ref({
-  checkStatus: 0,
-  name: '薄荷油微囊的制备',
-  cover: null,
-  uri: null,
-  author: null,
-  org: null,
-  intro: null,
-  details: null,
-  // details
-  deviceCondition: null,
-  guideVideo: null,
-  introVideo: null,
-  principle: null,
-  steps: null,
-  target: null,
-  team: null,
-  // simulation
-  report: null,
-  result: {}
-})
-
-const tab = ref(null)
-const features = ref([])
-const icons = [
-  'mdi-facebook',
-  'mdi-twitter',
-  'mdi-linkedin',
-  'mdi-instagram',
-]
-const reviews = ref([])
-const team = ref([])
-const deviceCondition = ref()
-const target = ref()
-const principle = ref()
-const steps = ref()
-const rate = ref(5)
-const message = ref('')
-
-const playSimulation = () => {
-  dialog.value = true
-}
-
-const playVideo = () => {
-  const myGallery = GLightbox({
-    plyr: { css: '/glightbox/plyr.css', js: '/glightbox/plyr.js', },
-    elements: [{ 'href': FileApi.filePath + item.value.introVideo, 'type': 'video', }],
-  });
-  myGallery.open();
-}
-
-const handleTabUpdate = async (value) => {
-  if (value == 'team' && team.value.length == 0 && item.value[value]) {
-    try {
-      const res = await FileApi.downloadTxt(item.value[value])
-      team.value = JSON.parse(res)
-    } catch (e) { /* empty */ }
-  }
-  if (value == 'deviceCondition' && !deviceCondition.value && item.value[value]) {
-    try {
-      const res = await FileApi.downloadTxt(item.value[value])
-      deviceCondition.value = res
-    } catch (e) { /* empty */ }
-  }
-  if (value == 'target' && !target.value && item.value[value]) {
-    try {
-      const res = await FileApi.downloadTxt(item.value[value])
-      target.value = res
-    } catch (e) { /* empty */ }
-  }
-  if (value == 'principle' && !principle.value && item.value[value]) {
-    try {
-      const res = await FileApi.downloadTxt(item.value[value])
-      principle.value = res
-    } catch (e) { /* empty */ }
-  }
-  if (value == 'steps' && !steps.value && item.value[value]) {
-    try {
-      const res = await FileApi.downloadTxt(item.value[value])
-      steps.value = res
-    } catch (e) { /* empty */ }
-  }
-}
-
-const handleSimulationMessage = (event) => {
-  if (event && event.data && 'object' == typeof event.data) {
-    item.value.result = event.data
-    dialogResult.value = true
-    overlay.value = true
-  }
-}
-
-const onSendMessage = async () => {
-  const res = await CommentApi.save({
-    cid: route.params.id, comment: message.value, rate: rate.value
+  const accountStore = useAccountStore()
+  const route = useRoute()
+  const editor = ref(ClassicEditor)
+  const editorConfig = reactive({
+    plugins: [Bold, Essentials, Italic, Mention, Paragraph, Undo],
+    toolbar: ['undo', 'redo', '|', 'bold', 'italic'],
+    heigth: '500px'
   })
-  if (res) {
-    loadItem()
-    notify({
-      title: "评论发表成功",
-      type: "info",
-    });
-    message.value = ''
-    rate.value = 5
-  } else {
-    notify({
-      title: "评论发表失败",
-      type: "info",
-    });
-  }
-}
+  const uploadFile = ref(null)
+  const simulationRef = ref(null)
+  const dialog = ref(false)
+  const dialogResult = ref(false)
+  const fullscreen = ref(false)
+  const overlay = ref(false)
+  const {
+    enter
+  } = useFullscreen(simulationRef)
 
-const loadItem = async () => {
-  const declare = await DeclareApi.info(route.params.id)
-  item.value.checkStatus = declare.checkStatus
-  item.value.cover = FileApi.filePath + declare.cover
-  item.value.name = declare.name
-  item.value.uri = declare.uri
-  item.value.author = declare.author
-  item.value.org = declare.org
-  item.value.intro = declare.intro
-  item.value.details = declare.details
-  features.value = [
-    { label: '专业类型', value: declare.category },
-    { label: '实验类型', value: declare.type }
+  const item = ref({
+    checkStatus: 0,
+    name: '薄荷油微囊的制备',
+    cover: null,
+    uri: null,
+    author: null,
+    org: null,
+    intro: null,
+    details: null,
+    // details
+    deviceCondition: null,
+    guideVideo: null,
+    introVideo: null,
+    principle: null,
+    steps: null,
+    target: null,
+    team: null,
+    // simulation
+    report: null,
+    result: {}
+  })
+
+  const tab = ref(null)
+  const features = ref([])
+  const icons = [
+    'mdi-facebook',
+    'mdi-twitter',
+    'mdi-linkedin',
+    'mdi-instagram',
   ]
-  reviews.value = []
-  const comments = await CommentApi.list(route.params.id)
-  comments.forEach(comment => {
-    reviews.value.push({
-      comment: comment.comment,
-      rate: comment.rate,
-      date: useDateFormat(new Date(comment.date), 'YYYY年MM月DD日').value,
-      user: {
-        avatar: comment.ucover,
-        name: comment.uname,
+  const reviews = ref([])
+  const team = ref([])
+  const deviceCondition = ref()
+  const target = ref()
+  const principle = ref()
+  const steps = ref()
+  const rate = ref(5)
+  const message = ref('')
+
+  const playSimulation = () => {
+    dialog.value = true
+  }
+
+  const handleUploadFile = (file) => {
+    // 处理Word文件上传逻辑
+    console.log('Selected Word file:', file)
+  }
+
+  const playVideo = () => {
+    const myGallery = GLightbox({
+      plyr: {
+        css: '/glightbox/plyr.css',
+        js: '/glightbox/plyr.js',
       },
+      elements: [{
+        'href': FileApi.filePath + item.value.introVideo,
+        'type': 'video',
+      }],
+    });
+    myGallery.open();
+  }
+
+  const handleTabUpdate = async (value) => {
+    if (value == 'team' && team.value.length == 0 && item.value[value]) {
+      try {
+        const res = await FileApi.downloadTxt(item.value[value])
+        team.value = JSON.parse(res)
+      } catch (e) {
+        /* empty */
+      }
+    }
+    if (value == 'deviceCondition' && !deviceCondition.value && item.value[value]) {
+      try {
+        const res = await FileApi.downloadTxt(item.value[value])
+        deviceCondition.value = res
+      } catch (e) {
+        /* empty */
+      }
+    }
+    if (value == 'target' && !target.value && item.value[value]) {
+      try {
+        const res = await FileApi.downloadTxt(item.value[value])
+        target.value = res
+      } catch (e) {
+        /* empty */
+      }
+    }
+    if (value == 'principle' && !principle.value && item.value[value]) {
+      try {
+        const res = await FileApi.downloadTxt(item.value[value])
+        principle.value = res
+      } catch (e) {
+        /* empty */
+      }
+    }
+    if (value == 'steps' && !steps.value && item.value[value]) {
+      try {
+        const res = await FileApi.downloadTxt(item.value[value])
+        steps.value = res
+      } catch (e) {
+        /* empty */
+      }
+    }
+  }
+
+  const handleSimulationMessage = (event) => {
+    if (event && event.data && 'object' == typeof event.data) {
+      item.value.result = event.data
+      dialogResult.value = true
+      overlay.value = true
+    }
+  }
+
+  const onSendMessage = async () => {
+    const res = await CommentApi.save({
+      cid: route.params.id,
+      comment: message.value,
+      rate: rate.value
     })
+    if (res) {
+      loadItem()
+      notify({
+        title: "评论发表成功",
+        type: "info",
+      });
+      message.value = ''
+      rate.value = 5
+    } else {
+      notify({
+        title: "评论发表失败",
+        type: "info",
+      });
+    }
+  }
+
+  const loadItem = async () => {
+    const declare = await DeclareApi.info(route.params.id)
+    item.value.checkStatus = declare.checkStatus
+    item.value.cover = FileApi.filePath + declare.cover
+    item.value.name = declare.name
+    item.value.uri = declare.uri
+    item.value.author = declare.author
+    item.value.org = declare.org
+    item.value.intro = declare.intro
+    item.value.details = declare.details
+    features.value = [{
+        label: '专业类型',
+        value: declare.category
+      },
+      {
+        label: '实验类型',
+        value: declare.type
+      }
+    ]
+    reviews.value = []
+    const comments = await CommentApi.list(route.params.id)
+    comments.forEach(comment => {
+      reviews.value.push({
+        comment: comment.comment,
+        rate: comment.rate,
+        date: useDateFormat(new Date(comment.date), 'YYYY年MM月DD日').value,
+        user: {
+          avatar: comment.ucover,
+          name: comment.uname,
+        },
+      })
+    })
+
+    const details = await DeclareApi.detailsInfo(route.params.id)
+    item.value.deviceCondition = details.deviceCondition
+    item.value.guideVideo = details.guideVideo
+    item.value.introVideo = details.introVideo
+    item.value.principle = details.principle
+    item.value.steps = details.steps
+    item.value.target = details.target
+    item.value.team = details.team
+  }
+
+  onMounted(() => {
+    loadItem()
+
+    window.addEventListener('message', handleSimulationMessage)
   })
 
-  const details = await DeclareApi.detailsInfo(route.params.id)
-  item.value.deviceCondition = details.deviceCondition
-  item.value.guideVideo = details.guideVideo
-  item.value.introVideo = details.introVideo
-  item.value.principle = details.principle
-  item.value.steps = details.steps
-  item.value.target = details.target
-  item.value.team = details.team
-}
-
-onMounted(() => {
-  loadItem()
-
-  window.addEventListener('message', handleSimulationMessage)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('message', handleSimulationMessage)
-})
+  onUnmounted(() => {
+    window.removeEventListener('message', handleSimulationMessage)
+  })
 </script>
 
 <style lang="scss" scoped>
-.lab-report:deep(.ck-editor__editable_inline) {
-  height: calc(100vh - 260px);
-  overflow-y: auto;
-}
+  .lab-report:deep(.ck-editor__editable_inline) {
+    height: calc(100vh - 314px);
+    overflow-y: auto;
+  }
+
+  .v-file-input:deep(.v-input__details) {
+    min-height: 0px !important;
+  }
+
+  .v-file-input:deep(.v-messages) {
+    min-height: 0px !important;
+  }
 </style>

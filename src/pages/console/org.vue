@@ -39,11 +39,11 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="dialogUpdateName" max-width="500">
-      <v-card prepend-icon="mdi-pencil" title="修改项目名称">
+      <v-card prepend-icon="mdi-pencil" title="修改组织名称">
         <v-card-text>
           <v-row dense>
             <v-col cols="12">
-              <v-text-field v-model="editedItem.name" label="项目名称" required></v-text-field>
+              <v-text-field v-model="editedItem.name" label="组织名称" required></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -56,11 +56,11 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="dialogNew" max-width="500">
-      <v-card prepend-icon="mdi-pencil" title="新增项目">
+      <v-card prepend-icon="mdi-pencil" title="新增组织">
         <v-card-text>
           <v-row dense>
             <v-col cols="12">
-              <v-text-field v-model="editedItem.name" label="项目名称" required></v-text-field>
+              <v-text-field v-model="editedItem.name" label="组织名称" required></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>

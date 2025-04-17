@@ -2,7 +2,7 @@
   <VCard>
     <VToolbar title="通知公告">
       <v-btn color="primary" dark @click="addItem()">
-        新增项目
+        新增公告
       </v-btn>
     </VToolbar>
     <v-data-table-server v-model:options="options" :headers="headers" :items="serverItems" :items-length="totalItems"
@@ -103,7 +103,7 @@ const defaultItem = ref({
   cover: '',
   content: '',
 })
-const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
+const formTitle = computed(() => editedIndex.value === -1 ? '新增公告' : '编辑公告')
 
 const addItem = () => {
   editedItem.value = Object.assign({}, defaultItem.value)

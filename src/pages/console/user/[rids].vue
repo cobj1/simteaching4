@@ -30,6 +30,9 @@
         </div>
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template v-slot:item.avatar="{ item }">
+        <img :src="useFileUri(item.avatar)" alt="头像" style="width: 40px; height: 40px; border-radius: 50%;">
+      </template>
       <template v-slot:item.actions="{ item }" v-if="!enableSelection">
         <VBtn icon="mdi-rename" variant="text" density="comfortable" size="small" @click="editItem(item)"></VBtn>
         <VBtn icon="mdi-lock-reset" variant="text" density="comfortable" size="small" @click="repwdItem(item)"></VBtn>
@@ -48,12 +51,12 @@
                 <v-text-field v-model="editedItem.avatar" label="头像(url)"></v-text-field>
               </v-col> -->
               <v-col cols="12" style="display: flex; justify-content: center;">
-                <v-hover v-if="editedItem.cover" height="60px" v-slot="{ isHovering, props }">
+                <v-hover v-if="editedItem.avatar" height="60px" v-slot="{ isHovering, props }">
                   <v-card v-bind="props" color="surface-light" height="140px">
-                    <v-img :src="useFileUri(editedItem.cover)" height="140px" width="140px"></v-img>
+                    <v-img :src="useFileUri(editedItem.avatar)" height="140px" width="140px"></v-img>
                     <v-btn icon="mdi-close" class="opacity-0 position-absolute" :class="{ 'opacity-100': isHovering }"
                       style="left: 50%; top: 50%; transform: translate(-50%,-50%);"
-                      @click="editedItem.cover = null; coverFile = null"></v-btn>
+                      @click="editedItem.avatar = null; coverFile = null"></v-btn>
                   </v-card>
                 </v-hover>
                 <v-file-upload v-else :height="140" :width="140"  v-model="coverFile" density="comfortable" title="头像"
@@ -105,7 +108,7 @@
     </v-dialog>
     <v-dialog v-model="dialogDelete" max-width="500px">
       <v-card>
-        <v-card-title class="text-h5">您确定要删除此项目吗？</v-card-title>
+        <v-card-title class="text-h5">您确定要删除此用户吗？</v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn variant="text" @click="closeDelete">取消</v-btn>
@@ -158,6 +161,12 @@ const props = defineProps({
 const search = reactive({ name: '', role: null, org: null, orgItem: null })
 const options = ref({ page: 1, itemsPerPage: 5 })
 const headers = ref([
+{
+    title: '头像',
+    key: 'avatar',
+    sortable: false,
+    align: 'center',
+  },
   {
     title: '姓名',
     align: 'start',
@@ -208,7 +217,7 @@ const defaultItem = ref({
   role: null,
   orgItem: null
 })
-const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
+const formTitle = computed(() => editedIndex.value === -1 ? '新增用户' : '编辑用户')
 
 const orgItemNames = computed(() => {
   if (editedItem.value.orgItem) {
@@ -245,7 +254,7 @@ const handleSearchSelectionOrgConfirm = async (value) => {
   search.orgItem = await OrgApi.selectOneAndParentById(search.org)
 }
 
-const addItem = () => {
+const addItem = () => {  
   coverFile.value = null
   editedItem.value = Object.assign({}, defaultItem.value)
   editedIndex.value = -1;
@@ -253,10 +262,18 @@ const addItem = () => {
 }
 
 const editItem = async (item) => {
+  
   coverFile.value = null
-  editedIndex.value = serverItems.value.indexOf(item)
-  editedItem.value = Object.assign({}, item)
-  editedItem.value.orgItem = await OrgApi.selectOneAndParentById(item.org)
+  if (item) 
+  {    
+    editedIndex.value = serverItems.value.indexOf(item)
+    editedItem.value = Object.assign({}, item)
+    editedItem.value.orgItem = await OrgApi.selectOneAndParentById(item.org)
+  }else
+  {
+    editedItem.value = Object.assign({}, defaultItem.value)
+    coverFile.value = null
+  }
   dialog.value = true
 }
 
@@ -314,8 +331,12 @@ const save = async () => {
   editedItem.value.role = search.role
   editedItem.value.orgItem = null
   if (coverFile.value) {
-    const coverConfig = await FileApi.upload(coverFile.value, 'simteaching/user/cover', true)
-    editedItem.value.cover = FileApi.filePath + coverConfig.url
+    console.log("coverFile.value :" + coverFile.value)
+    // editedItem.value.avatar = coverFile.value
+    // console.log("editedItem.value.avatar.value :" + editedItem.value.avatar)
+    const coverConfig = await FileApi.upload(coverFile.value, 'simteaching/user/avatar', true)
+    console.log("coverConfig :" + coverConfig.url)
+    editedItem.value.avatar = coverConfig.url
   }
   await UserApi.save(editedItem.value)
   loadItems(options.value)
@@ -346,7 +367,7 @@ const loadRoles = async () => {
     search.role = roleItems.value[0].id
 }
 const handleCoverFileUpdate = (file) => {
-  editedItem.value.cover = useObjectUrl(file).value
+  editedItem.value.avatar = useObjectUrl(file).value
 }
 onMounted(() => {
   loadRoles()

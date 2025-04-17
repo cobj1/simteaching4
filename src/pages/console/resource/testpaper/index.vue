@@ -1,11 +1,11 @@
 <template>
   <VCard :elevation="enableSelection ? 0 : 1">
-    <VToolbar title="测试管理" v-if="!enableSelection">
+    <VToolbar title="试卷管理" v-if="!enableSelection">
       <ResourceCategory>
         <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
       </ResourceCategory>
       <v-btn color="primary" dark @click="editItem()">
-        新增项目
+        新增试卷
       </v-btn>
     </VToolbar>
     <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
@@ -28,7 +28,7 @@
       <template v-slot:item.actions="{ item }" v-if="!enableSelection">
         <VBtn prepend-icon="mdi-head-question" variant="text" density="comfortable" size="small"
           :to="`/console/resource/testpaper/${item.id}`">试题</VBtn>
-        <VBtn prepend-icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)">修改
+        <VBtn prepend-icon="mdi-pencil" variant="text" density="comfortable" size="small" @click="editItem(item)">编辑
         </VBtn>
         <VBtn prepend-icon="mdi-delete" variant="text" density="comfortable" size="small" @click="deleteItem(item)">删除
         </VBtn>
@@ -46,8 +46,9 @@
               <v-col cols="12" md="6">
                 <v-text-field v-model="editedItem.name" label="标题" :disabled="loadingEdit"></v-text-field>
               </v-col>
+              
               <v-col cols="12" md="6">
-                <v-number-input v-model="editedItem.score" control-variant="stacked" :min="0"
+                <v-number-input v-model="editedItem.score" label="总分" control-variant="stacked" :min="0"
                   :max="200"></v-number-input>
               </v-col>
               <v-col cols="12" md="6">
@@ -78,7 +79,7 @@
     </v-dialog>
     <v-dialog v-model="dialogDelete" max-width="500px">
       <v-card>
-        <v-card-title class="text-h5">您确定要删除此项目吗？</v-card-title>
+        <v-card-title class="text-h5">您确定要删除此试题吗？</v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue-darken-1" variant="text" @click="closeDelete">取消</v-btn>
@@ -191,7 +192,7 @@
     score: 100,
     time: 60,
   })
-  const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
+  const formTitle = computed(() => editedIndex.value === -1 ? '新增试卷' : '编辑试卷')
 
   const editItem = async (item) => {
     if (item) {

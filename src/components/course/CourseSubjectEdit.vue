@@ -50,7 +50,7 @@ const defaultItem = ref({
   order: 0
 })
 
-const formTitle = computed(() => editedItem.value.id == null ? '新增项目' : '编辑项目')
+const formTitle = computed(() => editedItem.value.id == null ? '新增主题' : '编辑主题')
 
 const editItem = async (cid, order, item) => {
   if (item) {

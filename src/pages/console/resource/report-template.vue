@@ -2,7 +2,7 @@
   <VCard :elevation="enableSelection ? 0 : 1">
     <VToolbar title="报告模板管理" v-if="!enableSelection">
       <v-btn color="primary" dark @click="editItem()">
-        新增项目
+        新增模板
       </v-btn>
     </VToolbar>
     <v-data-iterator :items="items" :items-per-page="12" :search="search.name">
@@ -173,7 +173,7 @@
     content: '',
     cover: ''
   })
-  const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '查看项目')
+  const formTitle = computed(() => editedIndex.value === -1 ? '新增模板' : '查看模板')
 
   const editItem = async (item) => {
     if (item) {

@@ -5,7 +5,7 @@
         <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
       </ResourceCategory>
       <v-btn color="primary" dark @click="editItem()">
-        新增项目
+        新增类型
       </v-btn>
     </VToolbar>
     <v-data-table-server v-model:options="options" v-model="selected" item-value="id" :show-select="enableSelection"
@@ -69,7 +69,7 @@
     </v-dialog>
     <v-dialog v-model="dialogDelete" max-width="500px">
       <v-card>
-        <v-card-title class="text-h5">您确定要删除此项目吗？</v-card-title>
+        <v-card-title class="text-h5">您确定要删除此类型吗？</v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue-darken-1" variant="text" @click="closeDelete">取消</v-btn>
@@ -179,7 +179,7 @@
   })
   const completed = computed(() => editedItem.value.id != null)
   const SupportExts = ['jpg', 'png', 'xml', 'txt', 'mp4', 'mp3', 'docx', 'xlsx', 'pdf']
-  const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
+  const formTitle = computed(() => editedIndex.value === -1 ? '新增类型' : '编辑类型')
 
   const editItem = async (item) => {
     if (item) {

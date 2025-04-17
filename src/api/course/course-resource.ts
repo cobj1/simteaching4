@@ -101,5 +101,29 @@ export const CourseResourceApi = {
       url: "/courseResource/log/data/" + crlid,
       method: "get",
     });
+  }, 
+  getCourseAvgRate(cid: string) {
+    return axios({
+      url: "/courseResource/getCourseAvgRate/" + cid,
+      method: "get",
+    });
+  },
+  passRate(cid: string) {
+    return axios({
+      url: "/courseResource/passRate/" + cid,
+      method: "get",
+    });
+  },
+  usageRate(cid: string) {
+    return axios({
+      url: "/courseResource/usageRate/" + cid,
+      method: "get",
+    });
+  },
+countByCourseId(cid: string) {
+    return axios({
+      url: "/courseResource/countByCourseId/" + cid,
+      method: "get",
+    });
   },
 };

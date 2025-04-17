@@ -57,8 +57,6 @@
                 <v-select v-model="editedItem.typeId" label="类型" :items="types" item-title="type"
                   item-value="id"></v-select>
               </v-col>
-
-              
               <!-- <v-col cols="12">
                 <v-text-field v-model="editedItem.cover" label="封面(url)"></v-text-field>
               </v-col> -->
@@ -83,7 +81,7 @@
     </v-dialog>
     <v-dialog v-model="dialogDelete" max-width="500px">
       <v-card>
-        <v-card-title class="text-h5">您确定要删除此项目吗？</v-card-title>
+        <v-card-title class="text-h5">您确定要删除此文章吗？</v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue-darken-1" variant="text" @click="closeDelete">取消</v-btn>
@@ -160,7 +158,7 @@ const defaultItem = ref({
   content: '',
   contentOld: ''
 })
-const formTitle = computed(() => editedIndex.value === -1 ? '新增项目' : '编辑项目')
+const formTitle = computed(() => editedIndex.value === -1 ? '新增文章' : '编辑文章')
 
 const addItem = () => {
   editedItem.value = Object.assign({}, defaultItem.value)

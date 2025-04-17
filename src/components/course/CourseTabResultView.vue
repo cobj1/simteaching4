@@ -139,6 +139,29 @@ const open = async (value) => {
       reportTemplate.value.content = res
     } catch (e) { /* empty */ }
   }
+  ///裴超琦添加的接口测试，需要显示在前端
+  const res0 = await CourseResourceApi.getCourseAvgRate("3ee5d42d36cedffbe71b11229033eccd")
+  console.log("课程资源评价:"+res0)
+  ///裴超琦添加的接口测试，需要显示在前端
+  const res = await CourseResourceApi.countByCourseId("3ee5d42d36cedffbe71b11229033eccd")
+  console.log("资源数量:"+res)
+  const res2= await CourseResourceApi.usageRate("3ee5d42d36cedffbe71b11229033eccd")
+  console.log("课程使用率:"+res2)
+  const res3= await CourseResourceApi.passRate("3ee5d42d36cedffbe71b11229033eccd")
+  console.log("达标率率:"+res3)
+  // 将达标率转换为百分比形式
+  const passRatePercentage = res3 * 100
+  
+  // 根据达标率判断难度等级
+  let difficultyLevel = ''
+  if (passRatePercentage > 90) {
+    difficultyLevel = '简单'
+  } else if (passRatePercentage >= 60 && passRatePercentage <= 90) {
+    difficultyLevel = '普通'
+  } else {
+    difficultyLevel = '困难'
+  }
+  console.log("难易程度 :"+difficultyLevel)
   dialog.value = true
 }
 

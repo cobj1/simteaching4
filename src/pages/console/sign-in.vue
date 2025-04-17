@@ -119,6 +119,7 @@ const openLog = async (item) => {
       subtitle: item.success == 1 ? '登录成功' : '登录失败'
     }
   })
+  console.log(logs.value)
   drawerLog.value = true
 }
 const closeLog = () => {
@@ -131,6 +132,7 @@ const closeLog = () => {
 
 const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   loading.value = true
+  console.log(sortBy[0])
   const res = await SignInApi.logs({
     current: page,
     size: itemsPerPage,
@@ -142,6 +144,7 @@ const loadItems = async ({ page, itemsPerPage, sortBy }) => {
   })
   serverItems.value = res.records
   totalItems.value = res.total
+  console.log(res)
   loading.value = false
 }
 </script>
