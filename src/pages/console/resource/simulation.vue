@@ -21,7 +21,7 @@
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.cover="{ item }">
         <div class="pa-2">
-          <v-img :src="item.cover" :width="80" :height="45" cover>
+          <v-img :src="useFileUri(item.cover)" :width="80" :height="45" cover>
             <template v-slot:placeholder>
               <v-img src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"></v-img>
             </template>
@@ -259,6 +259,10 @@ const save = async () => {
         FileApi.delete(`simulation-zip/${fileId}.zip`)
         FileApi.delete(`${indexDirectory}/`)
       }
+    }
+    if (coverFile.value) {
+      const coverConfig = await FileApi.upload(coverFile.value, 'simulation-cove', true)
+      editedItem.value.cover = coverConfig.url
     }
     await ResourceSimulationApi.save(editedItem.value)
     close()

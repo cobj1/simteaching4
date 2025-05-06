@@ -34,14 +34,17 @@ export const useConsoleStore = defineStore("console", () => {
 
   const items = computed(() => {
     return [
-      ...defaultManage.value,
       ...courseManage.value,
       ...courseRegister.value,
+      ...defaultManage.value,
     ].filter((item) => item.show || item.show == null);
   });
 
   const loadDefaultManage = async () => {
     defaultManage.value = [
+      {
+        type: "divider",
+      },
       {
         title: "后台首页",
         prependIcon: "mdi-home-outline",
@@ -50,19 +53,117 @@ export const useConsoleStore = defineStore("console", () => {
       },
       {
         show: accountStore.auth("course"),
-        title: "课程管理",
+        title: "课程教学管理",
         prependIcon: "mdi-school-outline",
         link: true,
-        path: "/console/course/manage",
+        children: [
+          {
+            title: "实验报告撰写",
+            path: "/console/resource/report-template",
+          },
+          {
+            title: "教学智能测评",
+            path: "/console/stats/VirtualLabStats",
+          },
+        ],
       },
       {
-        show: accountStore.auth("course-check"),
-        title: "课程审核",
-        prependIcon: "mdi-check-network-outline",
+        show: accountStore.auth("resource"),
+        title: "资源库管理",
+        prependIcon: "mdi-library-outline",
         link: true,
-        path: "/console/course/check",
+        children: [
+          {
+            title: "课件资源库",
+            path: "/console/resource/courseware",
+          },
+          {
+            title: "仿真资源库",
+            path: "/console/resource/simulation",
+          },
+          {
+            title: "试题资源库",
+            path: "/console/resource/testpaper",
+          },
+          {
+            title: "实验库",
+            path: "/console/resource/questions",
+          },
+          {
+            show: accountStore.auth("course"),
+            title: "课程库",
+            path: "/console/course/manage",
+          },
+          {
+            show: accountStore.auth("course-check"),
+            title: "课程审核",
+           /* prependIcon: "mdi-check-network-outline",
+            link: true, */
+            path: "/console/course/check",
+          },
+        ],
       },
-      /* {
+      {
+        show: accountStore.auth("share"),
+        title: "共享系统",
+        prependIcon: "mdi-share-variant-outline",
+        link: true,
+        path: "/console/resource/share",
+      },
+      {
+        show: accountStore.auth("statistics"),
+        title: "教学大数据统计",
+        prependIcon: "mdi-chart-box-outline",
+        link: true,
+        children: [
+          {
+            title: "教学过程数据统计",
+            path: "/console/stats/course-browse",
+          },
+          {
+            title: "教学结果数据统计",
+            path: "/console/stats/statistics",
+          },
+          {
+            title: "教务数据统计",
+            path: "/console/stats/visit-statistics",
+          },
+        ],
+      },
+      {
+        show: accountStore.auth("declare"),
+        title: "平台功能服务拓展",
+        prependIcon: "mdi-book-cog-outline",
+        link: true,
+        children: [
+          {
+            show: accountStore.auth("site"),
+            title: "门户展示平台",
+            path: "/console/site",
+          },
+          {
+            title: "申报服务平台",
+            path: "/console/declare/manage",
+          },
+          {
+            title: "申报服务审核",
+            path: "/console/declare/check",
+          },
+          {
+            show: accountStore.auth("statistics"),
+            title: "数据统计与质量监督平台",
+            path: "/console/stats/role-statistics",
+          },
+        ],
+      },
+      {
+        show: accountStore.auth("user"),
+        title: "教务功能管理平台",
+        prependIcon: "mdi-account-cog-outline",
+        link: true,
+        children: userManage,
+      },
+      {
         show: accountStore.auth("homework"),
         title: "作业管理",
         prependIcon: "mdi-book-open-variant-outline",
@@ -70,48 +171,13 @@ export const useConsoleStore = defineStore("console", () => {
         children: [
           {
             title: "作业列表",
-            path: "/console/homework/index",
+            path: "/console/homework/manage",
           },
           {
             title: "作业审批",
             path: "/console/homework/examine",
           },
         ],
-      }, */
-      {
-        show: accountStore.auth("resource"),
-        title: "资源库",
-        prependIcon: "mdi-library-outline",
-        link: true,
-        children: [
-          {
-            title: "资料",
-            path: "/console/resource/courseware",
-          },
-          {
-            title: "仿真",
-            path: "/console/resource/simulation",
-          },
-          {
-            title: "题库",
-            path: "/console/resource/questions",
-          },
-          {
-            title: "试卷",
-            path: "/console/resource/testpaper",
-          },
-          {
-            title: "报告模板",
-            path: "/console/resource/report-template",
-          },
-        ],
-      },
-      {
-        show: accountStore.auth("share"),
-        title: "共享资源",
-        prependIcon: "mdi-share-variant-outline",
-        link: true,
-        path: "/console/resource/share",
       },
       {
         show: accountStore.auth("attendance"),
@@ -135,25 +201,11 @@ export const useConsoleStore = defineStore("console", () => {
         path: "/console/notice",
       },
       {
-        show: accountStore.auth("site"),
-        title: "门户管理",
-        prependIcon: "mdi-web",
-        link: true,
-        path: "/console/site",
-      },
-      {
         show: accountStore.auth("org"),
         title: "组织管理",
         prependIcon: "mdi-bank",
         link: true,
         path: "/console/org",
-      },
-      {
-        show: accountStore.auth("user"),
-        title: "用户管理",
-        prependIcon: "mdi-account-cog-outline",
-        link: true,
-        children: userManage,
       },
       {
         show: accountStore.auth("apply"),
@@ -172,38 +224,6 @@ export const useConsoleStore = defineStore("console", () => {
         ],
       },
       {
-        show: accountStore.auth("statistics"),
-        title: "统计中心",
-        prependIcon: "mdi-chart-box-outline",
-        link: true,
-        children: [
-          {
-            title: "课程学习统计",
-            path: "/console/stats/course-browse",
-          },
-          {
-            title: "资源学习统计",
-            path: "/console/stats/course-resource-browse",
-          },
-          {
-            title: "用户学习统计",
-            path: "/console/stats/user-browse",
-          },
-          {
-            title: "平台信息统计",
-            path: "/console/stats/statistics",
-          },
-          {
-            title: "角色信息统计",
-            path: "/console/stats/role-statistics",
-          },
-          {
-            title: "平台访问统计",
-            path: "/console/stats/visit-statistics",
-          },
-        ],
-      },
-      {
         show: accountStore.auth("dc"),
         title: "系统数据",
         prependIcon: "mdi-database-cog-outline",
@@ -218,20 +238,6 @@ export const useConsoleStore = defineStore("console", () => {
             path: "/console/system/log",
           },
         ],
-      },
-      {
-        show: accountStore.auth("declare"),
-        title: "申报管理",
-        prependIcon: "mdi-book-cog-outline",
-        link: true,
-        path: "/console/declare/manage",
-      },
-      {
-        show: accountStore.auth("declare-check"),
-        title: "申报审核",
-        prependIcon: "mdi-book-check-outline",
-        link: true,
-        path: "/console/declare/check",
       },
     ];
   };
@@ -266,7 +272,7 @@ export const useConsoleStore = defineStore("console", () => {
         courseManage.value.push({
           prependIcon: "mdi-human-male-board",
           type: "subheader",
-          title: "教授的课程",
+          title: "课程教学管理",
         });
         courseManage.value.push(
           ...courses.map((item : { name : string; explain : any; id : any }) => {

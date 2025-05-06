@@ -18,6 +18,9 @@
         <v-tabs-window-item value="user">
           <CourseTabUser :data="data"></CourseTabUser>
         </v-tabs-window-item>
+        <v-tabs-window-item value="homework">
+          <CourseTabHomework :cid="route.params.id"></CourseTabHomework>
+        </v-tabs-window-item>
       </v-tabs-window>
     </v-sheet>
     <v-empty-state v-else icon="$error" min-height="500px">
@@ -75,6 +78,11 @@ const tabs = ref([
     icon: 'mdi-shield-lock-outline',
     text: '用户',
     value: 'user',
+  },
+  {
+    icon: 'mdi-book-open-variant-outline',
+    text: '作业',
+    value: 'homework',
   }
 ])
 const Forbidden = ref(false)

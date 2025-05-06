@@ -19,7 +19,7 @@
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.cover="{ item }">
         <div class="pa-2">
-          <v-img :src="item.cover" :width="80" :height="45" cover>
+          <v-img :src="useFileUri(item.cover)" :width="80" :height="45" cover>
             <template v-slot:placeholder>
               <v-img src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"></v-img>
             </template>
@@ -65,83 +65,132 @@
 </template>
 
 <script setup>
-import { nextTick, ref } from 'vue';
-import { CourseApi } from '@/api/course/course';
-import { useResourceStore } from '@/stores/resource';
+  import {
+    nextTick,
+    ref
+  } from 'vue';
+  import {
+    CourseApi
+  } from '@/api/course/course';
+  import {
+    useResourceStore
+  } from '@/stores/resource';
+  import {
+    useFileUri
+  } from '@/utils/simulation-uri';
 
-const resourceStore = useResourceStore()
-const dialogCheck = ref(false)
-const options = ref({
-  page: 1,
-  itemsPerPage: 10
-})
-const headers = ref([
-  { title: '封面', key: 'cover', sortable: false, },
-  { title: '标题', key: 'name', },
-  { title: '主题', key: 'subject', },
-  { title: '教室', key: 'classroom', },
-  { title: '类型', key: 'categoryName', sortable: false },
-  { title: '种类', key: 'typeName', sortable: false },
-  { title: '开放时间', key: 'startTime' },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
-])
-const search = ref({
-  name: '',
-  category: null,
-  type: null
-})
-const serverItems = ref([])
-const types = ref([{ label: '普通课程', value: 'general' }, { label: '仿真课程', value: 'simulation' }])
-const loading = ref(true)
-const totalItems = ref(0)
-const editedItem = ref({
-  id: null
-})
-const defaultItem = ref({
-  id: null
-})
-
-const checkItem = (item) => {
-  editedItem.value = Object.assign({}, item)
-  editedItem.value.status = 1
-  dialogCheck.value = true;
-}
-
-const closeCheck = () => {
-  dialogCheck.value = false;
-  nextTick(() => {
-    editedItem.value = Object.assign({}, defaultItem.value)
+  const resourceStore = useResourceStore()
+  const dialogCheck = ref(false)
+  const options = ref({
+    page: 1,
+    itemsPerPage: 10
   })
-}
-
-const confirmCheck = async () => {
-  await CourseApi.checked(editedItem.value.id, editedItem.value.status)
-  loadItems(options.value)
-  closeCheck()
-}
-
-const loadItems = async ({ page, itemsPerPage, sortBy }) => {
-  loading.value = true
-  await resourceStore.loadCategorys()
-  const res = await CourseApi.checkPage({
-    current: page,
-    size: itemsPerPage,
-    sortKey: sortBy[0] ? sortBy[0].key : null,
-    sortOrder: sortBy[0] ? sortBy[0].order : null,
-    category: search.value.category,
-    name: search.value.name,
-    type: search.value.type
+  const headers = ref([{
+      title: '封面',
+      key: 'cover',
+      sortable: false,
+    },
+    {
+      title: '标题',
+      key: 'name',
+    },
+    {
+      title: '主题',
+      key: 'subject',
+    },
+    {
+      title: '教室',
+      key: 'classroom',
+    },
+    {
+      title: '类型',
+      key: 'categoryName',
+      sortable: false
+    },
+    {
+      title: '种类',
+      key: 'typeName',
+      sortable: false
+    },
+    {
+      title: '开放时间',
+      key: 'startTime'
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      sortable: false,
+      align: 'end'
+    },
+  ])
+  const search = ref({
+    name: '',
+    category: null,
+    type: null
   })
-  serverItems.value = res.records.map(item => {
-    return {
-      ...item,
-      categoryName: item.category ? resourceStore.categorys.find(category => category.id == item.category)?.name : "<未分类>",
-      typeName: item.type ? types.value.find(type => type.value == item.type)?.label : "",
-    }
+  const serverItems = ref([])
+  const types = ref([{
+    label: '普通课程',
+    value: 'general'
+  }, {
+    label: '仿真课程',
+    value: 'simulation'
+  }])
+  const loading = ref(true)
+  const totalItems = ref(0)
+  const editedItem = ref({
+    id: null
   })
-  totalItems.value = res.total
-  loading.value = false
-}
+  const defaultItem = ref({
+    id: null
+  })
+
+  const checkItem = (item) => {
+    editedItem.value = Object.assign({}, item)
+    editedItem.value.status = 1
+    dialogCheck.value = true;
+  }
+
+  const closeCheck = () => {
+    dialogCheck.value = false;
+    nextTick(() => {
+      editedItem.value = Object.assign({}, defaultItem.value)
+    })
+  }
+
+  const confirmCheck = async () => {
+    await CourseApi.checked(editedItem.value.id, editedItem.value.status)
+    loadItems(options.value)
+    closeCheck()
+  }
+
+  const loadItems = async ({
+    page,
+    itemsPerPage,
+    sortBy
+  }) => {
+    loading.value = true
+    await resourceStore.loadCategorys()
+    const res = await CourseApi.checkPage({
+      current: page,
+      size: itemsPerPage,
+      sortKey: sortBy[0] ? sortBy[0].key : null,
+      sortOrder: sortBy[0] ? sortBy[0].order : null,
+      category: search.value.category,
+      name: search.value.name,
+      type: search.value.type
+    })
+    serverItems.value = res.records.map(item => {
+      return {
+        ...item,
+        categoryName: item.category ? resourceStore.categorys.find(category => category.id == item.category)
+          ?.name : "<未分类>",
+        typeName: item.type ? types.value.find(type => type.value == item.type)?.label : "",
+      }
+    })
+    totalItems.value = res.total
+    loading.value = false
+  }
 </script>
 
 <style scoped></style>

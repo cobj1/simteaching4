@@ -1,6 +1,6 @@
 <template>
   <VCard :elevation="enableSelection ? 0 : 1">
-    <VToolbar title="报告模板管理" v-if="!enableSelection">
+    <VToolbar title="实验报告撰写" v-if="!enableSelection">
       <v-btn color="primary" dark @click="editItem()">
         新增模板
       </v-btn>

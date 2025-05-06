@@ -46,7 +46,7 @@ const tabs = ref([
   },
   {
     icon: 'mdi-handshake-outline',
-    text: '课业',
+    text: '课前预习',
     value: 'coursework',
   },
   {
@@ -56,7 +56,7 @@ const tabs = ref([
   },
   {
     icon: 'mdi-license',
-    text: '成绩',
+    text: '仿真考核测评',
     value: 'grade',
   },
 ])

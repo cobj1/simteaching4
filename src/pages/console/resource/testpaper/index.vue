@@ -60,7 +60,7 @@
                   :disabled="loadingEdit"></v-select>
               </v-col>
               <v-col cols="12" md="6">
-                <v-text-field label="考核时间" v-model="editedItem.time" suffix="分钟"></v-text-field>
+                <v-text-field label="考核时间" v-model="editedItem.examTime" suffix="分钟"></v-text-field>
               </v-col>
             </v-row>
           </v-container>
@@ -139,7 +139,7 @@ const headers = ref([{
 },
 {
   title: '考核时间',
-  key: 'time'
+  key: 'examTime'
 },
 {
   title: 'Actions',
@@ -168,7 +168,7 @@ const editedItem = ref({
   difficulty: '普通',
   model: '固定',
   score: 100,
-  time: 60,
+  examTime: 60,
 })
 const defaultItem = ref({
   id: null,
@@ -177,7 +177,7 @@ const defaultItem = ref({
   difficulty: '普通',
   model: '固定',
   score: 100,
-  time: 60,
+  examTime: 60,
 })
 const formTitle = computed(() => editedIndex.value === -1 ? '新增试卷' : '编辑试卷')
 

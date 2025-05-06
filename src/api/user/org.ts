@@ -51,4 +51,14 @@ export const OrgApi = {
       data,
     });
   },
+  fetchExperimentStats(orgid: string) {
+    return axios({
+      url: "statistics/score_dis",
+      method: "get",
+      params: {
+        orgid,
+       
+      },
+    });
+  }
 };

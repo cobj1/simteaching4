@@ -8,7 +8,7 @@
         <v-btn prepend-icon="mdi-format-list-bulleted-type">类型管理</v-btn>
       </ResourceCategory>
       <v-btn color="primary" dark @click="addItem()">
-        新增课程
+        课程布置
       </v-btn>
     </VToolbar>
     <v-data-table-server v-model:options="options" :items-per-page="options.itemsPerPage" :headers="headers"
@@ -25,24 +25,16 @@
             clearable></v-text-field>
         </div>
       </template>
-      <!-- <template v-slot:item.cover="{ item }">
-        <v-img :src="FileApi.filePath + item.cover"></v-img>
-      </template> -->
-      <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.cover="{ item }">
-        <!-- <div class="pa-2">
-          <v-img :src="item.cover" :width="80" :height="45" cover>
-            <template v-slot:placeholder>
-              <v-img src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"></v-img>
-            </template>
-            <template v-slot:error>
-              <v-img src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"></v-img>
-            </template>
-          </v-img>
-        </div> -->
-        <v-img :src="FileApi.filePath + item.cover"></v-img>
+        <v-img :src="useFileUri(item.cover)" :width="80" :height="45" cover>
+          <template v-slot:placeholder>
+            <v-img src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"></v-img>
+          </template>
+          <template v-slot:error>
+            <v-img src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"></v-img>
+          </template>
+        </v-img>
       </template>
-      <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template v-slot:item.code="{ item }">
         {{ item.code }}
         <v-menu width="210px">
@@ -98,8 +90,8 @@
                       @click="editedItem.cover = null; coverFile = null"></v-btn>
                   </v-card>
                 </v-hover>
-                <v-file-upload v-else v-model="coverFile" :disabled="disabled" density="comfortable" title="仿真封面" height="300px"
-                  accept=".png,.jpg" @update:model-value="handleCoverFileUpdate"></v-file-upload>
+                <v-file-upload v-else v-model="coverFile" :disabled="disabled" density="comfortable" title="仿真封面"
+                  height="300px" accept=".png,.jpg" @update:model-value="handleCoverFileUpdate"></v-file-upload>
               </v-col>
               <v-col cols="12">
                 <v-text-field v-model="editedItem.name" label="标题" :disabled="loadingEdit"></v-text-field>
@@ -168,192 +160,269 @@
 </template>
 
 <script setup>
-import { VDateInput } from 'vuetify/labs/VDateInput'
-import { computed, nextTick, ref } from 'vue';
-import { CourseApi } from '@/api/course/course';
-import { useClipboard, useDateFormat } from '@vueuse/core';
-import { useResourceStore } from '@/stores/resource';
-import { TimeRangeGenerators } from '@/utils/time-range-generators';
+  import {
+    VDateInput
+  } from 'vuetify/labs/VDateInput'
+  import {
+    computed,
+    nextTick,
+    ref
+  } from 'vue';
+  import {
+    CourseApi
+  } from '@/api/course/course';
+  import {
+    useClipboard,
+    useDateFormat
+  } from '@vueuse/core';
+  import {
+    useResourceStore
+  } from '@/stores/resource';
+  import {
+    TimeRangeGenerators
+  } from '@/utils/time-range-generators';
 
-import { VFileUpload } from 'vuetify/labs/VFileUpload'
-import { FileApi } from '@/api/file';
-import { useFileUri } from '@/utils/simulation-uri';
-import { useObjectUrl } from '@vueuse/core';
-defineProps({
-  disabled: {
-    type: Boolean,
-    default: false
-  }
-})
-const resourceStore = useResourceStore()
-const { copy } = useClipboard()
-const options = ref({
-  page: 1,
-  itemsPerPage: 10
-})
-const headers = ref([
-{ 
-  title: '仿真封面', align: 'start', sortable: false, key: 'cover', nowrap: true },
-  // { title: '封面', key: 'cover', sortable: false, },
-  { title: '标题', key: 'name', },
-  { title: '主题', key: 'subject', },
-  { title: '教室', key: 'classroom', },
-  { title: '类型', key: 'categoryName', sortable: false },
-  { title: '种类', key: 'typeName', sortable: false },
-  { title: '课程代码', key: 'code' },
-  { title: '开放时间', key: 'startTime' },
-  { title: '审核状态', key: 'checked' },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
-])
-const search = ref({
-  name: '',
-  category: null,
-  type: null
-})
-const serverItems = ref([])
-const types = ref([{ label: '普通课程', value: 'general' }, { label: '仿真课程', value: 'simulation' }])
-const loading = ref(true)
-const loadingEdit = ref(false)
-const totalItems = ref(0)
-const dialogDelete = ref(false)
-const dialog = ref(false)
-const dialogStopCode = ref(false)
-const editedIndex = ref(-1)
-const coverFile = ref(null)
-
-const editedItem = ref({
-  id: null,
-  name: '',
-  type: 'general',
-  category: null,
-  explain: '',
-  subject: '',
-  classroom: '',
-  cover: '',
-  time: []
-})
-const defaultItem = ref({
-  id: null,
-  name: '',
-  type: 'general',
-  category: null,
-  explain: '',
-  subject: '',
-  classroom: '',
-  cover: '',
-  time: []
-})
-const formTitle = computed(() => editedIndex.value === -1 ? '新增课程' : '编辑课程')
-const addItem = () => {
-
-  coverFile.value = null
-  editedItem.value = Object.assign({}, defaultItem.value)
-  editedIndex.value = -1;  
-  dialog.value = true
-}
-const editItem = async (item) => {
-  if (item) {
-    editedIndex.value = serverItems.value.indexOf(item)
-    editedItem.value = Object.assign({}, item)
-    editedItem.value.time = TimeRangeGenerators(item.startTime, item.stopTime)
-  } else {
-    editedItem.value = Object.assign({}, defaultItem.value)
-    editedIndex.value = -1;
-  }
-  dialog.value = true
-}
-const deleteItem = (item) => {
-  editedIndex.value = serverItems.value.indexOf(item);
-  editedItem.value = Object.assign({}, item)
-  dialogDelete.value = true;
-}
-const stopCodeItem = (item) => {
-  editedIndex.value = serverItems.value.indexOf(item);
-  editedItem.value = Object.assign({}, item)
-  dialogStopCode.value = true;
-}
-
-const close = () => {
-  dialog.value = false
-  nextTick(() => {
-    editedItem.value = Object.assign({}, defaultItem.value)
-    editedIndex.value = -1
-  })
-}
-const closeDelete = () => {
-  dialogDelete.value = false;
-  nextTick(() => {
-    editedItem.value = Object.assign({}, defaultItem.value)
-    editedIndex.value = -1;
-  })
-}
-const closeStepCode = () => {
-  dialogStopCode.value = false;
-  nextTick(() => {
-    editedItem.value = Object.assign({}, defaultItem.value)
-    editedIndex.value = -1;
-  })
-}
-
-const deleteItemConfirm = async () => {
-  await CourseApi.del(editedItem.value.id)
-  loadItems(options.value)
-  closeDelete()
-}
-const stopCodeItemConfirm = async () => {
-  await CourseApi.stopcode(editedItem.value.id)
-  loadItems(options.value)
-  closeStepCode()
-}
-
-const recode = async (id) => {
-  await CourseApi.recode(id)
-  loadItems(options.value)
-}
-
-const copycode = (code) => {
-  copy(code)
-}
-
-const save = async () => {
-  loadingEdit.value = true
-  try {
-    await CourseApi.save({
-      ...editedItem.value,
-      startTime: editedItem.value.time[0],
-      stopTime: editedItem.value.time.at(-1)
-    })
-    close()
-    loadItems(options.value)
-  } catch (e) { /* empty */ }
-  loadingEdit.value = false
-}
-
-const loadItems = async ({ page, itemsPerPage, sortBy }) => {
-  loading.value = true
-  await resourceStore.loadCategorys()
-  const res = await CourseApi.page({
-    current: page,
-    size: itemsPerPage,
-    sortKey: sortBy[0] ? sortBy[0].key : null,
-    sortOrder: sortBy[0] ? sortBy[0].order : null,
-    category: search.value.category,
-    name: search.value.name,
-    type: search.value.type
-  })
-  serverItems.value = res.records.map(item => {
-    return {
-      ...item,
-      categoryName: item.category ? resourceStore.categorys.find(category => category.id == item.category)?.name : "<未分类>",
-      typeName: item.type ? types.value.find(type => type.value == item.type)?.label : "",
+  import {
+    VFileUpload
+  } from 'vuetify/labs/VFileUpload'
+  import {
+    FileApi
+  } from '@/api/file';
+  import {
+    useFileUri
+  } from '@/utils/simulation-uri';
+  import {
+    useObjectUrl
+  } from '@vueuse/core';
+  defineProps({
+    disabled: {
+      type: Boolean,
+      default: false
     }
   })
-  totalItems.value = res.total
-  loading.value = false
-}
-const handleCoverFileUpdate = (file) => {
-  editedItem.value.cover = useObjectUrl(file).value
-}
+  const resourceStore = useResourceStore()
+  const {
+    copy
+  } = useClipboard()
+  const options = ref({
+    page: 1,
+    itemsPerPage: 10
+  })
+  const headers = ref([{
+      title: '仿真封面',
+      align: 'start',
+      sortable: false,
+      key: 'cover',
+      nowrap: true
+    },
+    // { title: '封面', key: 'cover', sortable: false, },
+    {
+      title: '标题',
+      key: 'name',
+    },
+    {
+      title: '主题',
+      key: 'subject',
+    },
+    {
+      title: '教室',
+      key: 'classroom',
+    },
+    {
+      title: '类型',
+      key: 'categoryName',
+      sortable: false
+    },
+    {
+      title: '种类',
+      key: 'typeName',
+      sortable: false
+    },
+    {
+      title: '课程代码',
+      key: 'code'
+    },
+    {
+      title: '开放时间',
+      key: 'startTime'
+    },
+    {
+      title: '审核状态',
+      key: 'checked'
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      sortable: false,
+      align: 'end'
+    },
+  ])
+  const search = ref({
+    name: '',
+    category: null,
+    type: null
+  })
+  const serverItems = ref([])
+  const types = ref([{
+    label: '普通课程',
+    value: 'general'
+  }, {
+    label: '仿真课程',
+    value: 'simulation'
+  }])
+  const loading = ref(true)
+  const loadingEdit = ref(false)
+  const totalItems = ref(0)
+  const dialogDelete = ref(false)
+  const dialog = ref(false)
+  const dialogStopCode = ref(false)
+  const editedIndex = ref(-1)
+  const coverFile = ref(null)
+
+  const editedItem = ref({
+    id: null,
+    name: '',
+    type: 'general',
+    category: null,
+    explain: '',
+    subject: '',
+    classroom: '',
+    cover: '',
+    time: []
+  })
+  const defaultItem = ref({
+    id: null,
+    name: '',
+    type: 'general',
+    category: null,
+    explain: '',
+    subject: '',
+    classroom: '',
+    cover: '',
+    time: []
+  })
+  const formTitle = computed(() => editedIndex.value === -1 ? '新增课程' : '编辑课程')
+  const addItem = () => {
+
+    coverFile.value = null
+    editedItem.value = Object.assign({}, defaultItem.value)
+    editedIndex.value = -1;
+    dialog.value = true
+  }
+  const editItem = async (item) => {
+    if (item) {
+      editedIndex.value = serverItems.value.indexOf(item)
+      editedItem.value = Object.assign({}, item)
+      editedItem.value.time = TimeRangeGenerators(item.startTime, item.stopTime)
+    } else {
+      editedItem.value = Object.assign({}, defaultItem.value)
+      editedIndex.value = -1;
+    }
+    dialog.value = true
+  }
+  const deleteItem = (item) => {
+    editedIndex.value = serverItems.value.indexOf(item);
+    editedItem.value = Object.assign({}, item)
+    dialogDelete.value = true;
+  }
+  const stopCodeItem = (item) => {
+    editedIndex.value = serverItems.value.indexOf(item);
+    editedItem.value = Object.assign({}, item)
+    dialogStopCode.value = true;
+  }
+
+  const close = () => {
+    dialog.value = false
+    nextTick(() => {
+      editedItem.value = Object.assign({}, defaultItem.value)
+      editedIndex.value = -1
+    })
+  }
+  const closeDelete = () => {
+    dialogDelete.value = false;
+    nextTick(() => {
+      editedItem.value = Object.assign({}, defaultItem.value)
+      editedIndex.value = -1;
+    })
+  }
+  const closeStepCode = () => {
+    dialogStopCode.value = false;
+    nextTick(() => {
+      editedItem.value = Object.assign({}, defaultItem.value)
+      editedIndex.value = -1;
+    })
+  }
+
+  const deleteItemConfirm = async () => {
+    await CourseApi.del(editedItem.value.id)
+    loadItems(options.value)
+    closeDelete()
+  }
+  const stopCodeItemConfirm = async () => {
+    await CourseApi.stopcode(editedItem.value.id)
+    loadItems(options.value)
+    closeStepCode()
+  }
+
+  const recode = async (id) => {
+    await CourseApi.recode(id)
+    loadItems(options.value)
+  }
+
+  const copycode = (code) => {
+    copy(code)
+  }
+
+  const save = async () => {
+    loadingEdit.value = true
+    try {
+      if (coverFile.value) {
+        const coverConfig = await FileApi.upload(coverFile.value, 'simteaching/course/cover', true)
+        editedItem.value.cover = coverConfig.url
+      }
+      await CourseApi.save({
+        ...editedItem.value,
+        startTime: editedItem.value.time[0],
+        stopTime: editedItem.value.time.at(-1)
+      })
+      close()
+      loadItems(options.value)
+    } catch (e) {
+      /* empty */
+    }
+    loadingEdit.value = false
+  }
+
+  const loadItems = async ({
+    page,
+    itemsPerPage,
+    sortBy
+  }) => {
+    loading.value = true
+    await resourceStore.loadCategorys()
+    const res = await CourseApi.page({
+      current: page,
+      size: itemsPerPage,
+      sortKey: sortBy[0] ? sortBy[0].key : null,
+      sortOrder: sortBy[0] ? sortBy[0].order : null,
+      category: search.value.category,
+      name: search.value.name,
+      type: search.value.type
+    })
+    serverItems.value = res.records.map(item => {
+      return {
+        ...item,
+        categoryName: item.category ? resourceStore.categorys.find(category => category.id == item.category)
+          ?.name : "<未分类>",
+        typeName: item.type ? types.value.find(type => type.value == item.type)?.label : "",
+      }
+    })
+    totalItems.value = res.total
+    loading.value = false
+  }
+  const handleCoverFileUpdate = (file) => {
+    editedItem.value.cover = useObjectUrl(file).value
+  }
 </script>
 
 <style scoped></style>

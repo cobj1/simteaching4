@@ -2,7 +2,7 @@
   <v-container fluid max-width="1000px" min-height="800px">
     <v-menu v-if="manage">
       <template v-slot:activator="{ props }">
-        <v-btn prepend-icon="mdi-plus" rounded="xl" size="large" color="#5865f2" v-bind="props">创建</v-btn>
+        <v-btn prepend-icon="mdi-plus" rounded="xl" size="large" color="#5865f2" v-bind="props">课程布置</v-btn>
       </template>
       <v-list class="mt-2" width="180">
         <v-list-item title="资料" :prepend-icon="useIconsAdapter('resource')" link>

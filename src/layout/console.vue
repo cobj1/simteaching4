@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-navigation-drawer v-model="drawer" disable-resize-watcher class="position-fixed">
+    <v-navigation-drawer v-model="drawer" disable-resize-watcher class="position-fixed" :width="264">
       <v-list nav>
         <v-list-subheader>
           <div class="d-flex align-center ga-1">
@@ -10,7 +10,7 @@
         </v-list-subheader>
         <div v-for="(item) in consoleStore.items" :key="item.title">
           <v-divider v-if="item.type == 'divider'"></v-divider>
-          <div v-if="item.type == 'subheader'">
+          <div v-else-if="item.type == 'subheader'">
             <v-divider></v-divider>
             <v-list-subheader>
               <div class="d-flex align-center ga-1">
@@ -51,7 +51,7 @@
 
     <v-app-bar border="b" class="ps-4 position-fixed" flat>
       <v-app-bar-nav-icon v-if="$vuetify.display.mdAndDown" @click="drawer = !drawer" />
-      <v-app-bar-title>智慧教育云仿真管理平台</v-app-bar-title>
+      <v-app-bar-title>校级虚拟仿真实验教学管理平台</v-app-bar-title>
       <template #append>
         <v-btn icon class="mr-4">
           <v-icon icon="mdi-plus"></v-icon>

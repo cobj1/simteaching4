@@ -6,6 +6,7 @@
     "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
     "paths": {
       "@/*": ["src/*"]
     },

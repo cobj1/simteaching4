@@ -49,8 +49,10 @@
                 </v-file-input>
               </v-col>
               <v-col v-if="editedItem.url" cols="12">
-                <ResourceViewResource v-model="resourceItem" :completed="completed">
-                </ResourceViewResource>
+                <v-responsive v-if="resourceItem">
+                  <ResourceViewResource v-model="resourceItem" :completed="completed">
+                  </ResourceViewResource>
+                </v-responsive>
               </v-col>
             </v-row>
           </v-container>
@@ -97,7 +99,9 @@
   import {
     useResourceStore
   } from '@/stores/resource';
-  import { fileTypeFromBlob } from 'file-type';
+  import {
+    fileTypeFromBlob
+  } from 'file-type';
 
   const resourceStore = useResourceStore()
   const selected = defineModel()
@@ -178,7 +182,7 @@
     file: null
   })
   const completed = computed(() => editedItem.value.id != null)
-  const SupportExts = ['jpg', 'png', 'xml', 'txt', 'mp4', 'mp3', 'docx', 'xlsx', 'pdf']
+  const SupportExts = ['jpg', 'jpeg', 'png', 'xml', 'txt', 'mp4', 'mp3', 'docx', 'xlsx', 'pdf']
   const formTitle = computed(() => editedIndex.value === -1 ? '新增类型' : '编辑类型')
 
   const editItem = async (item) => {
@@ -188,33 +192,34 @@
       editedItem.value.urlOld = editedItem.value.url
       const resource = await ResourceApi.info(item.id)
       if (resource) {
-         item.name = resource.name
-         resource.url = FileApi.filePath + resource.url
-         //支持在线预览的资源
-         if (SupportExts.includes(resource.url.substring(resource.url.lastIndexOf('.') + 1))) {
-           const fileRes = await fetch(resource.url)
-           const blob = await fileRes.blob()
-           if (blob.type == 'text/plain') {
-             resource.ext = 'txt'
-           } else {
-             const fileType = await fileTypeFromBlob(blob)
-             resource.ext = fileType.ext
-           }
-           resource.url = URL.createObjectURL(blob)
-           if (['xml', 'txt'].includes(resource.ext)) {
-             const reader = new FileReader()
-             reader.readAsText(blob)
-             reader.onload = () => {
-               resource.text = reader.result
-               resourceItem.value = resource
-             }
-           } else resourceItem.value = resource
-         } else resourceItem.value = resource
-       } else resourceItem.value = resource
+        item.name = resource.name
+        resource.url = FileApi.filePath + resource.url
+        //支持在线预览的资源
+        if (SupportExts.includes(resource.url.substring(resource.url.lastIndexOf('.') + 1))) {
+          const fileRes = await fetch(resource.url)
+          const blob = await fileRes.blob()
+          if (blob.type == 'text/plain') {
+            resource.ext = 'txt'
+          } else {
+            const fileType = await fileTypeFromBlob(blob)
+            resource.ext = fileType.ext
+          }
+          resource.url = URL.createObjectURL(blob)
+          if (['xml', 'txt'].includes(resource.ext)) {
+            const reader = new FileReader()
+            reader.readAsText(blob)
+            reader.onload = () => {
+              resource.text = reader.result
+              resourceItem.value = resource
+            }
+          } else resourceItem.value = resource
+        } else resourceItem.value = resource
+      } else resourceItem.value = resource
     } else {
       editedItem.value = Object.assign({}, defaultItem.value)
       editedIndex.value = -1;
     }
+    /* console.log(resourceItem.value) */
     dialog.value = true
   }
 
